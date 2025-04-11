@@ -34,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureModelBehavior();
+        $this->configureDatabase();
         $this->configureRequest();
         $this->configureScramble();
         $this->configureVite();
