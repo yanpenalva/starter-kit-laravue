@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Providers;
 
@@ -13,6 +13,7 @@ use Dedoc\Scramble\Support\Generator\{
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\{Vite};
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\DB;
 
 // @codeCoverageIgnoreStart
 class AppServiceProvider extends ServiceProvider
@@ -45,6 +46,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::preventLazyLoading(!$this->app->isProduction());
         Model::shouldBeStrict();
+        Model::automaticallyEagerLoadRelationships();
+        Model::unguard();
     }
 
     /**
@@ -72,9 +75,22 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function configureVite(): void
     {
-        Vite::usePrefetchStrategy('aggressive');
+        Vite::useAggressivePrefetching();
+
     }
 
+    /**
+     * Configure the keys for database configur
+     *
+     * @codeCoverageIgnore
+     */
+    public function configureDatabase(): void
+    {
+        DB::prohibitDestructiveCommands(
+            app()->isProduction(),
+        );
+
+    }
 }
 
 // @codeCoverageIgnoreEnd

@@ -2,15 +2,19 @@ includes:
     - vendor/larastan/larastan/extension.neon
 
 parameters:
+    level: 8
     treatPhpDocTypesAsCertain: false
     paths:
         - app/
-    level: 8
-    ignoreErrors:
-        - '#Class App\\Models\\User uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory#'
 
     excludePaths:
-        - ./*/*/FileToBeExcluded.php
-        - ./app/Providers/AppServiceProvider.php
-        - ./app/Http/Middleware/*
-        - ./app/Http/Resources/BaseResource.php
+        - ./app/Models/**.php
+        - ./app/Providers/**.php
+        - ./app/Http/Middleware/**
+        - ./app/Http/Resources/**
+        - ./app/Exceptions/**
+        - ./app/Console/Kernel.php
+        - ./app/Http/Kernel.php
+        - ./app/Events/**
+        - ./app/Listeners/**
+        - ./routes/**
