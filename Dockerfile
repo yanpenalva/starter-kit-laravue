@@ -39,7 +39,8 @@ RUN apk add --no-cache \
     && docker-php-ext-install \
     pdo pdo_pgsql zip exif gd curl bcmath intl pcntl xml \
     && pecl install redis xdebug \
-    && docker-php-ext-enable redis xdebug \
+    && docker-php-ext-enable redis \
+    && rm -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && apk del .build-deps
 
 RUN echo "upload_max_filesize = 16M" > /usr/local/etc/php/conf.d/custom.ini && \
@@ -61,6 +62,9 @@ RUN echo "upload_max_filesize = 16M" > /usr/local/etc/php/conf.d/custom.ini && \
     echo "opcache.revalidate_freq=2" >> /usr/local/etc/php/conf.d/custom.ini && \
     echo "opcache.jit=tracing" >> /usr/local/etc/php/conf.d/custom.ini && \
     echo "opcache.jit_buffer_size=100M" >> /usr/local/etc/php/conf.d/custom.ini && \
+    echo "xdebug.mode=coverage" >> /usr/local/etc/php/conf.d/custom.ini && \
+    echo "xdebug.start_with_request=trigger" >> /usr/local/etc/php/conf.d/custom.ini && \
+    echo "xdebug.discover_client_host=1" >> /usr/local/etc/php/conf.d/custom.ini && \
     if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "staging" ]; then echo "display_errors = Off"; else echo "display_errors = On"; fi >> /usr/local/etc/php/conf.d/custom.ini
 
 RUN mkdir -p /var/log/php /var/log/supervisor && \

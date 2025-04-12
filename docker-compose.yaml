@@ -18,7 +18,7 @@ services:
       - APP_ENV=development
       - APP_DEBUG=true
       - CHOKIDAR_USEPOLLING=true
-      - PHP_ENABLE_XDEBUG=0
+      - PHP_ENABLE_XDEBUG=1
     networks:
       - starterkit-network
     depends_on:

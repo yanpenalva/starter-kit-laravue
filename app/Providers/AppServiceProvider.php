@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\{Vite};
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\DB;
 
-// @codeCoverageIgnoreStart
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -94,4 +93,3 @@ class AppServiceProvider extends ServiceProvider
     }
 }
 
-// @codeCoverageIgnoreEnd
