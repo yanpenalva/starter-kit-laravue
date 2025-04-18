@@ -227,7 +227,10 @@ describe('Users Management', function () {
             function (array $invalidStatus) {
 
                 actingAs($this->asAdmin)
-                    ->put(route('users.update', [$this->asAdmin->id]), $invalidStatus)
+                    ->put(route(
+                        'users.update',
+                        [$this->asAdmin->id]
+                    ), $invalidStatus)
                     ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
                     ->assertJson([
                         'errors' => [
@@ -244,7 +247,10 @@ describe('Users Management', function () {
             function (array $invalidRoleData) {
 
                 actingAs($this->asAdmin)
-                    ->put(route('users.update', [$this->asAdmin->id]), $invalidRoleData)
+                    ->put(route(
+                        'users.update',
+                        [$this->asAdmin->id]
+                    ), $invalidRoleData)
                     ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
                     ->assertJson([
                         'errors' => [

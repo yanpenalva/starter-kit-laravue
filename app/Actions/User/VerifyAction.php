@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Actions\User;
 
@@ -33,7 +33,9 @@ final readonly class VerifyAction
             throw_if(
                 $user->email_verified_at !== null,
                 \Exception::class,
-                'Seu cadastro já foi validado! Por favor, aguarde até que um administrador realize a liberação do seu acesso.',
+                'Seu cadastro já foi validado!
+                Por favor, aguarde até que um administrador
+                realize a liberação do seu acesso.',
                 Response::HTTP_CONFLICT
             );
 

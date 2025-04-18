@@ -1,10 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
@@ -28,6 +29,7 @@ class Handler extends ExceptionHandler
             $exception instanceof AuthenticationException => (int) Response::HTTP_UNAUTHORIZED,
             $exception instanceof UnactivatedUserException => (int) ($exception->getCode() ?: Response::HTTP_FORBIDDEN),
             $exception instanceof RoleIsAssignedToUserException => (int) Response::HTTP_UNPROCESSABLE_ENTITY,
+            $exception instanceof ModelNotFoundException => (int) Response::HTTP_NOT_FOUND,
             default => (int) Response::HTTP_INTERNAL_SERVER_ERROR,
         };
         \Log::info('Status Code: ' . $status);
