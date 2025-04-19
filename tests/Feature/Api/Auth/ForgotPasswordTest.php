@@ -109,4 +109,19 @@ describe('ForgotPasswordTest', function () {
         $response->assertStatus(Response::HTTP_NO_CONTENT);
     })->group('password');
 
+    it('builds the mailable correctly with markdown and variables', function () {
+        $user = User::factory()->make([
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+        ]);
+
+        $token = \Str::random(60);
+
+        $mailable = new SendForgetPasswordMail($token, $user);
+        $rendered = $mailable->render();
+
+        expect($mailable->envelope()->subject)->toBe('Password Recovery Request SP System 1.0');
+        expect($rendered)->toContain('John Doe');
+        expect($rendered)->toContain("email={$user->email}");
+    })->group('password');
 });

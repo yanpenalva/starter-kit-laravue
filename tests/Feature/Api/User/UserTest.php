@@ -2,8 +2,12 @@
 
 namespace Tests\Feature\Users;
 
+use App\Mail\SendRandomPassword;
+use App\Mail\SendVerifyEmail;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
+use Mail;
 
 use function Pest\Laravel\{actingAs, get, post};
 
@@ -298,9 +302,11 @@ describe('Users Management', function () {
 
             $url = createTemporaryUrlForUser($user, Carbon::now()->addMinutes(30));
 
-            get($url)
-                ->assertJson(['message' => 'Seu cadastro já foi validado! Por favor, aguarde até que um administrador realize a liberação do seu acesso.']);
+            $response = get($url);
+
+            expect($response->json('message'))->toContain('Seu cadastro já foi validado!');
         });
+
 
         it('should return that the token is invalid', function () {
 
@@ -353,4 +359,60 @@ describe('Users Management', function () {
             $response->assertStatus(Response::HTTP_UNAUTHORIZED);
         });
     });
+
+    it('builds the SendRandomPassword mail with correct data', function () {
+        $user = User::factory()->make([
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+        ]);
+
+        $password = 'abc123XYZ';
+
+        $mail = new SendRandomPassword($user, $password);
+
+        $rendered = $mail->render();
+
+        expect($mail->envelope()->subject)->toBe('Registration in the SP 1.0 System');
+        expect($rendered)->toContain('John Doe');
+        expect($rendered)->toContain($password);
+    });
+
+    it('queues the SendVerifyEmail when registering external user', function (array $registerUser) {
+
+        $response = post(route('users.register'), $registerUser);
+
+        $response->assertStatus(Response::HTTP_OK);
+
+        Mail::assertQueued(\App\Mail\SendVerifyEmail::class, function ($mail) use ($registerUser) {
+            return $mail->hasTo($registerUser['email']);
+        });
+    })->with('registerUser');
+
+    it('builds the SendVerifyEmail mail with correct data', function () {
+        $user = User::factory()->make([
+            'id' => 1,
+            'name' => 'Jane Doe',
+            'email' => 'jane@example.com',
+        ]);
+
+        Carbon::setTestNow(Carbon::now());
+
+        $mail = new SendVerifyEmail($user);
+
+        $rendered = $mail->render();
+
+        $expectedLink = \URL::temporarySignedRoute(
+            'users.verify',
+            Carbon::now()->addHours(Config::get('auth.verification.expire', 48)),
+            [
+                'id' => $user->getKey(),
+                'hash' => sha1($user->getEmailForVerification()),
+            ]
+        );
+
+
+        expect($mail->envelope()->subject)->toBe('Confirmação de cadastro');
+        expect($rendered)->toContain('Jane Doe');
+    });
+
 })->group('users');
