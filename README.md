@@ -93,7 +93,7 @@ http://localhost:8001
 
 We use Laravel's native Action Pattern, which promotes the separation of responsibilities by encapsulating each functionality in a specific action. This eliminates the need for custom Service Providers and facilitates code reuse and maintenance. Actions perform a single task, making the code cleaner, more predictable and testable.We adopted the Event-Driven Development (EDD) paradigm to decouple processes and improve the extensibility of the system. This model allows events to be triggered from actions or services and processed by Listeners asynchronously or synchronously, as required. This makes it easier to implement logic such as notifications, log auditing and integration with external systems without directly coupling these responsibilities to the main flow of the application.
 
-📌 **Architecture Diagram**  
+📌 **Architecture Diagram**
 [Application Architecture](./architecture.svg)
 
 ---
@@ -176,5 +176,4 @@ Where:
 
 - [ ] Set phpstan max level(10), currently level is 8.
 - [ ] Create a screen to display the logs on the frontend.
-- [ ] Create more unit and integration tests for the application features.
 - [ ] Create a screen for show users informations.

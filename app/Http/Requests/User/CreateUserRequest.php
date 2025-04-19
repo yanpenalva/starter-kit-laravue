@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Http\Requests\User;
 
@@ -95,9 +95,12 @@ class CreateUserRequest extends FormRequest
      */
     public function fluentParams(?string $key = null): Fluent
     {
-        return new Fluent([
-            ...$this->validated($key),
+        /** @var array<string, mixed> $validated */
+        $validated = is_array($this->validated($key)) ? $this->validated($key) : [];
+
+        return new Fluent(array_merge($validated, [
             'password' => $this->has('send_random_password') ? Str::password(8) : $this->password,
-        ]);
+        ]));
     }
+
 }

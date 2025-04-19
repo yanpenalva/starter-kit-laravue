@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Actions\User;
 
@@ -21,18 +21,24 @@ final readonly class CreateUserAction
     public function execute(Fluent $params): User
     {
         return DB::transaction(function () use ($params): User {
+            $sendRandom = (bool) $params->get('send_random_password', false);
+
+            $password = $sendRandom
+                ? bcrypt($generated = \Illuminate\Support\Str::password(8))
+                : $params->get('password');
+
             $user = User::create([
                 'name' => $params->get('name'),
                 'email' => $params->get('email'),
-                'password' => $params->get('password'),
+                'password' => $password,
                 'cpf' => $params->get('cpf'),
                 'active' => $params->get('active', false) ? 'true' : 'false',
             ]);
 
             $user->syncRoles([$params->get('role_id')]);
 
-            if ($params->get('send_random_password', false)) {
-                Mail::to($user)->queue(new SendRandomPassword($user, $params->get('password')));
+            if ($sendRandom) {
+                Mail::to($user)->queue(new SendRandomPassword($user, $generated));
             }
 
             $this->writeOnLog($user); // TODO: Move to Event or Log

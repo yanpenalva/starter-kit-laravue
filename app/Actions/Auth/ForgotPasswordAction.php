@@ -1,12 +1,16 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Actions\Auth;
 
 use App\Enums\RolesEnum;
 use App\Mail\SendForgetPasswordMail;
-use Illuminate\Support\Facades\{DB, Mail, Password};
+use App\Models\User;
+use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Fluent;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,7 +29,12 @@ final readonly class ForgotPasswordAction
         DB::transaction(function () use ($params) {
             $status = Password::sendResetLink(
                 $params->toArray(),
-                function ($user, string $token) {
+                /**
+                 * @param User&CanResetPassword $user
+                 */
+                function (CanResetPassword $user, string $token): void {
+                    /** @var User $user */
+
                     throw_if(
                         !$user->roles->where('slug', RolesEnum::GUEST->value)->count(),
                         new \Exception(

@@ -1,10 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Http\Requests\User;
 
 use App\Enums\StatusEnum;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
@@ -59,8 +60,8 @@ class UpdateUserRequest extends FormRequest
                 'string',
                 new \App\Rules\ValidateCPF(),
                 Rule::unique('users', 'cpf')
-                    ->where(function ($query) {
-                        $query->whereExists(function ($subQuery) {
+                    ->where(function (Builder $query): void {
+                        $query->whereExists(function (Builder $subQuery): void {
                             $subQuery->select(DB::raw(1))
                                 ->from('role_user')
                                 ->whereColumn('role_user.user_id', 'users.id')
@@ -111,6 +112,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function messages(): array
     {
+        /** @var string $appName */
         $appName = config('app.name');
 
         return [
@@ -135,7 +137,13 @@ class UpdateUserRequest extends FormRequest
      */
     public function fluentParams(?string $key = null): Fluent
     {
-        return new Fluent($this->validated($key));
+        $validated = $this->validated($key);
+
+        /** @var array<string, mixed> $validated */
+        $validated = is_array($validated) ? $validated : [];
+
+        return new Fluent($validated);
     }
+
 
 }

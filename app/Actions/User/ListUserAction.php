@@ -26,25 +26,45 @@ final readonly class ListUserAction
             ->leftJoin('role_user', 'users.id', '=', 'role_user.user_id')
             ->leftJoin('roles', 'role_user.role_id', '=', 'roles.id');
 
-        $query->when($params->get('search'), fn($query, $search) => $query->where(function ($query) use ($search) {
-            $query->whereLike('users.id', "%$search%")
-                ->orWhereLike('users.name', "%$search%")
-                ->orWhereLike('users.email', "%$search%")
-                ->orWhereLike('roles.name', "%$search%");
-        }));
-        $query->when($params->get('order'), fn($query, $order) => $query->orderBy(
-            match ($params->get('column', 'id')) {
-                'name' => 'users.name',
-                'email' => 'users.email',
-                'role' => 'roles.name',
-                'setSituation' => 'users.active',
-                default => 'users.id',
-            },
-            $order
-        ));
+        /** @var string|null $search */
+        $search = $params->get('search');
 
-        return $params->get('paginated', false)
-            ? $query->paginate($params->get('limit', 10))
+        if (is_string($search) && $search !== '') {
+            $query->where(function ($query) use ($search) {
+                $query->whereLike('users.id', "%{$search}%")
+                    ->orWhereLike('users.name', "%{$search}%")
+                    ->orWhereLike('users.email', "%{$search}%")
+                    ->orWhereLike('roles.name', "%{$search}%");
+            });
+        }
+
+        /** @var string|null $order */
+        $order = $params->get('order');
+
+        /** @var string|null $column */
+        $column = $params->get('column', 'id');
+
+        if (is_string($order)) {
+            $query->orderBy(
+                match ($column) {
+                    'name' => 'users.name',
+                    'email' => 'users.email',
+                    'role' => 'roles.name',
+                    'setSituation' => 'users.active',
+                    default => 'users.id',
+                },
+                $order
+            );
+        }
+
+        /** @var bool $paginated */
+        $paginated = (bool) $params->get('paginated', false);
+
+        /** @var int $limit */
+        $limit = is_numeric($params->get('limit')) ? (int) $params->get('limit') : 10;
+
+        return $paginated
+            ? $query->paginate($limit)
             : $query->get();
     }
 }

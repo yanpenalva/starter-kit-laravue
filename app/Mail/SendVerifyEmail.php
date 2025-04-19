@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Mail;
 
@@ -48,16 +48,18 @@ class SendVerifyEmail extends Mailable
         ]);
     }
 
-    /**
-     * Get the verification URL for the email.
-     *
-     * @return string
-     */
+
     public function getUrl(): string
     {
+        $expire = Config::get('auth.verification.expire', 48);
+
+        $expiration = is_int($expire) || is_string($expire) || is_float($expire)
+            ? (int) $expire
+            : 48;
+
         $url = URL::temporarySignedRoute(
             'users.verify',
-            Carbon::now()->addHours(Config::get('auth.verification.expire', 48)),
+            Carbon::now()->addHours($expiration),
             [
                 'id' => $this->user->getKey(),
                 'hash' => sha1($this->user->getEmailForVerification()),

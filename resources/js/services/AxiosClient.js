@@ -107,6 +107,7 @@ function handleErrorResponse(status, message, data, config) {
 
       if (data?.message) {
         notify(data.message, 'negative');
+        return;
       }
       const messagesErrors = Object.values(errors422);
       messagesErrors.slice(0, 8).forEach((msg) => notify(msg.toString(), 'negative'));
