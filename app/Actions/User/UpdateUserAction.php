@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Actions\User;
 
@@ -29,6 +29,13 @@ final readonly class UpdateUserAction
 
             $user->update($fillableParams);
             $user->syncRoles([$params->get('role_id')]);
+
+            /** @var bool $notify */
+            $notify = (bool) $params->get('notify_status', false);
+
+            if ($notify) {
+                \Mail::to($user)->queue(new \App\Mail\SendNotificationUserActivation($user));
+            }
 
             $this->logUpdateActivity('Gestão de Perfis', $user, $user->getDirty(), 'Atualizou um perfil');
 

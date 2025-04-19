@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Users;
 
+use App\Mail\SendNotificationUserActivation;
 use App\Mail\SendRandomPassword;
 use App\Mail\SendVerifyEmail;
 use App\Models\User;
@@ -401,18 +402,59 @@ describe('Users Management', function () {
 
         $rendered = $mail->render();
 
-        $expectedLink = \URL::temporarySignedRoute(
-            'users.verify',
-            Carbon::now()->addHours(Config::get('auth.verification.expire', 48)),
-            [
-                'id' => $user->getKey(),
-                'hash' => sha1($user->getEmailForVerification()),
-            ]
-        );
-
 
         expect($mail->envelope()->subject)->toBe('Confirmação de cadastro');
         expect($rendered)->toContain('Jane Doe');
     });
 
+    it('builds SendVerifyEmail link using default expiration when config is invalid', function () {
+        $user = User::factory()->make([
+            'id' => 123,
+            'email' => 'foo@example.com',
+        ]);
+
+        Config::set('auth.verification.expire', []);
+
+        $mail = new SendVerifyEmail($user);
+
+        $link = $mail->getUrl();
+
+        expect($link)->toContain('verificar-email');
+    });
+
+
+    it(
+        'should queue SendNotificationUserActivation when notify_status is true',
+        function (array $updateDataUser, array $userJsonValidStructure) {
+            Mail::fake();
+
+            $updateDataUser['notify_status'] = true;
+
+            actingAs($this->asAdmin)
+                ->put(route('users.update', [$this->asAdmin->id]), $updateDataUser)
+                ->assertStatus(200)
+                ->assertJsonStructure($userJsonValidStructure);
+
+            $updatedUser = User::find($this->asAdmin->id);
+
+            Mail::assertQueued(SendNotificationUserActivation::class, fn($mail) => $mail->hasTo($updatedUser->email));
+
+        }
+    )->with('updateUserData')
+        ->with('userJsonValidStructure');
+
+    it('builds the SendNotificationUserActivation mail with correct data', function () {
+        $user = User::factory()->make([
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+        ]);
+
+        $mail = new SendNotificationUserActivation($user);
+
+        $rendered = $mail->render();
+
+        expect($mail->envelope()->subject)->toBe('Ativação de usuário');
+        expect($rendered)->toContain('John Doe');
+        expect($mail->attachments())->toBeArray()->toBeEmpty();
+    });
 })->group('users');
