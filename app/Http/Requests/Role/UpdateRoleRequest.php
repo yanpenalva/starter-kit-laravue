@@ -6,8 +6,8 @@ namespace App\Http\Requests\Role;
 
 use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\{Collection, Fluent};
+use Illuminate\Support\Facades\DB;
 
 class UpdateRoleRequest extends FormRequest
 {
@@ -46,9 +46,9 @@ class UpdateRoleRequest extends FormRequest
                 'required',
                 'string',
                 function ($attribute, $value, $fail) {
-                    $trimmedValue = trim($value);
+                    $trimmedValue = mb_trim($value);
                     $exists = DB::table('roles')
-                        ->whereRaw('LOWER(name) = ?', [strtolower($trimmedValue)])
+                        ->whereRaw('LOWER(name) = ?', [mb_strtolower($trimmedValue)])
                         ->when($this->role, fn ($query) => $query->where('id', '!=', $this->role->id))
                         ->exists();
 

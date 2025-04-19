@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Actions\Role;
 
@@ -18,7 +18,7 @@ final readonly class ListRoleAction
     public function execute(Fluent $params): LengthAwarePaginator|Collection
     {
         return Role::query()
-            ->with(['permissions' => fn($query) => $query->select(['id', 'description', 'name'])])
+            ->with(['permissions' => fn ($query) => $query->select(['id', 'description', 'name'])])
             ->when($params->get('search'), function ($query, $search) {
                 $query->where(function ($query) use ($search) {
                     $query->whereLike('id', "%$search%")
@@ -38,8 +38,8 @@ final readonly class ListRoleAction
             })
             ->when(
                 $params->get('paginated', false),
-                fn($query) => $query->paginate($params->get('limit', 10)),
-                fn($query) => $query->get()
+                fn ($query) => $query->paginate($params->get('limit', 10)),
+                fn ($query) => $query->get()
             );
     }
 }

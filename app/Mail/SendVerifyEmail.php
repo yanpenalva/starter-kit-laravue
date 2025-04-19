@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Mail;
 
@@ -47,7 +47,6 @@ class SendVerifyEmail extends Mailable
             'link' => $this->getUrl(),
         ]);
     }
-
 
     public function getUrl(): string
     {

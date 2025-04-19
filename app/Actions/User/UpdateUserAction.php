@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Actions\User;
 
@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
+use Mail;
 
 final readonly class UpdateUserAction
 {
@@ -34,7 +35,7 @@ final readonly class UpdateUserAction
             $notify = (bool) $params->get('notify_status', false);
 
             if ($notify) {
-                \Mail::to($user)->queue(new \App\Mail\SendNotificationUserActivation($user));
+                Mail::to($user)->queue(new \App\Mail\SendNotificationUserActivation($user));
             }
 
             $this->logUpdateActivity('Gestão de Perfis', $user, $user->getDirty(), 'Atualizou um perfil');

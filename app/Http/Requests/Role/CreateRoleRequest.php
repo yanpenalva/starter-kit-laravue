@@ -41,9 +41,9 @@ class CreateRoleRequest extends FormRequest
                 'required',
                 'string',
                 function ($attribute, $value, $fail) {
-                    $trimmedValue = trim($value);
+                    $trimmedValue = mb_trim($value);
                     $exists = DB::table('roles')
-                        ->whereRaw('LOWER(name) = ?', [strtolower($trimmedValue)])
+                        ->whereRaw('LOWER(name) = ?', [mb_strtolower($trimmedValue)])
                         ->when($this->role, fn ($query) => $query->where('id', '!=', $this->role->id))
                         ->exists();
 

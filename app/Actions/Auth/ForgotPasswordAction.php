@@ -1,16 +1,15 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Actions\Auth;
 
 use App\Enums\RolesEnum;
 use App\Mail\SendForgetPasswordMail;
 use App\Models\User;
+use Exception;
 use Illuminate\Contracts\Auth\CanResetPassword;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\{DB, Mail, Password};
 use Illuminate\Support\Fluent;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,7 +36,7 @@ final readonly class ForgotPasswordAction
 
                     throw_if(
                         !$user->roles->where('slug', RolesEnum::GUEST->value)->count(),
-                        new \Exception(
+                        new Exception(
                             'Usuário não disponível para solicitar a redefinição de senha.',
                             Response::HTTP_CONFLICT
                         )
@@ -49,7 +48,7 @@ final readonly class ForgotPasswordAction
 
             throw_if(
                 $status !== Password::RESET_LINK_SENT,
-                new \Exception(
+                new Exception(
                     'Não foi possível realizar a solicitação de redefinição de senha, verifique se os dados informados são válidos.',
                     Response::HTTP_BAD_REQUEST
                 )

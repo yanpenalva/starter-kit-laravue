@@ -1,10 +1,11 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Actions\User;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +20,7 @@ final readonly class VerifyAction
         DB::transaction(function () use ($params) {
             throw_if(
                 !request()->hasValidSignature(),
-                \Exception::class,
+                Exception::class,
                 'Link de validação expirado, cadastre-se novamente',
                 Response::HTTP_NOT_FOUND
             );
@@ -32,7 +33,7 @@ final readonly class VerifyAction
 
             throw_if(
                 $user->email_verified_at !== null,
-                \Exception::class,
+                Exception::class,
                 'Seu cadastro já foi validado!
                 Por favor, aguarde até que um administrador
                 realize a liberação do seu acesso.',

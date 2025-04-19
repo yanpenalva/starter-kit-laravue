@@ -15,7 +15,7 @@ class ValidateCPF implements Rule
 
         $cpf = preg_replace('/\D/', '', $value) ?? '';
 
-        if (strlen($cpf) !== 11) {
+        if (mb_strlen($cpf) !== 11) {
             $fail($this->message());
 
             return;
@@ -30,7 +30,7 @@ class ValidateCPF implements Rule
         $sum = 0;
 
         for ($i = 0; $i < 9; $i++) {
-            $sum += intval($cpf[$i]) * (10 - $i);
+            $sum += (int) ($cpf[$i]) * (10 - $i);
         }
         $remainder = $sum % 11;
         $firstCheckDigit = ($remainder < 2) ? 0 : 11 - $remainder;
@@ -44,7 +44,7 @@ class ValidateCPF implements Rule
         $sum = 0;
 
         for ($i = 0; $i < 10; $i++) {
-            $sum += intval($cpf[$i]) * (11 - $i);
+            $sum += (int) ($cpf[$i]) * (11 - $i);
         }
         $remainder = $sum % 11;
         $secondCheckDigit = ($remainder < 2) ? 0 : 11 - $remainder;

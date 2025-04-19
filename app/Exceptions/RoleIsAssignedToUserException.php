@@ -6,6 +6,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Http\Response;
+use Throwable;
 
 class RoleIsAssignedToUserException extends Exception
 {
@@ -17,12 +18,12 @@ class RoleIsAssignedToUserException extends Exception
     /**
      * @param string $message
      * @param int $code
-     * @param \Throwable|null $previous
+     * @param Throwable|null $previous
      */
     public function __construct(
         string $message = 'Existem usuário(s) vinculado(s) ao perfil. Exclusão não permitida!',
         int $code = Response::HTTP_UNPROCESSABLE_ENTITY,
-        ?\Throwable $previous = null
+        ?Throwable $previous = null
     ) {
         parent::__construct($message, $code, $previous);
         $this->error = 'O Perfil não é válido para exclusão.';

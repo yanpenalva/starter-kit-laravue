@@ -11,9 +11,9 @@ use Dedoc\Scramble\Support\Generator\{
     SecurityScheme
 };
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\{Vite};
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\DB;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,6 +40,19 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
+     * Configure the keys for database configur
+     *
+     * @codeCoverageIgnore
+     */
+    public function configureDatabase(): void
+    {
+        DB::prohibitDestructiveCommands(
+            app()->isProduction(),
+        );
+
+    }
+
+    /**
      * Configure the behavior of Eloquent models.
      */
     protected function configureModelBehavior(): void
@@ -47,7 +60,6 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading(!$this->app->isProduction());
         Model::shouldBeStrict();
         Model::automaticallyEagerLoadRelationships();
-        Model::unguard();
     }
 
     /**
@@ -55,7 +67,7 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function configureRequest(): void
     {
-        $this->app['request']->server->set('HTTPS', $this->app->environment() != 'local');
+        $this->app['request']->server->set('HTTPS', $this->app->environment() !== 'local');
     }
 
     /**
@@ -78,18 +90,4 @@ class AppServiceProvider extends ServiceProvider
         Vite::useAggressivePrefetching();
 
     }
-
-    /**
-     * Configure the keys for database configur
-     *
-     * @codeCoverageIgnore
-     */
-    public function configureDatabase(): void
-    {
-        DB::prohibitDestructiveCommands(
-            app()->isProduction(),
-        );
-
-    }
 }
-

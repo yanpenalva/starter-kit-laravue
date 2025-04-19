@@ -9,9 +9,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\{CreateUserRequest, IndexUserRequest, RegisterExternalUserRequest, UpdateUserRequest};
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\Resources\Json\JsonResource;
+use Exception;
 use Illuminate\Http\{JsonResponse, Request};
+use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class UserController extends Controller
 {
@@ -71,7 +73,7 @@ class UserController extends Controller
                 'message' => 'Usuário deletado com sucesso!',
             ], Response::HTTP_NO_CONTENT);
 
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             return response()->json([
                 'message' => 'Erro ao deletar usuário.',
                 'error' => $exception->getMessage(),
@@ -96,7 +98,7 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'O seu cadastro foi verificado com sucesso!',
             ], Response::HTTP_OK);
-        } catch (\Exception $exeption) {
+        } catch (Exception $exeption) {
             return response()->json([
                 'message' => $exeption->getMessage(),
             ], $exeption->getCode());

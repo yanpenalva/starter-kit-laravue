@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Actions\Auth\{LoginAction, LogoutAction, MyProfileAction};
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use Exception;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -23,7 +24,7 @@ class AuthController extends Controller
             $data = app(LoginAction::class)->execute($request->fluentParams());
 
             return response()->json($data);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return response()->json([
                 'message' => $exception->getMessage(),
             ], $exception->getCode());

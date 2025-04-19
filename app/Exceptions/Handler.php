@@ -1,12 +1,13 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Log;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -32,7 +33,7 @@ class Handler extends ExceptionHandler
             $exception instanceof ModelNotFoundException => (int) Response::HTTP_NOT_FOUND,
             default => (int) Response::HTTP_INTERNAL_SERVER_ERROR,
         };
-        \Log::info('Status Code: ' . $status);
+        Log::info('Status Code: ' . $status);
 
         if ($status !== Response::HTTP_INTERNAL_SERVER_ERROR || $exception->getCode() !== 0) {
             return response()->json([

@@ -19,22 +19,6 @@ use Illuminate\Support\Str;
 class BaseResource extends JsonResource
 {
     /**
-     * Transforms the keys of the resource data based on allowed keys.
-     *
-     * @param array<string> $allowedKeys
-     * @param \Illuminate\Http\Request|null $request
-     * @return array<string, mixed>
-     */
-    protected function transformKeys(array $allowedKeys, ?\Illuminate\Http\Request $request = null): array
-    {
-        $resource = is_array($parentArray = parent::toArray($request)) ? $parentArray : $parentArray->toArray();
-
-        return collect($allowedKeys)->mapWithKeys(function (string $allowedKey) use ($resource) {
-            return [Str::camel($allowedKey) => $resource[$allowedKey] ?? null];
-        })->toArray();
-    }
-
-    /**
      * Adds pagination information to the response.
      *
      * @param \Illuminate\Http\Request $request
@@ -56,6 +40,21 @@ class BaseResource extends JsonResource
                 'rowsPerPage' => $meta->get('per_page'),
             ],
         ];
+    }
+    /**
+     * Transforms the keys of the resource data based on allowed keys.
+     *
+     * @param array<string> $allowedKeys
+     * @param \Illuminate\Http\Request|null $request
+     * @return array<string, mixed>
+     */
+    protected function transformKeys(array $allowedKeys, ?\Illuminate\Http\Request $request = null): array
+    {
+        $resource = is_array($parentArray = parent::toArray($request)) ? $parentArray : $parentArray->toArray();
+
+        return collect($allowedKeys)->mapWithKeys(function (string $allowedKey) use ($resource) {
+            return [Str::camel($allowedKey) => $resource[$allowedKey] ?? null];
+        })->toArray();
     }
 }
 
