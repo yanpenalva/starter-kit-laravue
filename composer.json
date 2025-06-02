@@ -1,11 +1,22 @@
 {
-  "name": "starterkit/api",
-  "version": "1.0.0",
+  "name": "yanpenalva/starter-kit-laravue",
   "type": "project",
-  "description": "the api for the starterkit project",
+  "description": "",
   "keywords": [
     "laravel",
     "framework"
+  ],
+  "authors": [
+    {
+      "name": "Yan Penalva",
+      "email": "yanpenabr@gmail.com"
+    },
+    {
+      "name": "Nicolas Hernandez"
+    },
+    {
+      "name": "Jaylan Esquivel"
+    }
   ],
   "license": "MIT",
   "require": {
