@@ -1,11 +1,8 @@
 {
   "name": "yanpenalva/starter-kit-laravue",
   "type": "project",
-  "description": "",
-  "keywords": [
-    "laravel",
-    "framework"
-  ],
+  "description": "Starter kit with Laravel , Vue 3, Quasar, Vite and Docker support",
+  "keywords": ["laravel", "vue", "quasar", "vite", "starter", "boilerplate"],
   "authors": [
     {
       "name": "Yan Penalva",
