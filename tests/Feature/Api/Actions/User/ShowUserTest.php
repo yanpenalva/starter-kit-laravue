@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types = 1);
 
 use App\Actions\User\ShowUserAction;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-
+use Spatie\Permission\Models\{Permission, Role};
 
 describe('ShowUserAction (Feature)', function () {
     it('returns user with roles and permissions', function () {

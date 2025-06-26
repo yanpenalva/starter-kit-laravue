@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Providers;
 
@@ -11,9 +11,9 @@ use Dedoc\Scramble\Support\Generator\{
     SecurityScheme
 };
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\{Vite};
+use Illuminate\Support\Facades\{DB, Vite};
 use Illuminate\Support\ServiceProvider;
+use Laravel\Telescope\Telescope;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,6 +37,16 @@ class AppServiceProvider extends ServiceProvider
         $this->configureRequest();
         $this->configureScramble();
         $this->configureVite();
+
+        if (!class_exists(Telescope::class)) {
+            return;
+        }
+
+        $app = $this->app;
+
+        if (method_exists($app, 'runningInQueue') && $app->runningInQueue()) {
+            Telescope::stopRecording();
+        }
     }
 
     /**
@@ -49,7 +59,6 @@ class AppServiceProvider extends ServiceProvider
         DB::prohibitDestructiveCommands(
             app()->isProduction(),
         );
-
     }
 
     /**
@@ -88,6 +97,5 @@ class AppServiceProvider extends ServiceProvider
     protected function configureVite(): void
     {
         Vite::useAggressivePrefetching();
-
     }
 }

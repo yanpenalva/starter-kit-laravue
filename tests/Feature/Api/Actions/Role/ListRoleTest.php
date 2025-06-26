@@ -1,10 +1,9 @@
-<?php
+<?php declare(strict_types = 1);
 
 use App\Actions\Role\ListRoleAction;
-use Illuminate\Support\Fluent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Fluent;
+use Spatie\Permission\Models\{Permission, Role};
 
 uses(RefreshDatabase::class);
 

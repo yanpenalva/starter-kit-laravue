@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Tests\Feature\Users;
 
-use App\Mail\SendNotificationUserActivation;
-use App\Mail\SendRandomPassword;
-use App\Mail\SendVerifyEmail;
+use App\Mail\{SendNotificationUserActivation, SendRandomPassword, SendVerifyEmail};
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -308,7 +306,6 @@ describe('Users Management', function () {
             expect($response->json('message'))->toContain('Seu cadastro já foi validado!');
         });
 
-
         it('should return that the token is invalid', function () {
 
             $user = createUser([
@@ -402,7 +399,6 @@ describe('Users Management', function () {
 
         $rendered = $mail->render();
 
-
         expect($mail->envelope()->subject)->toBe('Confirmação de cadastro');
         expect($rendered)->toContain('Jane Doe');
     });
@@ -422,7 +418,6 @@ describe('Users Management', function () {
         expect($link)->toContain('verificar-email');
     });
 
-
     it(
         'should queue SendNotificationUserActivation when notify_status is true',
         function (array $updateDataUser, array $userJsonValidStructure) {
@@ -437,7 +432,7 @@ describe('Users Management', function () {
 
             $updatedUser = User::find($this->asAdmin->id);
 
-            Mail::assertQueued(SendNotificationUserActivation::class, fn($mail) => $mail->hasTo($updatedUser->email));
+            Mail::assertQueued(SendNotificationUserActivation::class, fn ($mail) => $mail->hasTo($updatedUser->email));
 
         }
     )->with('updateUserData')

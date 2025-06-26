@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        APP_ENV: ${APP_ENV:-development}
+        APP_ENV: ${APP_ENV:-local}
     container_name: starterkit-app
     restart: always
     ports:
@@ -15,7 +15,7 @@ services:
       - .:/var/www/html
       - ./docker/SUPERVISOR/supervisord.conf:/etc/supervisord.conf
     environment:
-      - APP_ENV=development
+      - APP_ENV=local
       - APP_DEBUG=true
       - CHOKIDAR_USEPOLLING=true
       - PHP_ENABLE_XDEBUG=1

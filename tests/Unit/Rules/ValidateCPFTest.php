@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 use App\Rules\ValidateCPF;
 use Illuminate\Support\Facades\Validator;
@@ -48,6 +48,5 @@ describe('ValidateCPF (Unit)', function () {
 
         expect($validator->fails())->toBeTrue();
     });
-
 
 })->group('unit', 'rules');

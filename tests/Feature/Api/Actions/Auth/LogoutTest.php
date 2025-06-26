@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types = 1);
 
 use App\Actions\Auth\LogoutAction;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-
+use Illuminate\Support\Facades\{Auth};
 
 describe('LogoutAction (Feature)', function () {
     it(

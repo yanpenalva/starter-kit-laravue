@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Tests\Feature\Api\Auth;
 
@@ -6,6 +6,7 @@ use App\Enums\RolesEnum;
 use App\Mail\SendForgetPasswordMail;
 use App\Models\User;
 use Illuminate\Support\Facades\{DB, Mail};
+use Str;
 use Symfony\Component\HttpFoundation\Response;
 
 beforeEach(function () {
@@ -115,7 +116,7 @@ describe('ForgotPasswordTest', function () {
             'email' => 'john@example.com',
         ]);
 
-        $token = \Str::random(60);
+        $token = Str::random(60);
 
         $mailable = new SendForgetPasswordMail($token, $user);
         $rendered = $mailable->render();

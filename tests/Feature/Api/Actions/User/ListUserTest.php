@@ -1,10 +1,9 @@
-<?php
+<?php declare(strict_types = 1);
 
 use App\Actions\User\ListUserAction;
 use App\Models\User;
 use Illuminate\Support\Fluent;
 use Spatie\Permission\Models\Role;
-
 
 describe('ListUserAction (Feature)', function () {
     beforeEach(function () {

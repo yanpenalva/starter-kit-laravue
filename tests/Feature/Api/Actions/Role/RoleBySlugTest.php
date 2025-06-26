@@ -1,9 +1,7 @@
-<?php
+<?php declare(strict_types = 1);
 
 use App\Actions\Role\RoleBySlugAction;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
-
+use Spatie\Permission\Models\{Permission, Role};
 
 describe('RoleBySlugAction (Feature)', function () {
     it('returns role by slug without permissions', function () {
