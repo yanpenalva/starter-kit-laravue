@@ -42,39 +42,8 @@ RUN apk add --no-cache \
     fi \
     && apk del .build-deps
 
-# PHP config
-RUN { \
-    echo "upload_max_filesize = 16M"; \
-    echo "post_max_size = 64M"; \
-    echo "max_execution_time = 60"; \
-    echo "memory_limit = 512M"; \
-    echo "expose_php = Off"; \
-    echo "log_errors = On"; \
-    echo "error_log = /var/log/php_errors.log"; \
-    echo "error_reporting = E_ALL"; \
-    echo "date.timezone = America/Bahia"; \
-    echo "opcache.enable=1"; \
-    echo "opcache.enable_cli=1"; \
-    echo "opcache.memory_consumption=128"; \
-    echo "opcache.interned_strings_buffer=8"; \
-    echo "opcache.max_accelerated_files=10000"; \
-    echo "opcache.validate_timestamps=1"; \
-    echo "opcache.revalidate_freq=2"; \
-    echo "opcache.jit=0"; \
-    echo "opcache.jit_buffer_size=0"; \
-    echo "xdebug.mode=coverage"; \
-    echo "xdebug.start_with_request=trigger"; \
-    echo "xdebug.discover_client_host=1"; \
-    if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "staging" ]; then \
-    echo "display_errors = Off"; \
-    echo "disable_functions = exec,passthru,shell_exec,system,proc_open,popen,parse_ini_file,show_source,pcntl_exec,eval"; \
-    else \
-    echo "display_errors = On"; \
-    echo "disable_functions = exec,passthru,shell_exec,system,parse_ini_file,show_source,pcntl_exec,eval"; \
-    fi; \
-    } > /usr/local/etc/php/conf.d/custom.ini
+COPY ./docker/PHP/php-dev.ini /usr/local/etc/php/conf.d/custom.ini
 
-# Logs
 RUN mkdir -p /var/log/php /var/log/supervisor && \
     touch /var/log/php_errors.log && chmod 666 /var/log/php_errors.log && \
     echo "0 0 * * 0 truncate -s 0 /var/log/php_errors.log" > /etc/crontabs/root
