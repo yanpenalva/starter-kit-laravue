@@ -1,16 +1,22 @@
 <script setup>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 import useAuthenticate from '@/composables/Authenticate/useAuthenticate';
 import useAuthStore from '@/store/useAuthStore';
-import { useRouter } from 'vue-router';
+import { ROLES } from '@/utils/roles';
 
 const authStore = useAuthStore();
 const { logout } = useAuthenticate();
 const router = useRouter();
 
+const isGuest = computed(() =>
+  authStore.getRoles?.some(({ slug }) => slug === ROLES.GUEST),
+);
+
 const goToEditProfile = () => {
   router.push({
     name: 'editUsers',
-    params: { id: authStore.getUser?.id, viewOnly: 'true' },
+    params: { id: authStore.getUser?.id },
   });
 };
 </script>
@@ -27,7 +33,7 @@ const goToEditProfile = () => {
         size="sm"
         unelevated
         color="secondary"
-        icon="question_mark"></q-btn>
+        icon="question_mark" />
 
       <q-btn-dropdown
         class="q-pl-xs dropdown__header--style"
@@ -39,7 +45,7 @@ const goToEditProfile = () => {
         :label="authStore.getUser?.name || 'Conta'"
         icon="account_circle">
         <q-list>
-          <q-item v-close-popup clickable @click="goToEditProfile">
+          <q-item v-if="!isVisitor" v-close-popup clickable @click="goToEditProfile">
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>

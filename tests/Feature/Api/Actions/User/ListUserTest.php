@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 use App\Actions\User\ListUserAction;
 use App\Models\User;
@@ -109,7 +111,7 @@ describe('ListUserAction (Feature)', function () {
 
         $result = app(ListUserAction::class)->execute($params);
 
-        expect($result->first()->active)->toBe(0);
+        expect($result->first()->active)->toBeFalse();
     });
 
     it('orders users by email ascending', function () {
@@ -126,5 +128,4 @@ describe('ListUserAction (Feature)', function () {
 
         expect($result->first()->email)->toBe('alice@example.com');
     });
-
 })->group('feature', 'user');

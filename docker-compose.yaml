@@ -41,7 +41,7 @@ services:
       - starterkit-network
 
   db:
-    image: postgres:17.4-alpine
+    image: postgres:17.4
     container_name: starterkit-db
     restart: always
     ports:
