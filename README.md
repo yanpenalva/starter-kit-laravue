@@ -166,14 +166,37 @@ Where:
   php artisan scramble:export
   ```
 - Run PHP Insights
+
   ```bash
   ./vendor/bin/phpstan insights
   ```
 
----
+  - To run the tests, first ensure that your local test database is configured correctly and that the tables have been created.
+
+```bash
+./docker-entrypoint-initdb.sh
+```
+
+This script will be create the test database.
+
+- After, execute the tests with the command:
+
+```bash
+docker exec -it starterkit-app composer test
+```
+or
+
+```bash
+docker exec -it starterkit-app composer test:coverage
+```
+
+- Attention: if you want to run manually, remember to insert env APP_ENV=testing next to the command, for example
+
+```bash
+docker exec -it starterkit-app env APP_ENV=testing php artisan test --env=testing --parallel
+```
+If you do not enter it, TestCase will block the execution of the tests.
 
 ## 📌 **TODO List**
 
 - [ ] Set phpstan max level(10), currently level is 8.
-- [ ] Create a screen to display the logs on the frontend.
-- [ ] Create a screen for show users informations.

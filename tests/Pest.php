@@ -1,6 +1,9 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 use Illuminate\Support\Facades\{Event, Http, Mail};
+use Illuminate\Support\Facades\Storage;
 
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
@@ -8,6 +11,9 @@ pest()->extend(Tests\TestCase::class)
         Http::preventStrayRequests();
         Mail::fake();
         Event::fake();
+        Storage::fake('local');
+        Queue::fake();
+        Bus::fake();
     })
     ->in('Feature');
 
@@ -20,7 +26,6 @@ expect()->extend('toBeOne', function () {
     return $this->toBe(1);
 });
 
-function something()
-{
+function something() {
     //
 }
