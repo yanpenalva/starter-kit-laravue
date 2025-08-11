@@ -78,7 +78,8 @@
         "test:bail": "php artisan optimize:clear && env APP_ENV=testing php artisan test --env=testing --bail",
         "test:dirty": "php artisan optimize:clear && env APP_ENV=testing php artisan test --env=testing --dirty",
         "test:profile": "php artisan optimize:clear && env APP_ENV=testing php artisan test --env=testing --profile",
-        "test:ci": "php artisan optimize:clear && env APP_ENV=testing php artisan test --env=testing --coverage --bail"
+        "test:ci": "php artisan optimize:clear && env APP_ENV=testing php artisan test --env=testing --coverage --bail",
+        "run:static-analysis": "php artisan optimize:clear && ./vendor/bin/phpstan analyse"
     },
     "extra": {
         "laravel": {

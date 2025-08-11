@@ -1,6 +1,6 @@
 ## Related Activity
 
-<!-- Add the title of the activity -->
+<!-- Add the title or link to the related activity/issue -->
 
 ## Description
 
@@ -28,3 +28,19 @@
 ## Screenshots or Videos
 
 <!-- Add images or videos to help visualize the changes -->
+
+## Checklist
+
+- [ ] I have added/updated tests for this change
+- [ ] I have updated the documentation if needed
+- [ ] I have followed the project's coding standards
+- [ ] I have checked for security implications
+- [ ] I have ensured this change does not degrade performance
+
+## Breaking Changes
+
+<!-- Describe any breaking changes and their impact, or write "None" -->
+
+## Related Issues / References
+
+<!-- Link related issues, tickets, or specifications -->

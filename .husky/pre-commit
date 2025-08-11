@@ -1,9 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+
+start_time=$(date +%s)
 echo "🔍 Executando pre-commit hook..."
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 
 if [ "$current_branch" = "main" ]; then
-    echo "🚫 Branch 'main' detectada. Pulando execução dos testes e do PHPStan."
+    echo "🚫 Branch 'main' detectada. Pulando execução."
     exit 0
 fi
 
@@ -14,74 +18,72 @@ if [ -z "$staged_files" ]; then
     exit 0
 fi
 
-run_formatter() {
-    local formatter="$1"
-    local file="$2"
+container="starterkit-app"
 
-    if [ ! -f "$file" ]; then
-        echo "⚠️ Arquivo $file não encontrado. Pulando."
-        return
+check_container() {
+    if ! docker exec -i "$container" true &>/dev/null; then
+        echo "❌ Container '$container' não está rodando."
+        exit 1
     fi
+}
 
-    echo "✨ Formatando $file com $formatter"
-    docker exec -i starterkit-app $formatter "$file"
-    git add "$file"
+run_formatter() {
+    local file="$1"
+    if [ -f "$file" ]; then
+        echo "✨ Formatando $file..."
+        docker exec -i "$container" ./vendor/bin/pint "$file"
+        git add "$file"
+    fi
+}
+
+lint_js() {
+    local js_files
+    js_files=$(echo "$staged_files" | grep -E '\.(js|vue)$' || true)
+    [ -z "$js_files" ] && return
+    echo "🔍 Lintando arquivos JS/Vue..."
+    docker exec -i "$container" npm run lint || {
+        echo "❌ Lint JS/Vue falhou."
+        exit 1
+    }
 }
 
 run_phpstan() {
-    echo "🔍 Executando análise com PHPStan..."
-    docker exec -i starterkit-app vendor/bin/phpstan analyse || {
-        echo "❌ Falha na análise do PHPStan. Corrija os problemas antes de commitar."
+    echo "🔍 Executando PHPStan..."
+    docker exec -i "$container" vendor/bin/phpstan analyse || {
+        echo "❌ PHPStan falhou."
         exit 1
     }
 }
 
 run_tests() {
     local coverage_mode="$1"
-    echo "🧪 Executando testes para a branch '$current_branch' $coverage_mode..."
-
-    echo "🔄 Limpando cache antes de executar os testes..."
-    docker exec -i starterkit-app php artisan optimize:clear
-
-    docker exec -i starterkit-app php artisan test --env=testing --parallel $coverage_mode || {
-        echo "❌ Falha nos testes. Corrija os problemas antes de commitar."
+    echo "🧪 Rodando testes ($coverage_mode)..."
+    docker exec -i "$container" php artisan optimize:clear
+    docker exec -i "$container" php artisan test --env=testing --parallel $coverage_mode || {
+        echo "❌ Testes falharam."
         exit 1
     }
 }
 
-for file in $staged_files; do
-    if [ ! -f "$file" ]; then
-        echo "⚠️ Arquivo $file não encontrado. Pulando."
-        continue
-    fi
+check_container
 
-    case "$file" in
-    *.php)
-        run_formatter "./vendor/bin/pint" "$file"
-        ;;
-    esac
+# Format PHP files
+echo "$staged_files" | grep -E '\.php$' | while read -r file; do
+    run_formatter "$file"
 done
 
-echo "🔍 Executando lint JavaScript/Vue..."
-docker exec -i starterkit-app npm run lint || {
-    echo "❌ Lint falhou ou apresentou warnings. Corrija antes de commitar."
-    exit 1
-}
+# Lint JS/Vue
+lint_js
 
-if [ "$current_branch" != "main" ]; then
-    run_phpstan
-fi
+# PHPStan
+run_phpstan
 
+# Testes por branch
 case "$current_branch" in
-hml)
-    run_tests ""
-    ;;
-main)
-    exit 0
-    ;;
-*)
-    run_tests "--coverage"
-    ;;
+    hml)  run_tests "" ;;
+    # main) exit 0 ;;
+    *)    run_tests "--coverage" ;;
 esac
 
-echo "✅Pre-commit hook finalizado com sucesso!"
+end_time=$(date +%s)
+echo "✅ Pre-commit finalizado com sucesso em $((end_time - start_time))s."
