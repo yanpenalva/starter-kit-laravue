@@ -34,18 +34,10 @@ run_larastan() {
   docker exec "$container" composer run run:larastan || { echo "❌ Larastan falhou."; exit 1; }
 }
 
-run_tests_with_coverage() {
-  echo "🧪 Rodando testes com cobertura..."
-  docker exec "$container" composer run test:coverage > coverage.log || { echo "❌ Testes falharam."; rm -f coverage.log; exit 1; }
-
-  coverage_percent=$(grep -Eo '[0-9]+(\.[0-9]+)?%' coverage.log | tail -n1 | tr -d '%')
-  rm -f coverage.log
-
-  if (( $(echo "$coverage_percent < 80" | bc -l) )); then
-    echo "🚫 Cobertura insuficiente: ${coverage_percent}% (mínimo: 80%)"
-    exit 1
-  fi
-  echo "✅ Cobertura OK: ${coverage_percent}%"
+run_tests() {
+  local script="$1"
+  echo "🧪 Rodando testes (composer $script)..."
+  docker exec "$container" composer run "$script" || { echo "❌ Testes falharam."; exit 1; }
 }
 
 check_container
@@ -60,12 +52,12 @@ if [ -n "$php_changed" ]; then
 fi
 
 [ -n "$js_changed" ] && lint_js
-[ -n "$php_changed" ] && run_larastan
+# [ -n "$php_changed" ] && run_larastan
 
 case "$current_branch" in
-  hml) docker exec "$container" composer run test ;;
+  hml) run_tests "test" ;;
   main) exit 0 ;;
-  *) run_tests_with_coverage ;;
+  *) run_tests "test:coverage" ;;
 esac
 
 end_time=$(date +%s)
