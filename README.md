@@ -170,17 +170,17 @@ Format:
 - Routes follow `{resource}.{action}` (e.g., `roles.index`).
 - Methods: descriptive, max 5 words.
 - REST API versioned as `/api/v1` and breaking changes versioned.
-- Minimum coverage: **lines ≥ 80%** (commit blocked if below).
+- Minimum coverage: **lines ≥ 80%**
 - Run static analysis:
 
 ```bash
-./vendor/bin/phpstan analyze
+docker exec -it starterkit-app composer run:phpstan
 ```
 
 - Generate API documentation:
 
 ```bash
-php artisan scramble:export
+docker exec -it starterkit-app php artisan scramble:export
 ```
 
 - Run tests:
