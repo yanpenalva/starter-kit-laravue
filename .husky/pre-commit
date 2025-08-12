@@ -29,9 +29,9 @@ lint_js() {
   docker exec "$container" npm run lint || { echo "❌ Lint JS/Vue falhou."; exit 1; }
 }
 
-run_larastan() {
+run_phpstan() {
   echo "🔍 Executando análise estática (Composer)..."
-  docker exec "$container" composer run run:larastan || { echo "❌ Larastan falhou."; exit 1; }
+  docker exec "$container" composer run run:phpstan || { echo "❌ Phpstan/Larastan falhou."; exit 1; }
 }
 
 run_tests() {
@@ -52,7 +52,7 @@ if [ -n "$php_changed" ]; then
 fi
 
 [ -n "$js_changed" ] && lint_js
-# [ -n "$php_changed" ] && run_larastan
+# [ -n "$php_changed" ] && run_phpstan
 
 case "$current_branch" in
   hml) run_tests "test" ;;
