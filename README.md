@@ -180,7 +180,7 @@ docker exec -it starterkit-app composer run:phpstan
 - Generate API documentation:
 
 ```bash
-php artisan scramble:export
+docker exec -it starterkit-app php artisan scramble:export
 ```
 
 - Run tests:
