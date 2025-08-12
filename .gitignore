@@ -23,3 +23,4 @@ schema.sql
 supervisord.log
 supervisord.pid
 packages.txt
+var/phpstan
