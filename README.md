@@ -201,7 +201,7 @@ docker exec -it starterkit-app composer test:coverage
 To run manually with a specific environment:
 
 ```bash
-docker exec -it starterkit-app env APP_ENV=testing php artisan test --env=testing --parallel
+docker exec -it starterkit-app php artisan optimize:clear && env APP_ENV=testing php artisan test --env=testing --parallel
 ```
 ---
 

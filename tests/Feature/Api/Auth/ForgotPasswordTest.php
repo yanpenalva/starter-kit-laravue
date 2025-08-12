@@ -1,11 +1,15 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
 
 namespace Tests\Feature\Api\Auth;
 
 use App\Enums\RolesEnum;
+use App\Http\Requests\Auth\ForgotPasswordRequest;
 use App\Mail\SendForgetPasswordMail;
 use App\Models\User;
 use Illuminate\Support\Facades\{DB, Mail};
+use Illuminate\Support\Fluent;
 use Str;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,7 +18,6 @@ beforeEach(function () {
 });
 
 describe('ForgotPasswordTest', function () {
-
     it('should return that email is required', function () {
         $payload = ['email' => null];
         $response = $this->postJson(route('forgot-password'), $payload);
@@ -29,7 +32,6 @@ describe('ForgotPasswordTest', function () {
     })->group('password');
 
     it('should queue the SendForgetPasswordMail when a valid guest requests password reset', function () {
-
         $user = User::factory()->create();
 
         DB::table('roles')->updateOrInsert(
@@ -124,5 +126,31 @@ describe('ForgotPasswordTest', function () {
         expect($mailable->envelope()->subject)->toBe('Password Recovery Request SP System 1.0');
         expect($rendered)->toContain('John Doe');
         expect($rendered)->toContain("email={$user->email}");
+    })->group('password');
+
+    it('returns Fluent with all keys when key is null', function () {
+        $user = User::factory()->create(['email' => 'john@example.com']);
+
+        $req = ForgotPasswordRequest::create('/', 'POST', ['email' => $user->email]);
+        $req->setContainer(app());
+        $req->setRedirector(app('redirect'));
+        $req->validateResolved();
+
+        $fluent = $req->fluentParams();
+        expect($fluent)->toBeInstanceOf(Fluent::class);
+        expect($fluent->get('email'))->toBe('john@example.com');
+        expect(array_keys($fluent->toArray()))->toBe(['email']);
+    })->group('password');
+
+    it('returns Fluent containing only the requested key when key is provided', function () {
+        $user = User::factory()->create(['email' => 'jane@example.com']);
+
+        $req = ForgotPasswordRequest::create('/', 'POST', ['email' => $user->email]);
+        $req->setContainer(app());
+        $req->setRedirector(app('redirect'));
+        $req->validateResolved();
+
+        $fluent = $req->fluentParams('email');
+        expect($fluent->toArray())->toBe(['email' => 'jane@example.com']);
     })->group('password');
 });
