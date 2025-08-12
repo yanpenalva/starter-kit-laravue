@@ -171,12 +171,17 @@ Format:
 - Methods: descriptive, max 5 words.
 - REST API versioned as `/api/v1` and breaking changes versioned.
 - Minimum coverage: **lines ≥ 80%**
+
 - Run static analysis:
 
 ```bash
 docker exec -it starterkit-app composer run:phpstan
 ```
+- Run PHP Insights:
 
+```bash
+docker exec -it starterkit-app composer run:phpinsights
+```
 - Generate API documentation:
 
 ```bash
@@ -188,19 +193,16 @@ docker exec -it starterkit-app php artisan scramble:export
 ```bash
 docker exec -it starterkit-app composer test
 ```
-
 or with coverage:
 
 ```bash
 docker exec -it starterkit-app composer test:coverage
 ```
-
 To run manually with a specific environment:
 
 ```bash
 docker exec -it starterkit-app env APP_ENV=testing php artisan test --env=testing --parallel
 ```
-
 ---
 
 ## 📌 TODO List
