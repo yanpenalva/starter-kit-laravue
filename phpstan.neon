@@ -2,8 +2,9 @@ includes:
     - vendor/larastan/larastan/extension.neon
 
 parameters:
-    level: 8
+    level: 10
     treatPhpDocTypesAsCertain: false
+
     paths:
         - app/
 
@@ -15,6 +16,10 @@ parameters:
         - ./app/Exceptions/**
         - ./app/Console/Kernel.php
         - ./app/Http/Kernel.php
-        - ./app/Events/**
-        - ./app/Listeners/**
         - ./routes/**
+
+    tmpDir: var/phpstan
+    checkMissingTypehints: true
+    checkImplicitMixed: true
+    reportUnmatchedIgnoredErrors: true
+

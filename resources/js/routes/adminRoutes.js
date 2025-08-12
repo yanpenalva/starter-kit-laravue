@@ -4,7 +4,7 @@ const adminHomeRoutes = {
   component: async () => import('@pages/admin/AdminHomePage.vue'),
   meta: {
     requiresAuth: true,
-    module: 'Home',
+    module: 'Tela Inicial',
     icon: 'space_dashboard',
   },
 };

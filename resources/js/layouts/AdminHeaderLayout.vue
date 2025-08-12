@@ -25,7 +25,6 @@ const goToEditProfile = () => {
   <q-header elevated class="header-custom">
     <q-toolbar class="bg-white text-grey-8 q-pt-xs q-pb-xs toolbar-custom">
       <slot></slot>
-
       <q-btn
         class="question-mark"
         round
@@ -33,7 +32,11 @@ const goToEditProfile = () => {
         size="sm"
         unelevated
         color="secondary"
-        icon="question_mark" />
+        icon="question_mark">
+        <q-tooltip anchor="top middle" self="bottom middle">
+          Para mais dúvidas, entre em contato com o administrador do sistema.
+        </q-tooltip>
+      </q-btn>
 
       <q-btn-dropdown
         class="q-pl-xs dropdown__header--style"

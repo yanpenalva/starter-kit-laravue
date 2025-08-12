@@ -1,88 +1,71 @@
-#!/bin/bash
-set -euo pipefail
+#!/usr/bin/env bash
 
 start_time=$(date +%s)
 echo "🔍 Executando pre-commit hook..."
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
-
-if [ "$current_branch" = "main" ]; then
-    echo "🚫 Branch 'main' detectada. Pulando execução."
-    exit 0
-fi
+[ "$current_branch" = "main" ] && { echo "🚫 Branch 'main' detectada. Pulando execução."; exit 0; }
 
 staged_files=$(git diff --name-only --cached --diff-filter=d)
-
-if [ -z "$staged_files" ]; then
-    echo "🚫 Nenhum arquivo staged encontrado."
-    exit 0
-fi
+[ -z "$staged_files" ] && { echo "🚫 Nenhum arquivo staged encontrado."; exit 0; }
 
 container="starterkit-app"
 
 check_container() {
-    if ! docker exec -i "$container" true &>/dev/null; then
-        echo "❌ Container '$container' não está rodando."
-        exit 1
-    fi
+  docker inspect -f '{{.State.Running}}' "$container" 2>/dev/null | grep -q '^true$' || { echo "❌ Container '$container' não está rodando."; exit 1; }
+  docker exec "$container" sh -c 'exit 0' >/dev/null 2>&1 || { echo "❌ docker exec falhou em '$container'."; exit 1; }
 }
 
 run_formatter() {
-    local file="$1"
-    if [ -f "$file" ]; then
-        echo "✨ Formatando $file..."
-        docker exec -i "$container" ./vendor/bin/pint "$file"
-        git add "$file"
-    fi
+  local file="$1"
+  [ -f "$file" ] || return 0
+  echo "✨ Formatando $file..."
+  docker exec "$container" ./vendor/bin/pint "$file"
+  git add "$file"
 }
 
 lint_js() {
-    local js_files
-    js_files=$(echo "$staged_files" | grep -E '\.(js|vue)$' || true)
-    [ -z "$js_files" ] && return
-    echo "🔍 Lintando arquivos JS/Vue..."
-    docker exec -i "$container" npm run lint || {
-        echo "❌ Lint JS/Vue falhou."
-        exit 1
-    }
+  echo "🔍 Lintando arquivos JS/Vue..."
+  docker exec "$container" npm run lint || { echo "❌ Lint JS/Vue falhou."; exit 1; }
 }
 
-run_phpstan() {
-    echo "🔍 Executando PHPStan..."
-    docker exec -i "$container" vendor/bin/phpstan analyse || {
-        echo "❌ PHPStan falhou."
-        exit 1
-    }
+run_larastan() {
+  echo "🔍 Executando análise estática (Composer)..."
+  docker exec "$container" composer run run:larastan || { echo "❌ Larastan falhou."; exit 1; }
 }
 
-run_tests() {
-    local coverage_mode="$1"
-    echo "🧪 Rodando testes ($coverage_mode)..."
-    docker exec -i "$container" php artisan optimize:clear
-    docker exec -i "$container" php artisan test --env=testing --parallel $coverage_mode || {
-        echo "❌ Testes falharam."
-        exit 1
-    }
+run_tests_with_coverage() {
+  echo "🧪 Rodando testes com cobertura..."
+  docker exec "$container" composer run test:coverage > coverage.log || { echo "❌ Testes falharam."; rm -f coverage.log; exit 1; }
+
+  coverage_percent=$(grep -Eo '[0-9]+(\.[0-9]+)?%' coverage.log | tail -n1 | tr -d '%')
+  rm -f coverage.log
+
+  if (( $(echo "$coverage_percent < 80" | bc -l) )); then
+    echo "🚫 Cobertura insuficiente: ${coverage_percent}% (mínimo: 80%)"
+    exit 1
+  fi
+  echo "✅ Cobertura OK: ${coverage_percent}%"
 }
 
 check_container
 
-# Format PHP files
-echo "$staged_files" | grep -E '\.php$' | while read -r file; do
-    run_formatter "$file"
-done
+php_changed=$(echo "$staged_files" | grep -E '\.php$' || true)
+js_changed=$(echo "$staged_files" | grep -E '\.(js|vue)$' || true)
 
-# Lint JS/Vue
-lint_js
+if [ -n "$php_changed" ]; then
+  echo "$php_changed" | while read -r file; do
+    [ -n "$file" ] && run_formatter "$file"
+  done
+fi
 
-# PHPStan
-run_phpstan
+[ -n "$js_changed" ] && lint_js
+[ -n "$php_changed" ] && run_larastan
 
-# Testes por branch
 case "$current_branch" in
-    hml)  run_tests "" ;;
-    # main) exit 0 ;;
-    *)    run_tests "--coverage" ;;
+  hml) docker exec "$container" composer run test ;;
+  main) exit 0 ;;
+  *) run_tests_with_coverage ;;
 esac
 
 end_time=$(date +%s)

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 docker exec -i starterkit-db psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'starterkit_test';" | grep -q 1 && {
     echo "Banco starterkit_test já existe."
