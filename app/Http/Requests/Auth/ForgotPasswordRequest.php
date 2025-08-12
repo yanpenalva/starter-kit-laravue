@@ -42,16 +42,14 @@ class ForgotPasswordRequest extends FormRequest
             'email.exists' => 'Nenhum cadastro encontrado com o e-mail informado.',
         ];
     }
-
-    /**
-     * Retorna os dados validados encapsulados em um objeto Fluent.
-     *
-     * @param string|null $key
-     * @param mixed|null $default
-     * @return Fluent<string, mixed>
-     */
+    /** @return \Illuminate\Support\Fluent<string, mixed> */
     public function fluentParams(?string $key = null, mixed $default = null): Fluent
     {
-        return new Fluent($this->validated($key, $default));
+        /** @var array<string, mixed> $data */
+        $data = null === $key
+            ? $this->validated()
+            : [(string) $key => $this->validated($key, $default)];
+
+        return new Fluent($data);
     }
 }
