@@ -16,7 +16,10 @@ The kit supports automated testing and offers tools for monitoring and debugging
 6. [Database Schema & ER Diagram](#-database-schema--er-diagram)
 7. [Commit Conventions](#-commit-conventions)
 8. [Code Standards](#-code-standards)
+<<<<<<< HEAD
 9. [TODO List](#-todo-list)
+=======
+>>>>>>> dev
 
 ---
 
@@ -177,6 +180,12 @@ Format:
 docker exec -it starterkit-app composer run:phpstan
 ```
 
+- Run PHP Insights:
+
+```bash
+docker exec -it starterkit-app composer run:phpinsights
+```
+
 - Generate API documentation:
 
 ```bash
@@ -198,11 +207,5 @@ docker exec -it starterkit-app composer test:coverage
 To run manually with a specific environment:
 
 ```bash
-docker exec -it starterkit-app env APP_ENV=testing php artisan test --env=testing --parallel
+docker exec -it starterkit-app php artisan optimize:clear && env APP_ENV=testing php artisan test --env=testing --parallel
 ```
-
----
-
-## 📌 TODO List
-
-- [ ] Increase PHPStan level to 10 (currently 8).

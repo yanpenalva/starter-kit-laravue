@@ -21,7 +21,10 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         try {
-            $data = app(LoginAction::class)->execute($request->fluentParams());
+            /** @var \Illuminate\Support\Fluent<string, string> $params */
+            $params = $request->fluentParams();
+
+            $data = app(LoginAction::class)->execute($params);
 
             return response()->json($data);
         } catch (Exception $exception) {

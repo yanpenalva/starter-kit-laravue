@@ -1,8 +1,14 @@
 .git
 .dockerignore
 .gitignore
+.env
 node_modules
 vendor
-storage/logs/*
-!storage/framework/cache/data/
+storage/**
+bootstrap/cache/**
+tests/**
 docker/PGSQL
+*.log
+*.sqlite
+coverage/**
+npm-debug.log*

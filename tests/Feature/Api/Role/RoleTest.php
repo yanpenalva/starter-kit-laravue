@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
 
 namespace Tests\Feature\Api\Role;
 
@@ -101,7 +103,6 @@ describe('RoleTest', function () {
                 ],
             ])
                 ->assertStatus(Response::HTTP_OK);
-
             $response->assertJsonStructure([
                 'data' => [
                     'id',
@@ -112,6 +113,24 @@ describe('RoleTest', function () {
                     'permissions',
                 ],
             ]);
+        });
+
+        it('should return 422 when trying to update a role with a name that already exists', function () {
+            $this->actingAs($this->userAuth);
+
+            $existingRole = $this->roles->first();
+            $targetRole = $this->roles->where('id', '!=', $existingRole->id)->first();
+
+            $response = $this->put(route('roles.edit', $targetRole->id), [
+                'name' => $existingRole->name, // duplicado
+                'description' => fake('pt_BR')->text(50),
+                'permissions' => [
+                    Permission::all()->first()->id,
+                ],
+            ]);
+
+            $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+            $response->assertJsonValidationErrors(['name']);
         });
 
         it('should return a 404 status code for invalid role ID', function () {
@@ -140,7 +159,6 @@ describe('RoleTest', function () {
                 ->assertStatus(Response::HTTP_NO_CONTENT);
 
             $this->assertDatabaseMissing('roles', ['id' => $role->id]);
-
         });
 
         it('should return 422 when trying to remove roles that have linked users', function () {

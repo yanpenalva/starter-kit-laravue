@@ -12,10 +12,12 @@ final readonly class RemoveUserRoleAction
     {
         $user->load('roles');
 
-        $hasRoles = !$user->getRoleNames()->isEmpty();
+        $user->getRoleNames()
+            ->each(static function (mixed $role) use ($user): bool {
+                assert(is_string($role));
+                $user->removeRole($role);
 
-        if ($hasRoles) {
-            $user->getRoleNames()->each(fn ($role) => $user->removeRole($role));
-        }
+                return true;
+            });
     }
 }

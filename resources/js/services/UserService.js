@@ -23,7 +23,7 @@ const update = async (id, params) => {
   return data;
 };
 
-const destroy = async (payload) => {
+const destroy = async (id) => {
   return await http.delete(`${route}/${id}`);
 };
 

@@ -61,11 +61,15 @@ class ResetPasswordRequest extends FormRequest
     public function fluentParams(?string $key = null, mixed $default = null): Fluent
     {
         $validated = parent::validated($key, $default);
+        assert(is_array($validated));
 
         if (!array_key_exists('password_confirmation', $validated)) {
-            $validated['password_confirmation'] = $this->input('password_confirmation');
+            /** @var string|null $passwordConfirmation */
+            $passwordConfirmation = $this->input('password_confirmation');
+            $validated['password_confirmation'] = $passwordConfirmation;
         }
 
+        /** @var array<string, mixed> $validated */
         return new Fluent($validated);
     }
 }

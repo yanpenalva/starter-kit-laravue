@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Actions\Role;
 
 use App\Traits\LogsActivity;
+use BackedEnum;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
 use Spatie\Permission\Models\Role;
@@ -14,7 +15,7 @@ final readonly class UpdateRoleAction
     use LogsActivity;
 
     /**
-     * @param Fluent<string, mixed> $params
+     * @phpstan-param Fluent<string, mixed> $params
      */
     public function execute(Role $role, Fluent $params): Role
     {
@@ -25,9 +26,24 @@ final readonly class UpdateRoleAction
                 'guard_name' => 'web',
             ]);
 
-            $role->syncPermissions($params->get('permissions', []));
+            $permissions = $params->get('permissions', []);
+            assert(
+                is_array($permissions) ||
+                    $permissions instanceof BackedEnum ||
+                    $permissions instanceof \Illuminate\Support\Collection ||
+                    is_int($permissions) ||
+                    $permissions instanceof \Spatie\Permission\Contracts\Permission ||
+                    is_string($permissions)
+            );
 
-            $this->logUpdateActivity('Gestão de Perfis', $role, $role->getDirty(), 'Atualizou um perfil');
+            $role->syncPermissions($permissions);
+
+            $this->logUpdateActivity(
+                'Gestão de Perfis',
+                $role,
+                $role->getDirty(),
+                'Atualizou um perfil'
+            );
 
             return $role;
         });

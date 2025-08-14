@@ -1,42 +1,51 @@
 #!/usr/bin/env bash
 
-change_group_and_permissions() {
-    local dir=$1
-    local group=$2
+GROUP="www-data"
 
-    if [ ! -d "$dir" ]; then
+DIRECTORIES=(
+    "bootstrap"
+    "storage"
+    "storage/logs"
+    "storage/framework/cache/data"
+)
+
+install_acl_if_missing() {
+    if ! command -v setfacl >/dev/null 2>&1; then
+        echo "Instalando suporte a ACL..."
+        if command -v apk >/dev/null 2>&1; then
+            apk add --no-cache acl
+        elif command -v apt-get >/dev/null 2>&1; then
+            apt-get update && apt-get install -y acl && rm -rf /var/lib/apt/lists/*
+        else
+            echo "Gerenciador de pacotes não suportado. Instale 'acl' manualmente."
+            exit 1
+        fi
+    fi
+}
+
+change_group_and_permissions() {
+    local dir="$1"
+
+    if [[ ! -d "$dir" ]]; then
         echo "Diretório $dir não encontrado. Pulando."
         return
     fi
 
-    echo "Alterando o grupo para $group e definindo permissões de escrita para o grupo em $dir"
-    chgrp -R $group "$dir"
-    if [ $? -ne 0 ]; then
-        echo "Erro ao alterar grupo em $dir."
-        exit 1
-    fi
-    echo "Grupo alterado com sucesso em $dir."
+    echo "Aplicando permissões em $dir"
 
-    echo "Definindo permissões de escrita para o grupo em $dir"
-    chmod -R g+w "$dir"
-    if [ $? -ne 0 ]; then
-        echo "Erro ao definir permissões em $dir."
-        exit 1
-    fi
-    echo "Permissões definidas com sucesso em $dir."
+    chgrp -R "$GROUP" "$dir"
+    chmod -R u+rwX,g+rwX "$dir"
 
-    echo "Definindo o bit setgid em todos os diretórios dentro de $dir"
-    find "$dir" -type d -exec chmod g+s {} +
-    if [ $? -ne 0 ]; then
-        echo "Erro ao definir bit setgid em $dir."
-        exit 1
-    fi
-    echo "Bit setgid definido com sucesso em $dir."
+    find "$dir" -type d -print0 | xargs -0 chmod g+s
+
+    setfacl -R -m u::rwX,g::rwX,o::rX "$dir"
+    setfacl -dR -m u::rwX,g::rwX,o::rX "$dir"
 }
 
-change_group_and_permissions "bootstrap/" "www-data"
-change_group_and_permissions "storage/" "www-data"
-change_group_and_permissions "storage/logs/" "www-data"
-change_group_and_permissions "/var/www/html/storage/framework/cache/data/" "www-data"
+install_acl_if_missing
 
-echo "Permissões e propriedades de grupo atualizadas com sucesso."
+for dir in "${DIRECTORIES[@]}"; do
+    change_group_and_permissions "$dir"
+done
+
+echo "Permissões e ACLs aplicadas com sucesso."
