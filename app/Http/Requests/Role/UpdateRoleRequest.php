@@ -4,13 +4,13 @@ declare(strict_types = 1);
 
 namespace App\Http\Requests\Role;
 
+use App\Rules\UniqueRoleNameRule;
 use App\Traits\FailedValidation;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\{Collection, Fluent};
-use Illuminate\Support\Facades\{Auth, DB};
-use Illuminate\Support\Str;
+use Illuminate\Support\{Collection, Fluent, Str};
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 
 final class UpdateRoleRequest extends FormRequest
@@ -49,25 +49,7 @@ final class UpdateRoleRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
-                function (string $attribute, mixed $value, Closure $fail) use ($role): void {
-                    if (!is_string($value)) {
-                        return;
-                    }
-
-                    $trimmedValue = mb_trim($value);
-
-                    $exists = DB::table('roles')
-                        ->whereRaw('LOWER(name) = ?', [mb_strtolower($trimmedValue)])
-                        ->when(
-                            $role !== null,
-                            fn ($query) => $query->where('id', '!=', $role?->id) // safe access
-                        )
-                        ->exists();
-
-                    if ($exists) {
-                        $fail('Este nome de perfil já está em uso. Escolha outro nome.');
-                    }
-                },
+                new UniqueRoleNameRule($role?->id ? (int) $role->id : null),
             ],
             'description' => ['max:258'],
             'permissions' => ['array'],
@@ -120,13 +102,10 @@ final class UpdateRoleRequest extends FormRequest
         /** @var string $name */
         $name = (string) ($rawName ?? '');
 
-        /** @var Str $str */
-        $str = str();
-
         return new Fluent([
             ...$validated,
             'guard_name' => 'web',
-            'slug' => $str->slug($name),
+            'slug' => Str::slug($name),
             'role' => $role,
         ]);
     }
