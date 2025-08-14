@@ -56,7 +56,7 @@ const confirmDeleteRow = (isStatus) => {
           <q-card-section class="row items-center">
             <span class="q-ml-sm">
               <strong
-                >Tem certeza de que deseja excluir este perfil de acesso?
+                >Tem certeza de que deseja excluir este usuário?
                 <br />
                 Esta ação não poderá ser desfeita.</strong
               >
@@ -103,33 +103,29 @@ const confirmDeleteRow = (isStatus) => {
             flat
             round
             icon="more_horiz"
-            class="button-more-horiz"
-          >
+            class="button-more-horiz">
             <q-menu>
               <q-list dense style="min-width: 150px">
                 <q-item
                   v-if="col.methods.onConsult"
                   clickable
                   v-close-popup
-                  @click="emit('onConsult', bodyProps.row)"
-                >
+                  @click="emit('onConsult', bodyProps.row)">
                   <q-item-section>Ver detalhes</q-item-section>
                 </q-item>
                 <q-item
                   v-if="col.methods.onEdit"
                   clickable
                   v-close-popup
-                  @click="emit('onEdit', bodyProps.row)"
-                >
+                  @click="emit('onEdit', bodyProps.row)">
                   <q-item-section>Editar</q-item-section>
                 </q-item>
                 <q-separator></q-separator>
-                <q-item 
+                <q-item
                   v-if="col.methods.onDelete(bodyProps.row)"
-                  clickable 
-                  v-close-popup 
-                  @click="deleteRow(bodyProps.row)"
-                >
+                  clickable
+                  v-close-popup
+                  @click="deleteRow(bodyProps.row)">
                   <q-item-section>Excluir</q-item-section>
                 </q-item>
               </q-list>
