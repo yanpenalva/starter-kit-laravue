@@ -16,10 +16,6 @@ The kit supports automated testing and offers tools for monitoring and debugging
 6. [Database Schema & ER Diagram](#-database-schema--er-diagram)
 7. [Commit Conventions](#-commit-conventions)
 8. [Code Standards](#-code-standards)
-<<<<<<< HEAD
-9. [TODO List](#-todo-list)
-=======
->>>>>>> dev
 
 ---
 
