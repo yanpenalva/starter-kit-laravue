@@ -6,7 +6,7 @@ namespace App\Actions\Role;
 
 use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Fluent;
+use Illuminate\Support\{Fluent, Str};
 use Spatie\Permission\Models\Role;
 
 final readonly class CreateRoleAction
@@ -15,22 +15,31 @@ final readonly class CreateRoleAction
 
     /**
      * @param Fluent<string, mixed> $params
-     * @return Role
      */
     public function execute(Fluent $params): Role
     {
         return DB::transaction(function () use ($params): Role {
-            /** @var Role $role */
+            $name = $params->get('name');
+            assert(is_string($name));
+
+            $description = $params->get('description');
+            assert($description === null || is_string($description));
+
+            $permissions = $params->get('permissions', []);
+            assert(is_array($permissions));
+
             $role = Role::create([
-                'name' => $params->get('name'),
+                'name' => $name,
                 'guard_name' => 'web',
-                'slug' => str()->slug($params->get('name')),
-                'description' => $params->get('description'),
+                'slug' => Str::slug($name),
+                'description' => $description,
             ]);
 
-            $role->syncPermissions($params->get('permissions', []));
+            assert($role instanceof Role);
 
-            $this->writeOnLog($role); // TODO: Move to Event or Log
+            $role->syncPermissions($permissions);
+
+            $this->writeOnLog($role);
 
             return $role;
         });

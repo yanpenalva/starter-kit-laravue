@@ -52,7 +52,7 @@ if [ -n "$php_changed" ]; then
 fi
 
 [ -n "$js_changed" ] && lint_js
-# [ -n "$php_changed" ] && run_phpstan
+[ -n "$php_changed" ] && run_phpstan
 
 case "$current_branch" in
   hml) run_tests "test" ;;

@@ -5,51 +5,63 @@ declare(strict_types = 1);
 namespace App\Http\Requests\Role;
 
 use App\Traits\FailedValidation;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\{Collection, Fluent};
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\{Auth, DB};
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
-class UpdateRoleRequest extends FormRequest
+final class UpdateRoleRequest extends FormRequest
 {
     use FailedValidation;
 
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return auth()->check();
+        return Auth::check();
     }
 
     public function prepareForValidation(): void
     {
-        /** @var \Illuminate\Support\Collection<int, mixed> $permissions */
-        $permissions = new Collection($this->permissions);
-        $isInteger = $permissions->contains(function ($item) {
-            return is_int($item);
-        });
+        /** @var iterable<int, int|string>|null $rawPermissions */
+        $rawPermissions = $this->permissions;
+
+        $permissions = new Collection($rawPermissions ?? []);
+        $isInteger = $permissions->contains(fn (mixed $item): bool => is_int($item));
 
         $this->merge([
-            'permissions' => $isInteger ? $permissions->toArray() : $permissions->pluck('value')->toArray(),
+            'permissions' => $isInteger
+                ? $permissions->toArray()
+                : $permissions->pluck('value')->toArray(),
         ]);
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, array<int, string|ValidationRule|Closure>>
      */
     public function rules(): array
     {
+        /** @var Role|null $role */
+        $role = $this->route('role');
+
         return [
             'name' => [
                 'required',
                 'string',
-                function ($attribute, $value, $fail) {
+                function (string $attribute, mixed $value, Closure $fail) use ($role): void {
+                    if (!is_string($value)) {
+                        return;
+                    }
+
                     $trimmedValue = mb_trim($value);
+
                     $exists = DB::table('roles')
                         ->whereRaw('LOWER(name) = ?', [mb_strtolower($trimmedValue)])
-                        ->when($this->role, fn ($query) => $query->where('id', '!=', $this->role->id))
+                        ->when(
+                            $role !== null,
+                            fn ($query) => $query->where('id', '!=', $role?->id) // safe access
+                        )
                         ->exists();
 
                     if ($exists) {
@@ -61,6 +73,7 @@ class UpdateRoleRequest extends FormRequest
             'permissions' => ['array'],
         ];
     }
+
     /**
      * @return array<string, string>
      */
@@ -72,6 +85,7 @@ class UpdateRoleRequest extends FormRequest
             'permissions' => 'Permissões',
         ];
     }
+
     /**
      * @return array<string, string>
      */
@@ -85,20 +99,35 @@ class UpdateRoleRequest extends FormRequest
             'permissions.array' => 'O :attribute deve ser uma lista',
         ];
     }
+
     /**
-     * Retorna instância Fluent com os dados validados acrescentando atributos adicionais.
-     *
-     * @param mixed|null $key
+     * @param array<string>|string|int|null $key
      * @return Fluent<string, mixed>
      */
     public function fluent($key = null): Fluent
     {
+        /** @var Role|null $role */
+        $role = $this->route('role');
+
+        /** @var array<string, mixed> $validated */
+        $validated = $this->validated($key);
+
+        /** @var mixed $rawName */
+        $rawName = $this->input('name');
+
+        assert(is_scalar($rawName) || $rawName === null);
+
+        /** @var string $name */
+        $name = (string) ($rawName ?? '');
+
+        /** @var Str $str */
+        $str = str();
 
         return new Fluent([
-            ...$this->validated($key),
+            ...$validated,
             'guard_name' => 'web',
-            'slug' => str()->slug($this->name),
+            'slug' => $str->slug($name),
+            'role' => $role,
         ]);
     }
-
 }

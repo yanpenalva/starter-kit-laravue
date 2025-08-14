@@ -5,33 +5,41 @@ declare(strict_types = 1);
 namespace App\Http\Requests\Role;
 
 use App\Traits\FailedValidation;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\{Auth, DB};
 
 class CreateRoleRequest extends FormRequest
 {
     use FailedValidation;
 
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return auth()->check();
+        return Auth::check();
     }
 
     public function prepareForValidation(): void
     {
-        $permissions = (new Collection($this->permissions))->pluck('value')->toArray();
+        $permissionsRaw = $this->permissions;
+
+        assert(
+            $permissionsRaw === null ||
+                $permissionsRaw instanceof Arrayable ||
+                is_iterable($permissionsRaw)
+        );
+
+        /** @var Arrayable<int|string, mixed>|iterable<int|string, mixed>|null $permissionsRaw */
+        $permissionsArray = (new Collection($permissionsRaw))
+            ->pluck('value')
+            ->toArray();
+
         $this->merge([
-            'permissions' => $permissions,
+            'permissions' => $permissionsArray,
         ]);
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
@@ -40,14 +48,19 @@ class CreateRoleRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
-                function ($attribute, $value, $fail) {
+                function (string $attribute, mixed $value, callable $fail): void {
+                    assert(is_string($value));
                     $trimmedValue = mb_trim($value);
-                    $exists = DB::table('roles')
-                        ->whereRaw('LOWER(name) = ?', [mb_strtolower($trimmedValue)])
-                        ->when($this->role, fn ($query) => $query->where('id', '!=', $this->role->id))
-                        ->exists();
 
-                    if ($exists) {
+                    $query = DB::table('roles')
+                        ->whereRaw('LOWER(name) = ?', [mb_strtolower($trimmedValue)]);
+
+                    if ($this->role !== null) {
+                        assert(is_object($this->role) && property_exists($this->role, 'id'));
+                        $query->where('id', '!=', $this->role->id);
+                    }
+
+                    if ($query->exists()) {
                         $fail('Este nome de perfil já está em uso. Escolha outro nome.');
                     }
                 },
@@ -56,6 +69,7 @@ class CreateRoleRequest extends FormRequest
             'permissions' => ['array'],
         ];
     }
+
     /**
      * @return array<string, string>
      */
@@ -67,6 +81,7 @@ class CreateRoleRequest extends FormRequest
             'permissions' => 'Permissões',
         ];
     }
+
     /**
      * @return array<string, string>
      */

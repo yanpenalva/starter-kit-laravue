@@ -5,41 +5,52 @@ declare(strict_types = 1);
 namespace App\Actions\Role;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\{Builder, Collection};
+use Illuminate\Database\Eloquent\Relations\{BelongsToMany, Relation};
 use Illuminate\Support\Fluent;
-use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\{Permission, Role};
 
 final readonly class ListRoleAction
 {
     /**
-     * @param Fluent<string, mixed> $params
-     * @return LengthAwarePaginator<int, Role>|Collection<int, Role>
+     * @phpstan-param Fluent<string, mixed> $params
+     * @phpstan-return LengthAwarePaginator<int, Role>
      */
     public function execute(Fluent $params): LengthAwarePaginator|Collection
     {
         return Role::query()
-            ->with(['permissions' => fn ($query) => $query->select(['id', 'description', 'name'])])
-            ->when($params->get('search'), function ($query, $search) {
-                $query->where(function ($query) use ($search) {
-                    $query->whereLike('id', "%$search%")
-                        ->orWhereLike('name', "%$search%")
-                        ->orWhereLike('description', "%$search%");
+            ->with([
+                /** @param BelongsToMany<Permission, Role> $relation */
+                'permissions' => static function (Relation $relation): void {
+                    $relation->select(['id', 'description', 'name']);
+                },
+            ])
+            ->when($params->get('search'), function (Builder $query, mixed $search): void {
+                assert(is_string($search));
+                $query->where(static function (Builder $query) use ($search): void {
+                    $query->whereLike('id', "%{$search}%")
+                        ->orWhereLike('name', "%{$search}%")
+                        ->orWhereLike('description', "%{$search}%");
                 });
             })
-            ->when($params->get('order'), function ($query) use ($params) {
-                return $query->orderBy(
-                    match ($params->get('column', 'id')) {
-                        'name' => 'name',
-                        'description' => 'description',
-                        default => 'id',
-                    },
-                    $params->get('order', 'asc')
-                );
+            ->when($params->get('order'), function (Builder $query) use ($params): Builder {
+                $column = $params->get('column', 'id');
+                $direction = $params->get('order', 'asc');
+
+                assert(is_string($column));
+                assert(is_string($direction));
+
+                return $query->orderBy($column, $direction);
             })
             ->when(
-                $params->get('paginated', false),
-                fn ($query) => $query->paginate($params->get('limit', 10)),
-                fn ($query) => $query->get()
+                $params->get('paginated', true) === true,
+                function (Builder $query) use ($params): LengthAwarePaginator {
+                    $limit = $params->get('limit', 10);
+                    assert(is_int($limit));
+
+                    return $query->paginate($limit);
+                },
+                fn (Builder $query): LengthAwarePaginator => $query->paginate()
             );
     }
 }

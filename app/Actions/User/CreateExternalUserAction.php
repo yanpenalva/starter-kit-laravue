@@ -17,7 +17,7 @@ final readonly class CreateExternalUserAction
     use LogsActivity;
 
     /**
-     * @param Fluent<string, mixed> $params
+     * @phpstan-param Fluent<string, mixed> $params
      */
     public function execute(Fluent $params): User
     {
@@ -30,11 +30,14 @@ final readonly class CreateExternalUserAction
                 'active' => $params->get('active', false) ? 'true' : 'false',
             ]);
 
-            $role = app(RoleBySlugAction::class)->execute($params->get('role'));
+            $slug = $params->get('role');
+            assert(is_string($slug));
+
+            $role = app(RoleBySlugAction::class)->execute($slug);
 
             $user->syncRoles([$role->id]);
 
-            $this->writeOnLog($user); // TODO: Move to Event or Log
+            $this->writeOnLog($user);
 
             Mail::to($user)->queue(new SendVerifyEmail($user));
 
