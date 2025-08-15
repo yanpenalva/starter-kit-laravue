@@ -110,6 +110,7 @@ const confirmDeleteRow = (isStatus) => {
                   v-if="col.methods.onConsult"
                   clickable
                   v-close-popup
+                  :to="{ name: 'showUsers', params: { id: bodyProps.row.id } }"
                   @click="emit('onConsult', bodyProps.row)">
                   <q-item-section>Ver detalhes</q-item-section>
                 </q-item>

@@ -44,7 +44,7 @@ const {
               v-if="hasPermission([USER_PERMISSION.CREATE])"
               icon="add"
               label="Criar"
-              color="secondary"
+              color="accent"
               @click-action="router.push({ name: 'createUsers' })" />
           </div>
         </div>

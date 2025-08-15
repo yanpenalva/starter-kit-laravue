@@ -17,8 +17,8 @@ const authStore = useAuthStore();
 const { logout } = useAuthenticate();
 const router = useRouter();
 
-const goToEditProfile = () => {
-  router.push({ name: 'editUsers', params: { id: authStore.getUser?.id } });
+const goToViewProfile = () => {
+  router.push({ name: 'showUsers', params: { id: authStore.getUser?.id } });
 };
 
 const emit = defineEmits(['update:miniState']);
@@ -78,7 +78,7 @@ const emit = defineEmits(['update:miniState']);
         <q-item-section class="text-white"> Ajuda </q-item-section>
       </q-item>
 
-      <q-item clickable v-ripple @click="goToEditProfile">
+      <q-item clickable v-ripple @click="goToViewProfile">
         <q-item-section avatar class="text-white">
           <q-icon name="account_circle" />
         </q-item-section>

@@ -6,6 +6,8 @@ const adminHomeRoutes = {
     requiresAuth: true,
     module: 'Tela Inicial',
     icon: 'space_dashboard',
+    iconColor: '#344955',
+    iconBg: '#FFAA30',
   },
 };
 

@@ -1,6 +1,6 @@
-import { ref } from 'vue';
 import { hasPermission } from '@utils/hasPermission';
 import { USER_PERMISSION } from '@utils/permissions';
+import { ref } from 'vue';
 
 import useAuthStore from '@/store/useAuthStore';
 import { storeToRefs } from 'pinia';
@@ -49,7 +49,7 @@ export default function useUserConfigListPage() {
       field: (row) => row.id,
       format: (val) => `${val}`,
       methods: {
-        onConsult: false,
+        onConsult: () => hasPermission([USER_PERMISSION.SHOW]),
         onEdit: hasPermission([USER_PERMISSION.UPDATE]),
         onDelete: (row) => {
           return row.id !== user.value?.id && hasPermission([USER_PERMISSION.DELETE]);

@@ -139,6 +139,42 @@
     font-weight: 500;
 }
 
+.page-icon-style {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 0.8rem;
+}
+.page-icon-style i {
+    font-size: 27px;
+    padding-left: 0.4rem;
+}
+.icon-style {
+    font-size: 22px !important;
+    padding-left: unset !important;
+}
+
+.page-icon-style-sm {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 0.8rem;
+}
+.page-icon-style-sm i {
+    font-size: 22px;
+    padding-left: 0.4rem;
+}
+.icon-style-sm {
+    font-size: 17px !important;
+    padding-left: unset !important;
+}
+
 @media (max-width: 600px) {
     .q-layout-container .absolute-full {
         right: unset !important;

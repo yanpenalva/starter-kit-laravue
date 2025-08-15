@@ -1,23 +1,14 @@
 <script setup>
 import useAuthenticate from '@/composables/Authenticate/useAuthenticate';
 import useAuthStore from '@/store/useAuthStore';
-import { ROLES } from '@/utils/roles';
-import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
 const { logout } = useAuthenticate();
 const router = useRouter();
 
-const isGuest = computed(() =>
-  authStore.getRoles?.some(({ slug }) => slug === ROLES.GUEST),
-);
-
-const goToEditProfile = () => {
-  router.push({
-    name: 'editUsers',
-    params: { id: authStore.getUser?.id },
-  });
+const goToViewProfile = () => {
+  router.push({ name: 'showUsers', params: { id: authStore.getUser?.id } });
 };
 </script>
 
@@ -48,7 +39,7 @@ const goToEditProfile = () => {
         :label="authStore.getUser?.name || 'Conta'"
         icon="account_circle">
         <q-list>
-          <q-item v-close-popup clickable @click="goToEditProfile">
+          <q-item v-close-popup clickable @click="goToViewProfile">
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>
