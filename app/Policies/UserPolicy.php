@@ -4,32 +4,33 @@ declare(strict_types = 1);
 
 namespace App\Policies;
 
+use App\Enums\PermissionEnum;
 use App\Models\User;
 
-class UserPolicy
+final class UserPolicy
 {
     public function index(User $user): bool
     {
-        return $user->can('users.list');
+        return $user->can(PermissionEnum::USERS_LIST->value);
     }
 
     public function create(User $user): bool
     {
-        return $user->can('users.create');
+        return $user->can(PermissionEnum::USERS_CREATE->value);
     }
 
     public function show(User $user): bool
     {
-        return $user->can('users.show');
+        return $user->can(PermissionEnum::USERS_SHOW->value);
     }
 
     public function update(User $user): bool
     {
-        return $user->can('users.update');
+        return $user->can(PermissionEnum::USERS_UPDATE->value);
     }
 
     public function delete(User $user): bool
     {
-        return $user->can('users.delete');
+        return $user->can(PermissionEnum::USERS_DELETE->value);
     }
 }
