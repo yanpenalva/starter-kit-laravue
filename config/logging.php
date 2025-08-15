@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
 
 use Monolog\Handler\{NullHandler, StreamHandler, SyslogUdpHandler};
 use Monolog\Processor\PsrLogMessageProcessor;
@@ -70,7 +72,12 @@ return [
             'days' => 7,
             'replace_placeholders' => true,
         ],
-
+        'activity_rotation' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/activity_rotation.log'),
+            'level' => env('LOG_LEVEL', 'info'),
+            'replace_placeholders' => true,
+        ],
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

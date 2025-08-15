@@ -8,19 +8,15 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 // @codeCoverageIgnoreStart
-class Kernel extends ConsoleKernel
+final class Kernel extends ConsoleKernel
 {
-    /**
-     * Define the application's command schedule.
-     */
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('auth:clear-resets')->hourly();
+
+        $schedule->command('clean:logs')->quarterly();
     }
 
-    /**
-     * Register the commands for the application.
-     */
     protected function commands(): void
     {
         $this->load(__DIR__ . '/Commands');
