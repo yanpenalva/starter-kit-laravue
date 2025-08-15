@@ -93,6 +93,14 @@ const useUser = () => {
       router.push({ name: 'login' });
     }
   };
+  const onEdit = (event) => {
+    router.push({
+      name: 'editUsers',
+      params: {
+        id: event.id,
+      },
+    });
+  };
 
   return {
     router,
@@ -105,6 +113,7 @@ const useUser = () => {
     onVerifyEmail,
     nameUser,
     errors,
+    onEdit,
   };
 };
 
