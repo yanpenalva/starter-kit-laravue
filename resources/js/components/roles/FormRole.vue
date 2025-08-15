@@ -14,6 +14,8 @@ const {
   saveRole,
   initializeRoleData,
   cleanupRoleData,
+  isPermissionGroupFullySelected,
+  togglePermissionGroup,
 } = useRole();
 
 const permissionStore = usePermissionStore();
@@ -39,12 +41,13 @@ onUnmounted(() => {
         placeholder="Campo obrigatório."
         bottom-slots
         lazy-rules
-        :error="errors && errors?.name?.length > 0">
+        :error="errors?.name?.length > 0">
         <template #error>
-          <ErrorInput :errors="errors.name"></ErrorInput>
+          <ErrorInput :errors="errors.name" />
         </template>
       </q-input>
     </div>
+
     <div>
       <label for="description" class="text-weight-bold">Descrição</label>
       <q-input
@@ -52,33 +55,56 @@ onUnmounted(() => {
         filled
         placeholder="Texto não obrigatório."
         bottom-slots
-        :error="errors && errors?.description?.length > 0">
+        :error="errors?.description?.length > 0">
         <template #error>
-          <ErrorInput :errors="errors.description"></ErrorInput>
+          <ErrorInput :errors="errors.description" />
         </template>
       </q-input>
     </div>
+
     <div v-if="!shouldBlockSelectPermission" class="q-mt-md">
       <label class="text-weight-bold">Permissões</label>
       <div class="q-mt-sm q-gutter-y-sm">
-        <q-card flat bordered>
-          <q-card-section>
+        <q-card
+          flat
+          bordered
+          v-for="permissionGroup in permissionStore.getPermissions"
+          :key="permissionGroup.group">
+          <q-expansion-item expand-separator :default-opened="true">
+            <template #header>
+              <q-item-section avatar>
+                <q-icon name="bookmark" color="blue-10" />
+              </q-item-section>
+              <q-item-section>
+                {{ permissionGroup.label }}
+              </q-item-section>
+            </template>
+
+            <div class="q-mb-sm">
+              <q-checkbox
+                :model-value="isPermissionGroupFullySelected(permissionGroup)"
+                label="Selecionar todas as permissões deste grupo"
+                class="text-weight-bold"
+                @update:model-value="togglePermissionGroup(permissionGroup)" />
+            </div>
+
             <div class="row q-col-gutter-md">
               <div
-                v-for="permission in permissionStore.getPermissions"
-                :key="permission.value"
+                v-for="permissionItem in permissionGroup.permissions"
+                :key="permissionItem.value"
                 class="col-12 col-sm-6 col-md-4">
                 <q-checkbox
-                  :model-value="selectedPermissionIds.includes(permission.value)"
-                  :label="permission.label"
+                  :model-value="selectedPermissionIds.includes(permissionItem.value)"
+                  :label="permissionItem.label"
                   :disable="shouldBlockSelectPermission"
-                  @update:model-value="togglePermission(permission.value)" />
+                  @update:model-value="togglePermission(permissionItem.value)" />
               </div>
             </div>
-          </q-card-section>
+          </q-expansion-item>
         </q-card>
       </div>
     </div>
+
     <div class="q-mt-lg q-gutter-sm">
       <q-btn
         class="text-weight-bold"
@@ -92,7 +118,6 @@ onUnmounted(() => {
         flat
         class="text-weight-bold"
         label="Voltar"
-        type="submit"
         color="primary"
         :to="{ name: 'listRoles' }" />
     </div>

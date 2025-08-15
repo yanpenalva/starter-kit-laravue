@@ -1,9 +1,9 @@
 <script setup>
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
 import useAuthenticate from '@/composables/Authenticate/useAuthenticate';
 import useAuthStore from '@/store/useAuthStore';
 import { ROLES } from '@/utils/roles';
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
 const { logout } = useAuthenticate();
@@ -48,7 +48,7 @@ const goToEditProfile = () => {
         :label="authStore.getUser?.name || 'Conta'"
         icon="account_circle">
         <q-list>
-          <q-item v-if="!isVisitor" v-close-popup clickable @click="goToEditProfile">
+          <q-item v-close-popup clickable @click="goToEditProfile">
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>

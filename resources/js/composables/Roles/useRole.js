@@ -2,11 +2,11 @@ import useAuthStore from '@/store/useAuthStore';
 import usePermissionStore from '@/store/usePermissionStore';
 import useRoleStore from '@/store/useRoleStore';
 import notify from '@/utils/notify';
+import { ROLES } from '@/utils/roles';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ROLES } from '@/utils/roles';
 
 const useRole = () => {
   const $q = useQuasar();
@@ -52,7 +52,7 @@ const useRole = () => {
   };
 
   const shouldBlockSelectPermission = computed(() => {
-    return role.value?.slug === ROLES.ADMINISTRATOR
+    return role.value?.slug === ROLES.ADMINISTRATOR;
   });
 
   const isProtectedRole = (slugRoleRow) => {
@@ -99,9 +99,7 @@ const useRole = () => {
 
     try {
       const hasId = Boolean(route.params.id);
-      const action = hasId
-        ? store.update(route.params.id, params)
-        : store.store(params);
+      const action = hasId ? store.update(route.params.id, params) : store.store(params);
 
       await action;
 
@@ -187,6 +185,32 @@ const useRole = () => {
     }
   };
 
+  const isPermissionGroupFullySelected = (permissionGroup) => {
+    return permissionGroup.permissions.every((permissionItem) =>
+      selectedPermissionIds.value.includes(permissionItem.value),
+    );
+  };
+
+  const togglePermissionGroup = (permissionGroup) => {
+    const allPermissionsSelected = isPermissionGroupFullySelected(permissionGroup);
+
+    permissionGroup.permissions.forEach((permissionItem) => {
+      const permissionAlreadySelected = selectedPermissionIds.value.includes(
+        permissionItem.value,
+      );
+
+      if (!allPermissionsSelected && !permissionAlreadySelected) {
+        selectedPermissionIds.value.push(permissionItem.value);
+      }
+
+      if (allPermissionsSelected && permissionAlreadySelected) {
+        selectedPermissionIds.value = selectedPermissionIds.value.filter(
+          (permissionId) => permissionId !== permissionItem.value,
+        );
+      }
+    });
+  };
+
   return {
     role,
     roles,
@@ -209,6 +233,8 @@ const useRole = () => {
     updatePagination,
     onEdit,
     onDelete,
+    isPermissionGroupFullySelected,
+    togglePermissionGroup,
   };
 };
 

@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Api\Permission;
 
 use App\Actions\Permission\PermissionListAction;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\PermissionResource;
+use App\Http\Resources\PermissionGroupResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class PermissionController extends Controller
@@ -15,6 +15,6 @@ class PermissionController extends Controller
     {
         $permissions = app(PermissionListAction::class)->execute();
 
-        return PermissionResource::collection($permissions);
+        return PermissionGroupResource::collection($permissions);
     }
 }
