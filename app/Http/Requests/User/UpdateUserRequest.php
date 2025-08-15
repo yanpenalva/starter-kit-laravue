@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Http\Requests\User;
 
 use App\Enums\StatusEnum;
+use App\Traits\FailedValidation;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,7 @@ use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
 {
+    use FailedValidation;
     public function authorize(): bool
     {
         return true;
@@ -144,5 +146,4 @@ class UpdateUserRequest extends FormRequest
     {
         return $this->filled('role_slug') ? ['role_slug' => ['required']] : [];
     }
-
 }

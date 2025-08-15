@@ -5,12 +5,14 @@ declare(strict_types = 1);
 namespace App\Http\Requests\User;
 
 use App\Enums\{RolesEnum, StatusEnum};
+use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\{Fluent, Str};
 use Illuminate\Validation\Rule;
 
 class CreateUserRequest extends FormRequest
 {
+    use FailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -102,5 +104,4 @@ class CreateUserRequest extends FormRequest
             'password' => $this->has('send_random_password') ? Str::password(8) : $this->password,
         ]));
     }
-
 }

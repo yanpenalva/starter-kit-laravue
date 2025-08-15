@@ -2,6 +2,7 @@
 import useRole from '@/composables/Roles/useRole';
 import usePermissionStore from '@/store/usePermissionStore';
 import ErrorInput from '@components/shared/ErrorInput.vue';
+import RequiredLabel from '@/components/shared/RequiredLabel.vue';
 import { onBeforeMount, onUnmounted } from 'vue';
 
 const {
@@ -32,9 +33,7 @@ onUnmounted(() => {
 <template>
   <q-form v-if="role">
     <div>
-      <label for="name" class="text-weight-bold">
-        Nome do Perfil <span class="text-negative">*</span>
-      </label>
+      <RequiredLabel required>Nome do Perfil</RequiredLabel>
       <q-input
         v-model="role.name"
         filled

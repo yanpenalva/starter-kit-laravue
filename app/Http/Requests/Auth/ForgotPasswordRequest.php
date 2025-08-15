@@ -4,11 +4,13 @@ declare(strict_types = 1);
 
 namespace App\Http\Requests\Auth;
 
+use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Fluent;
 
 class ForgotPasswordRequest extends FormRequest
 {
+    use FailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */

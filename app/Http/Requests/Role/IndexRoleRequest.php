@@ -6,6 +6,7 @@ namespace App\Http\Requests\Role;
 
 use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class IndexRoleRequest extends FormRequest
 {
@@ -15,7 +16,7 @@ class IndexRoleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check();
+        return Auth::check();
     }
 
     public function prepareForValidation(): void
@@ -30,7 +31,6 @@ class IndexRoleRequest extends FormRequest
             'search' => $this->get('search', null),
             'paginated' => $this->get('paginated', 1),
         ]);
-
     }
 
     /**
@@ -112,5 +112,4 @@ class IndexRoleRequest extends FormRequest
             'paginated' => 'Paginado',
         ];
     }
-
 }

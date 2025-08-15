@@ -1,6 +1,10 @@
 <script setup>
+import ErrorInput from '@/components/shared/ErrorInput.vue';
+import RequiredLabel from '@/components/shared/RequiredLabel.vue';
+import useUser from '@/composables/User/useUser';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+
 const props = defineProps({
   profiles: Array,
   loading: Boolean,
@@ -9,14 +13,13 @@ const props = defineProps({
 
 const emit = defineEmits(['send']);
 const route = useRoute();
+const { errors } = useUser();
 
 const formData = ref({
   send_random_password: false,
   role_slug: null,
   active: 0,
 });
-
-const submitted = ref(false);
 
 onMounted(() => {
   formData.value.name = props.user?.name || '';
@@ -27,7 +30,6 @@ onMounted(() => {
 });
 
 const onSubmit = async () => {
-  submitted.value = true;
   emit('send', {
     email: formData.value.email,
     name: formData.value.name,
@@ -49,55 +51,73 @@ watch([formData, () => formData.value.send_random_password], () => {
   <q-form class="q-gutter-md" @submit.prevent="onSubmit">
     <div class="row q-col-gutter-md">
       <div class="col-md-6">
-        <label for="name" class="text-weight-bold">Nome</label>
+        <RequiredLabel required>Nome</RequiredLabel>
         <q-input
           v-model="formData.name"
           filled
           placeholder="Digite o nome"
+          bottom-slots
           lazy-rules
-          :style="{ width: '100%' }"
-          :rules="[(val) => (val && val.length > 0) || 'Por favor, insira o nome']" />
+          :error="errors?.name?.length > 0">
+          <template #error>
+            <ErrorInput :errors="errors.name" />
+          </template>
+        </q-input>
       </div>
       <div class="col-md-6">
-        <label for="cpf" class="text-weight-bold">CPF</label>
+        <RequiredLabel required>CPF</RequiredLabel>
         <q-input
           v-model="formData.cpf"
           filled
           placeholder="Digite o CPF"
-          lazy-rules
           mask="###.###.###-##"
-          :style="{ width: '100%' }"
-          :rules="[(val) => (val && val.length > 0) || 'Por favor, insira o CPF']" />
+          bottom-slots
+          lazy-rules
+          :error="errors?.cpf?.length > 0">
+          <template #error>
+            <ErrorInput :errors="errors.cpf" />
+          </template>
+        </q-input>
       </div>
     </div>
+
     <div class="row q-col-gutter-md">
       <div class="col-md-12">
-        <label for="email" class="text-weight-bold">Email</label>
+        <RequiredLabel required>Email</RequiredLabel>
         <q-input
           v-model="formData.email"
           filled
           type="email"
           placeholder="Digite o email"
+          bottom-slots
           lazy-rules
-          :style="{ width: '100%' }"
-          :rules="[(val) => (val && val.length > 0) || 'Por favor, insira o email']" />
+          :error="errors?.email?.length > 0">
+          <template #error>
+            <ErrorInput :errors="errors.email" />
+          </template>
+        </q-input>
       </div>
     </div>
+
     <div class="row q-col-gutter-md">
       <div class="col-md-12">
-        <label for="password" class="text-weight-bold">Senha</label>
+        <RequiredLabel required>Senha</RequiredLabel>
         <q-input
           v-model="formData.password"
           filled
-          label="Senha"
           type="password"
           placeholder="Digite a senha"
+          bottom-slots
           lazy-rules
-          :style="{ width: '100%' }"
-          :rules="[]"
-          :readonly="formData.send_random_password" />
+          :readonly="formData.send_random_password"
+          :error="errors?.password?.length > 0">
+          <template #error>
+            <ErrorInput :errors="errors.password" />
+          </template>
+        </q-input>
       </div>
     </div>
+
     <div v-if="route.name !== 'editUsers'" class="row q-col-gutter-md">
       <div class="col-md-12">
         <q-checkbox
@@ -105,9 +125,10 @@ watch([formData, () => formData.value.send_random_password], () => {
           label="Enviar senha aleatória por email" />
       </div>
     </div>
+
     <div class="row q-col-gutter-md">
       <div class="col-md-6">
-        <label for="role_id" class="text-weight-bold">Perfil</label>
+        <RequiredLabel required>Perfil</RequiredLabel>
         <q-select
           v-model="formData.role"
           :style="{ width: '100%' }"
@@ -116,19 +137,18 @@ watch([formData, () => formData.value.send_random_password], () => {
           option-value="id"
           filled
           label="Selecione um perfil"
-          autofocus
-          :rules="[
-            (val) =>
-              (submitted.value && val && (val.id || val.id === undefined)) ||
-              !submitted.value ||
-              'Por favor, selecione um perfil',
-          ]">
+          bottom-slots
+          lazy-rules
+          :error="errors?.role?.length > 0">
           <template #no-option>
             <q-item>
               <q-item-section class="text-italic text-grey">
                 Nenhuma opção disponível
               </q-item-section>
             </q-item>
+          </template>
+          <template #error>
+            <ErrorInput :errors="errors.role" />
           </template>
         </q-select>
       </div>
@@ -140,12 +160,10 @@ watch([formData, () => formData.value.send_random_password], () => {
           class="text-weight-bold"
           name="active"
           label="Ativo"
-          :style="{ width: '100%' }"
-          :rules="[
-            (val) => val !== undefined || 'Por favor, selecione o status do usuário',
-          ]" />
+          :style="{ width: '100%' }" />
       </div>
     </div>
+
     <div class="q-mt-lg q-gutter-sm">
       <q-btn
         :loading="props.loading"
@@ -156,7 +174,7 @@ watch([formData, () => formData.value.send_random_password], () => {
       <q-btn
         flat
         class="text-weight-bold"
-        label="Retornar"
+        label="Voltar"
         type="button"
         color="primary"
         :to="{ name: 'listUsers' }" />

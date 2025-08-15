@@ -5,11 +5,13 @@ declare(strict_types = 1);
 namespace App\Http\Requests\User;
 
 use App\Enums\RolesEnum;
+use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class RegisterExternalUserRequest extends FormRequest
 {
+    use FailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */
