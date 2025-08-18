@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -16,6 +15,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         \Spatie\Permission\Models\Role::class => \App\Policies\RolePolicy::class,
+        \Spatie\Activitylog\Models\Activity::class => \App\Policies\ActivityLogPolicy::class,
+        \App\Models\User::class => \App\Policies\UserPolicy::class,
     ];
 
     /**
@@ -23,6 +24,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-
+        $this->registerPolicies();
     }
 }

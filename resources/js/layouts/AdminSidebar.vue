@@ -5,7 +5,7 @@ import logoImage from '@assets/logo-125px40px.png';
 import logoSmaller from '@assets/logoSmaller-50px40px.png';
 import { hasPermission } from '@utils/hasPermission';
 import { isActiveLink } from '@utils/isActiveLink';
-import { ROLE_PERMISSION, USER_PERMISSION } from '@utils/permissions';
+import { LOG_PERMISSION, ROLE_PERMISSION, USER_PERMISSION } from '@utils/permissions';
 import { useRouter } from 'vue-router';
 
 const props = defineProps({
@@ -40,7 +40,10 @@ const emit = defineEmits(['update:miniState']);
       </q-item>
     </q-list>
 
-    <q-list v-if="hasPermission([USER_PERMISSION.LIST, ROLE_PERMISSION.LIST])">
+    <q-list
+      v-if="
+        hasPermission([USER_PERMISSION.LIST, ROLE_PERMISSION.LIST, LOG_PERMISSION.LIST])
+      ">
       <q-item
         v-if="hasPermission([USER_PERMISSION.LIST])"
         v-ripple
@@ -65,6 +68,19 @@ const emit = defineEmits(['update:miniState']);
           <q-icon name="sym_o_contacts" />
         </q-item-section>
         <q-item-section class="text-white"> Perfis </q-item-section>
+      </q-item>
+
+      <q-item
+        v-if="hasPermission([LOG_PERMISSION.LIST])"
+        v-ripple
+        clickable
+        exact
+        :to="{ name: 'listLogs' }"
+        :class="isActiveLink('listLogs')">
+        <q-item-section avatar class="text-white">
+          <q-icon name="history" />
+        </q-item-section>
+        <q-item-section class="text-white"> Logs de Atividade </q-item-section>
       </q-item>
     </q-list>
 

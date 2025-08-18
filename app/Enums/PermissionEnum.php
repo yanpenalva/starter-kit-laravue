@@ -18,6 +18,8 @@ enum PermissionEnum: string
     case ROLES_EDIT = 'roles.edit';
     case ROLES_DELETE = 'roles.delete';
 
+    case ACTIVITY_LOGS_LIST = 'activity_logs.list';
+
     public function description(): string
     {
         return match ($this) {
@@ -32,6 +34,8 @@ enum PermissionEnum: string
             self::ROLES_CREATE => 'Criar perfis',
             self::ROLES_EDIT => 'Editar perfis',
             self::ROLES_DELETE => 'Deletar perfis',
+
+            self::ACTIVITY_LOGS_LIST => 'Listar logs',
         };
     }
 

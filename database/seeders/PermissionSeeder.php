@@ -13,6 +13,7 @@ final class PermissionSeeder extends Seeder
         $this->call([
             UserPermissionSeeder::class,
             RolePermissionSeeder::class,
+            ActivityLogPermissionSeeder::class,
         ]);
     }
 }

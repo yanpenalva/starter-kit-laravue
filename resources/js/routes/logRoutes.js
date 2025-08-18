@@ -1,0 +1,34 @@
+import { LOG_PERMISSION } from '@utils/permissions';
+
+const logRoutes = {
+  children: [
+    {
+      path: '',
+      name: 'listLogs',
+      component: async () => import('@pages/admin/logs/ListPage.vue'),
+      meta: {
+        requiresAuth: true,
+        module: 'Logs',
+        icon: 'history',
+        iconColor: '#344955',
+        iconBg: '#FFAA30',
+        roles: [LOG_PERMISSION.LIST],
+      },
+    },
+    // {
+    //   path: 'show/:id',
+    //   name: 'showLog',
+    //   component: async () => import('@pages/admin/logs/ShowPage.vue'),
+    //   meta: {
+    //     requiresAuth: true,
+    //     module: 'Logs',
+    //     icon: 'history',
+    //     iconColor: '#344955',
+    //     iconBg: '#FFAA30',
+    //     roles: [LOG_PERMISSION.LIST],
+    //   },
+    // },
+  ],
+};
+
+export default logRoutes;

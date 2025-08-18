@@ -14,4 +14,8 @@ const USER_PERMISSION = {
   DELETE: 'users.delete',
 };
 
-export { ROLE_PERMISSION, USER_PERMISSION };
+const LOG_PERMISSION = {
+  LIST: 'activity_logs.list',
+};
+
+export { LOG_PERMISSION, ROLE_PERMISSION, USER_PERMISSION };

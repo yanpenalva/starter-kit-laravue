@@ -1,6 +1,7 @@
 import AccessDeniedPage from '@/pages/errors/AccessDeniedPage.vue';
 import NotFoundPage from '@/pages/errors/NotFoundPage.vue';
 import adminHomeRoutes from '@/routes/adminRoutes';
+import logRoutes from '@/routes/logRoutes';
 import publicRoutes from '@/routes/publicRoutes/publicRoutes';
 import roleRoutes from '@/routes/roleRoutes';
 import userRoutes from '@/routes/userRoutes';
@@ -29,6 +30,10 @@ const routes = [
       {
         path: 'profiles',
         children: roleRoutes.children,
+      },
+      {
+        path: 'logs',
+        children: logRoutes.children,
       },
       {
         path: 'notFound',
