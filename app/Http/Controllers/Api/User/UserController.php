@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\{CreateUserRequest, IndexUserRequest, RegisterExternalUserRequest, UpdateUserRequest};
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Exception;
 use Illuminate\Http\{JsonResponse, Request};
 use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +24,6 @@ class UserController extends Controller
 
         return new UserResource($users);
     }
-
     public function store(CreateUserRequest $request): JsonResource
     {
         $this->authorize('create', User::class);
@@ -37,9 +35,9 @@ class UserController extends Controller
 
     public function show(int $id): JsonResource
     {
-        $this->authorize('show', User::class);
-
         $showUser = app(ShowUserAction::class)->execute($id);
+
+        $this->authorize('show', $showUser);
 
         return new UserResource($showUser);
     }
@@ -72,7 +70,6 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'Usuário deletado com sucesso!',
             ], Response::HTTP_NO_CONTENT);
-
         } catch (Throwable $exception) {
             return response()->json([
                 'message' => 'Erro ao deletar usuário.',
@@ -95,13 +92,9 @@ class UserController extends Controller
         try {
             app(VerifyAction::class)->execute($request->fluent());
 
-            return response()->json([
-                'message' => 'O seu cadastro foi verificado com sucesso!',
-            ], Response::HTTP_OK);
-        } catch (Exception $exeption) {
-            return response()->json([
-                'message' => $exeption->getMessage(),
-            ], $exeption->getCode());
+            return response()->json(['message' => 'O seu cadastro foi verificado com sucesso!'], Response::HTTP_OK);
+        } catch (Throwable $exception) {
+            return response()->json(['message' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
