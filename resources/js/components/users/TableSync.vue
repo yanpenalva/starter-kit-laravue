@@ -1,4 +1,5 @@
 <script setup>
+import Pagination from '@/components/shared/Pagination.vue';
 import { ref } from 'vue';
 
 const emit = defineEmits([
@@ -13,10 +14,11 @@ const emit = defineEmits([
   'notify',
   'onValidate',
 ]);
-const loading = ref();
+
+const loading = ref(false);
 const pagination = ref({});
-const columns = ref();
-const rows = ref();
+const columns = ref([]);
+const rows = ref([]);
 const itemDelete = ref(null);
 const confirmRowDelete = ref(false);
 
@@ -24,6 +26,7 @@ const deleteRow = (row) => {
   confirmRowDelete.value = true;
   itemDelete.value = row;
 };
+
 const confirmDeleteRow = (isStatus) => {
   confirmRowDelete.value = false;
   if (isStatus) {
@@ -40,13 +43,12 @@ const confirmDeleteRow = (isStatus) => {
     bordered
     :rows="rows"
     :columns="columns"
-    row-key="name"
-    no-data-label="Nenhum registro encontrado"
+    row-key="id"
     :rows-per-page-options="[10, 25, 50, 100]"
     :loading="loading"
     loading-label="Carregando..."
     :pagination="pagination"
-    :computed-rows-number="20"
+    :no-data-label="loading ? '' : 'Nenhum registro encontrado'"
     @update:pagination="emit('updatePagination', $event)"
     @request="emit('updatePagination', $event)">
     <template #header="props">
@@ -54,11 +56,11 @@ const confirmDeleteRow = (isStatus) => {
         <q-card>
           <q-card-section class="row items-center">
             <span class="q-ml-sm">
-              <strong
-                >Tem certeza de que deseja excluir este usuário?
+              <strong>
+                Tem certeza de que deseja excluir este usuário?
                 <br />
-                Esta ação não poderá ser desfeita.</strong
-              >
+                Esta ação não poderá ser desfeita.
+              </strong>
             </span>
           </q-card-section>
 
@@ -77,6 +79,7 @@ const confirmDeleteRow = (isStatus) => {
           </q-card-actions>
         </q-card>
       </q-dialog>
+
       <q-tr :props="props">
         <q-th v-for="col in props.cols" :key="col.name" :props="props">
           {{ col.label }}
@@ -87,7 +90,7 @@ const confirmDeleteRow = (isStatus) => {
     <template #body="bodyProps">
       <q-tr :props="bodyProps">
         <q-td v-for="col in bodyProps.cols" :key="col.name" :props="bodyProps">
-          <span v-if="col.name == 'setSituation'">
+          <span v-if="col.name === 'setSituation'">
             <q-toggle
               v-model="bodyProps.row.active"
               color="primary"
@@ -96,8 +99,9 @@ const confirmDeleteRow = (isStatus) => {
                 emit('onStatus', { value: $event, data: bodyProps.row })
               " />
           </span>
+
           <q-btn
-            v-else-if="col.name == 'action'"
+            v-else-if="col.name === 'action'"
             dense
             flat
             round
@@ -106,7 +110,7 @@ const confirmDeleteRow = (isStatus) => {
             <q-menu>
               <q-list dense style="min-width: 150px">
                 <q-item
-                  v-if="col.methods.onConsult"
+                  v-if="col.methods?.onConsult"
                   clickable
                   v-close-popup
                   :to="{ name: 'showUsers', params: { id: bodyProps.row.id } }"
@@ -114,15 +118,15 @@ const confirmDeleteRow = (isStatus) => {
                   <q-item-section>Ver detalhes</q-item-section>
                 </q-item>
                 <q-item
-                  v-if="col.methods.onEdit"
+                  v-if="col.methods?.onEdit"
                   clickable
                   v-close-popup
                   @click="emit('onEdit', bodyProps.row)">
                   <q-item-section>Editar</q-item-section>
                 </q-item>
-                <q-separator></q-separator>
+                <q-separator />
                 <q-item
-                  v-if="col.methods.onDelete(bodyProps.row)"
+                  v-if="col.methods?.onDelete(bodyProps.row)"
                   clickable
                   v-close-popup
                   @click="deleteRow(bodyProps.row)">
@@ -131,49 +135,16 @@ const confirmDeleteRow = (isStatus) => {
               </q-list>
             </q-menu>
           </q-btn>
+
           <span v-else>
-            {{ col.value }}
+            {{ bodyProps.row[col.field] ?? '-' }}
           </span>
         </q-td>
       </q-tr>
     </template>
 
     <template #pagination="scope">
-      <span>Página {{ scope.pagination.page }} de {{ scope.pagesNumber }} </span>
-      <q-btn
-        v-if="scope.pagesNumber > 2"
-        icon="first_page"
-        color="grey-8"
-        round
-        dense
-        flat
-        :disable="scope.isFirstPage"
-        @click="scope.firstPage" />
-      <q-btn
-        icon="chevron_left"
-        color="grey-8"
-        round
-        dense
-        flat
-        :disable="scope.isFirstPage"
-        @click="scope.prevPage" />
-      <q-btn
-        icon="chevron_right"
-        color="grey-8"
-        round
-        dense
-        flat
-        :disable="scope.isLastPage"
-        @click="scope.nextPage" />
-      <q-btn
-        v-if="scope.pagesNumber > 2"
-        icon="last_page"
-        color="grey-8"
-        round
-        dense
-        flat
-        :disable="scope.isLastPage"
-        @click="scope.lastPage" />
+      <Pagination :scope="scope" />
     </template>
   </q-table>
 </template>

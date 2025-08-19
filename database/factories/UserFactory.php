@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
 
 namespace Database\Factories;
 
@@ -12,10 +14,10 @@ class UserFactory extends Factory
         return [
             'name' => fake('pt_BR')->name(),
             'email' => fake('pt_BR')->email(),
-            'cpf' => preg_replace('/\D/', '', fake('pt_BR')->cpf()),
+            'cpf' => mb_str_pad((string) random_int(10000000000, 99999999999), 11, '0', STR_PAD_LEFT),
             'active' => true,
             'email_verified_at' => now(),
-            'password' => 'admin',
+            'password' => \Illuminate\Support\Facades\Hash::make('admin'),
             'remember_token' => Str::random(10),
         ];
     }
