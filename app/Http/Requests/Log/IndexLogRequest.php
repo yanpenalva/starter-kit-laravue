@@ -30,7 +30,11 @@ final class IndexLogRequest extends FormRequest {
         return [
             'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'page' => ['sometimes', 'integer', 'min:1'],
-            'column' => ['sometimes', 'string', 'in:id,logName,description,causer,subject,createdAt'],
+            'column' => [
+                'sometimes',
+                'string',
+                'in:id,logName,description,event,causer,subject,created_at'
+            ],
             'order' => ['sometimes', 'string', 'in:asc,desc'],
             'search' => ['sometimes', 'string', 'nullable'],
             'paginated' => ['sometimes', 'integer', 'in:0,1'],

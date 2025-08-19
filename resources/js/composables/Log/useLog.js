@@ -6,18 +6,28 @@ export default function useLog() {
   const $q = useQuasar();
   const store = useLogStore();
   const loading = ref(false);
-  const pagination = ref({});
+  const pagination = ref({
+    sortBy: 'id',
+    descending: true,
+    page: 1,
+    rowsPerPage: 10,
+    rowsNumber: 0,
+  });
   const searchText = ref('');
   const rows = ref([]);
   const errors = ref({});
 
-  const columnMap = {
-    id: 'id',
-    action: 'eventPt',
-    description: 'description',
-    executedBy: 'causer',
-    affected: 'subject',
-    createdAt: 'createdAt',
+  const columnResolver = new Map([
+    ['id', 'id'],
+    ['eventPt', 'event'],
+    ['description', 'description'],
+    ['causer', 'causer'],
+    ['subject', 'subject'],
+    ['createdAt', 'created_at'],
+  ]);
+
+  const resolveColumn = (sortBy) => {
+    return columnResolver.has(sortBy) ? columnResolver.get(sortBy) : 'id';
   };
 
   const listPage = async (params = {}) => {
@@ -25,22 +35,31 @@ export default function useLog() {
       $q.loading.show();
       loading.value = true;
 
+      const sortBy = params.column ?? pagination.value.sortBy ?? 'id';
+      const order = params.order ?? (pagination.value.descending ? 'desc' : 'asc');
+      const page = params.page ?? pagination.value.page ?? 1;
+      const limit = params.limit ?? pagination.value.rowsPerPage ?? 10;
+
+      const column = resolveColumn(sortBy);
+
       await store.list({
-        ...params,
         search: searchText.value,
         paginated: 1,
+        page,
+        limit,
+        column,
+        order,
       });
 
       const response = store.getLogs;
 
-      rows.value = response;
-
+      rows.value = response.data ?? [];
       pagination.value = {
-        rowsPerPage: response?.per_page ?? 10,
-        page: response?.current_page ?? 1,
-        rowsNumber: response?.total ?? 0,
-        sortBy: params.column ?? 'id',
-        descending: (params.order ?? 'desc') === 'desc',
+        rowsPerPage: response.per_page ?? limit,
+        page: response.current_page ?? page,
+        rowsNumber: response.total ?? 0,
+        sortBy,
+        descending: order === 'desc',
       };
     } finally {
       loading.value = false;
@@ -49,21 +68,22 @@ export default function useLog() {
   };
 
   const handleSearch = async (value) => {
-    searchText.value = value;
-    await listPage();
+    searchText.value = value ?? '';
+    await listPage({ page: 1 });
   };
 
   const handleResetSearch = async () => {
     searchText.value = '';
-    await listPage();
+    await listPage({ page: 1 });
   };
 
-  const updatePagination = async (pagination) => {
+  const updatePagination = async (event) => {
+    const paginationEvent = event?.pagination ?? event;
     await listPage({
-      column: pagination.sortBy,
-      order: pagination.descending ? 'desc' : 'asc',
-      page: pagination.page,
-      perPage: pagination.rowsPerPage,
+      column: paginationEvent?.sortBy,
+      order: paginationEvent?.descending ? 'desc' : 'asc',
+      page: paginationEvent?.page,
+      limit: paginationEvent?.rowsPerPage,
     });
   };
 
@@ -74,7 +94,6 @@ export default function useLog() {
     searchText,
     errors,
     filter: searchText,
-    columnMap,
     listPage,
     handleSearch,
     handleResetSearch,
