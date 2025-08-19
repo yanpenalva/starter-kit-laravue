@@ -33,33 +33,23 @@ const props = defineProps({
       </q-tr>
     </template>
 
-    <template #body="bodyProps">
-      <q-tr :props="bodyProps">
-        <q-td v-for="col in bodyProps.cols" :key="col.name" :props="bodyProps">
-          <q-btn
-            v-if="col.name === 'action'"
-            dense
-            flat
-            round
-            icon="more_horiz"
-            class="button-more-horiz">
-            <q-menu>
-              <q-list dense style="min-width: 150px">
-                <q-item
-                  v-if="col.methods?.onConsult"
-                  clickable
-                  v-close-popup
-                  @click="emit('onConsult', bodyProps.row)">
-                  <q-item-section>Ver detalhes</q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn>
-          <span v-else>
-            {{ bodyProps.row[col.field] ?? '-' }}
-          </span>
-        </q-td>
-      </q-tr>
+    <!-- Template apenas para a coluna de ações -->
+    <template #body-cell-action="props">
+      <q-td :props="props">
+        <q-btn dense flat round icon="more_horiz" class="button-more-horiz">
+          <q-menu>
+            <q-list dense style="min-width: 150px">
+              <q-item
+                v-if="props.col.methods?.onConsult"
+                clickable
+                v-close-popup
+                @click="emit('onConsult', props.row)">
+                <q-item-section>Ver detalhes</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+      </q-td>
     </template>
 
     <template #pagination="scope">
@@ -75,7 +65,6 @@ const props = defineProps({
     background-color: #064C7E
     color: white
     font-weight: bold
-
   thead tr th
     position: sticky
     z-index: 1

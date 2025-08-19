@@ -18,7 +18,6 @@ const useRole = () => {
   const store = useRoleStore();
   const permissionStore = usePermissionStore();
   const authStore = useAuthStore();
-
   const rows = ref([]);
   const selectedPermissionIds = ref([]);
   const initialRoleSetup = ref(false);

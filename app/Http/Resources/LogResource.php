@@ -18,18 +18,13 @@ final class LogResource extends JsonResource {
     public function toArray(Request $request): array {
         $activity = $this->resource;
 
-        $causer = $activity->causer ? [
-            'id' => $activity->causer->getKey(),
-            'type' => class_basename($activity->causer_type),
-            'name' => $activity->causer->name ?? ($activity->causer->email ?? null),
-            'email' => $activity->causer->email ?? null,
-        ] : null;
+        $causerName = $activity->causer
+            ? ($activity->causer->name ?? ($activity->causer->email ?? null))
+            : null;
 
-        $subject = $activity->subject ? [
-            'id' => $activity->subject->getKey(),
-            'type' => class_basename($activity->subject_type),
-            'name' => $activity->subject->name ?? ($activity->subject->title ?? null),
-        ] : null;
+        $subjectName = $activity->subject
+            ? ($activity->subject->name ?? ($activity->subject->title ?? null))
+            : null;
 
         $props = $activity->properties instanceof Collection
             ? $activity->properties->toArray()
@@ -41,8 +36,8 @@ final class LogResource extends JsonResource {
             'event' => $activity->event ?? null,
             'eventPt' => EventTranslator::translateEvent($activity->event ?? null),
             'description' => $activity->description,
-            'causer' => $causer,
-            'subject' => $subject,
+            'causer' => $causerName,
+            'subject' => $subjectName,
             'properties' => $props,
             'createdAt' => $activity->created_at?->translatedFormat('d/m/Y H\hi\m\i\n'),
             'updatedAt' => $activity->updated_at?->translatedFormat('d/m/Y H\hi\m\i\n'),

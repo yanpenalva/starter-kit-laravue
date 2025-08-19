@@ -33,16 +33,6 @@ const useLogStore = defineStore('logs', {
       const { data } = await service.get(id);
       this.log = data;
     },
-    clearStore() {
-      this.logs = {
-        data: [],
-        per_page: 10,
-        total: 0,
-        current_page: 1,
-      };
-      this.log = null;
-      this.errors = null;
-    },
   },
 });
 

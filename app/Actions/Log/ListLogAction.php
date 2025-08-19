@@ -61,12 +61,11 @@ final readonly class ListLogAction {
             is_string($order),
             fn($query) => $query->orderBy(
                 match ($column) {
-                    'logName'     => 'activity_log.log_name',
                     'description' => 'activity_log.description',
                     'causer'      => 'causer_users.name',
                     'subject'     => 'subject_users.name',
                     'createdAt'   => 'activity_log.created_at',
-                    default       => 'activity_log.id',
+                    default       => 'activity_log.created_at',
                 },
                 $order
             )
