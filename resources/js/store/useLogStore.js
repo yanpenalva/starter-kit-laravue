@@ -1,4 +1,3 @@
-// useLogStore.js
 import service from '@/services/LogService';
 import { defineStore } from 'pinia';
 

@@ -33,7 +33,6 @@ const props = defineProps({
       </q-tr>
     </template>
 
-    <!-- Template apenas para a coluna de ações -->
     <template #body-cell-action="props">
       <q-td :props="props">
         <q-btn dense flat round icon="more_horiz" class="button-more-horiz">

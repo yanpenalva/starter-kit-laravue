@@ -5,44 +5,40 @@ import { ref } from 'vue';
 export default function useLog() {
   const $q = useQuasar();
   const store = useLogStore();
-
   const loading = ref(false);
   const pagination = ref({});
   const searchText = ref('');
   const rows = ref([]);
   const errors = ref({});
 
+  const validColumns = ['description', 'event', 'causer', 'subject', 'createdAt'];
+
+  const getValidColumn = (column) => {
+    return validColumns.includes(column) ? column : 'createdAt';
+  };
+
   const listPage = async (params = {}) => {
     try {
       $q.loading.show();
       loading.value = true;
 
-      const sortBy = params.column ?? pagination.value.sortBy ?? 'createdAt';
-      const order =
-        params.order ?? (pagination.value.descending ? 'desc' : 'asc') ?? 'desc';
-      const page = params.page ?? pagination.value.page ?? 1;
-      const limit = params.limit ?? pagination.value.rowsPerPage ?? 10;
-
-      await store.list({
-        search: searchText.value,
+      const requestParams = {
+        search: searchText.value || '',
         paginated: 1,
-        page,
-        limit,
-        column: sortBy,
-        order,
-      });
+        page: params.page || pagination.value.page || 1,
+        limit: params.limit || pagination.value.rowsPerPage || 10,
+        column: getValidColumn(params.column || pagination.value.sortBy || 'createdAt'),
+        order: params.order || (pagination.value.descending ? 'desc' : 'asc') || 'desc',
+      };
+
+      await store.list(requestParams);
 
       const response = store.getLogs;
+      rows.value = response.data || response || [];
 
-      rows.value = response.data ?? [];
-
-      pagination.value = {
-        page: response.current_page ?? page,
-        rowsPerPage: response.per_page ?? limit,
-        rowsNumber: response.total ?? 0,
-        sortBy,
-        descending: order === 'desc',
-      };
+      pagination.value.rowsPerPage = response.meta?.per_page || response.per_page || 10;
+      pagination.value.page = response.meta?.current_page || response.current_page || 1;
+      pagination.value.rowsNumber = response.meta?.total || response.total || 0;
     } finally {
       loading.value = false;
       $q.loading.hide();
@@ -53,8 +49,9 @@ export default function useLog() {
     searchText.value = value ?? '';
     await listPage({
       page: 1,
-      column: pagination.value?.sortBy ?? 'createdAt',
+      limit: pagination.value?.rowsPerPage || 10,
       order: pagination.value?.descending ? 'desc' : 'asc',
+      column: pagination.value?.sortBy || 'createdAt',
     });
   };
 
@@ -62,30 +59,22 @@ export default function useLog() {
     searchText.value = '';
     await listPage({
       page: 1,
-      column: pagination.value?.sortBy ?? 'createdAt',
+      limit: pagination.value?.rowsPerPage || 10,
       order: pagination.value?.descending ? 'desc' : 'asc',
+      column: pagination.value?.sortBy || 'createdAt',
     });
   };
 
   const updatePagination = async (event) => {
-    const paginationEvent = event?.pagination ?? event;
+    pagination.value.descending = event.pagination?.descending;
+    pagination.value.sortBy = event.pagination?.sortBy;
 
-    const sortBy = paginationEvent?.sortBy ?? 'createdAt';
-    const order = paginationEvent?.descending ? 'desc' : 'asc';
-    const page = paginationEvent?.page ?? 1;
-    const limit = paginationEvent?.rowsPerPage ?? 10;
-
-    console.log(sortBy, order, page, limit);
-
-    pagination.value = {
-      sortBy,
-      descending: order === 'desc',
-      page: event.current_page ?? page,
-      rowsPerPage: event.per_page ?? limit,
-      rowsNumber: event.total ?? 0,
-    };
-
-    await listPage({ page, limit, column: sortBy, order });
+    await listPage({
+      page: event.pagination?.page || 1,
+      limit: event.pagination?.rowsPerPage || 10,
+      order: event.pagination?.descending ? 'desc' : 'asc',
+      column: event.pagination?.sortBy || 'createdAt',
+    });
   };
 
   return {
