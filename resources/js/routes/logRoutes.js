@@ -8,7 +8,7 @@ const logRoutes = {
       component: async () => import('@pages/admin/logs/ListPage.vue'),
       meta: {
         requiresAuth: true,
-        module: 'Logs',
+        module: 'Histórico de Registros',
         icon: 'history',
         iconColor: '#344955',
         iconBg: '#FFAA30',

@@ -1,36 +1,30 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Log;
 
-use App\Actions\Log\{ListActivityLogAction, ShowActivityLogAction};
+use App\Actions\Log\{ListLogAction, ShowLogAction};
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Log\{IndexActivityLogRequest, ShowActivityLogRequest};
-use App\Http\Resources\ActivityLogResource;
+use App\Http\Requests\Log\IndexLogRequest;
+use App\Http\Resources\LogResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Spatie\Activitylog\Models\Activity;
 
-final class LogController extends Controller
-{
-    public function index(IndexActivityLogRequest $request): JsonResource
-    {
+final class LogController extends Controller {
+    public function index(IndexLogRequest $request): JsonResource {
         $this->authorize('index', Activity::class);
 
-        $params = $request->validated();
-        $fluent = new \Illuminate\Support\Fluent($params);
+        $logs = app(ListLogAction::class)->execute($request->fluent());
 
-        $logs = app(ListActivityLogAction::class)->execute($fluent);
-
-        return ActivityLogResource::collection($logs);
+        return LogResource::collection($logs);
     }
 
-    public function show(ShowActivityLogRequest $request, int $id): JsonResource
-    {
-        $activity = app(ShowActivityLogAction::class)->execute($id);
+    public function show(int $id): JsonResource {
+        $log = app(ShowLogAction::class)->execute($id);
 
-        $this->authorize('view', $activity);
+        $this->authorize('show', $log);
 
-        return new ActivityLogResource($activity);
+        return new LogResource($log);
     }
 }

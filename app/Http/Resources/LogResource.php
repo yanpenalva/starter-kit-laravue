@@ -1,22 +1,20 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 
-final class ActivityLogResource extends JsonResource
-{
-    public function __construct(Activity $resource)
-    {
+final class LogResource extends JsonResource {
+    public function __construct(Activity $resource) {
         parent::__construct($resource);
     }
 
-    public function toArray(Request $request): array
-    {
+    public function toArray(Request $request): array {
         $activity = $this->resource;
 
         $causer = $activity->causer ? [
@@ -32,7 +30,7 @@ final class ActivityLogResource extends JsonResource
             'name' => $activity->subject->name ?? ($activity->subject->title ?? null),
         ] : null;
 
-        $props = $activity->properties instanceof \Illuminate\Support\Collection
+        $props = $activity->properties instanceof Collection
             ? $activity->properties->toArray()
             : (is_string($activity->properties) ? json_decode($activity->properties, true) ?? [] : (array) $activity->properties);
 
@@ -45,13 +43,12 @@ final class ActivityLogResource extends JsonResource
             'causer' => $causer,
             'subject' => $subject,
             'properties' => $props,
-            'createdAt' => $activity->created_at?->toDateTimeString(),
-            'updatedAt' => $activity->updated_at?->toDateTimeString(),
+            'createdAt' => $activity->created_at?->translatedFormat('d/m/Y H\hi\m\i\n'),
+            'updatedAt' => $activity->updated_at?->translatedFormat('d/m/Y H\hi\m\i\n'),
         ];
     }
 
-    private function translateEvent(?string $event): string
-    {
+    private function translateEvent(?string $event): string {
         return match ($event) {
             'view' => 'Visualizar',
             'create' => 'Criar',

@@ -5,7 +5,13 @@ import { ref } from 'vue';
 export default function useLogConfigListPage() {
   const columns = ref([
     { name: 'id', align: 'left', label: 'ID', field: 'id', sortable: true },
-    { name: 'eventPt', label: 'Ação', field: 'eventPt', align: 'left', sortable: true },
+    {
+      name: 'eventPt',
+      label: 'Ação',
+      field: 'eventPt',
+      align: 'left',
+      sortable: true,
+    },
     {
       name: 'description',
       label: 'Descrição',
@@ -16,16 +22,18 @@ export default function useLogConfigListPage() {
     {
       name: 'causer',
       label: 'Executado por',
-      field: (row) => row.causer?.name ?? '-',
+      field: 'causer',
+      format: (val) => val?.name ?? '-',
       align: 'left',
-      sortable: false,
+      sortable: true,
     },
     {
       name: 'subject',
       label: 'Afetado',
-      field: (row) => row.subject?.name ?? '-',
+      field: 'subject',
+      format: (val) => val?.name ?? '-',
       align: 'left',
-      sortable: false,
+      sortable: true,
     },
     {
       name: 'createdAt',
@@ -38,7 +46,7 @@ export default function useLogConfigListPage() {
       name: 'action',
       label: 'Opções',
       align: 'center',
-      field: (row) => row.id,
+      field: 'id',
       methods: {
         onConsult: hasPermission([LOG_PERMISSION.LIST]),
       },

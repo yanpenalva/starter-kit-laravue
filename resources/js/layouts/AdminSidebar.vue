@@ -80,7 +80,7 @@ const emit = defineEmits(['update:miniState']);
         <q-item-section avatar class="text-white">
           <q-icon name="history" />
         </q-item-section>
-        <q-item-section class="text-white"> Logs de Atividade </q-item-section>
+        <q-item-section class="text-white"> Histórico de Registros </q-item-section>
       </q-item>
     </q-list>
 

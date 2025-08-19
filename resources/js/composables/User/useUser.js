@@ -18,9 +18,6 @@ const useUser = () => {
 
   const { user } = storeToRefs(useAuthStore());
 
-  const confirmHandleStatus = ref(false);
-  const dataHandleStatus = ref(null);
-
   const nameUser = computed(() => user.value?.name);
 
   const handleSearch = async (value) => {

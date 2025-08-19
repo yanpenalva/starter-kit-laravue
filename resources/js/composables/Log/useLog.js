@@ -1,51 +1,83 @@
-import service from '@/services/LogService';
+import useLogStore from '@/store/useLogStore';
 import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 
 export default function useLog() {
   const $q = useQuasar();
+  const store = useLogStore();
   const loading = ref(false);
+  const pagination = ref({});
+  const searchText = ref('');
   const rows = ref([]);
-  const pagination = ref({
-    page: 1,
-    rowsPerPage: 10,
-    sortBy: 'id',
-    descending: true,
-  });
+  const errors = ref({});
 
-  const listPage = async (event = {}) => {
+  const columnMap = {
+    id: 'id',
+    action: 'eventPt',
+    description: 'description',
+    executedBy: 'causer',
+    affected: 'subject',
+    createdAt: 'createdAt',
+  };
+
+  const listPage = async (params = {}) => {
     try {
       $q.loading.show();
       loading.value = true;
-      const params = {
-        page: event.page ?? pagination.value.page,
-        rowsPerPage: event.rowsPerPage ?? pagination.value.rowsPerPage,
-        sortBy: event.sortBy ?? pagination.value.sortBy,
-        order: (event.descending ?? pagination.value.descending) ? 'desc' : 'asc',
-        paginated: true,
-        search: event.search ?? '',
+
+      await store.list({
+        ...params,
+        search: searchText.value,
+        paginated: 1,
+      });
+
+      const response = store.getLogs;
+
+      rows.value = response;
+
+      pagination.value = {
+        rowsPerPage: response?.per_page ?? 10,
+        page: response?.current_page ?? 1,
+        rowsNumber: response?.total ?? 0,
+        sortBy: params.column ?? 'id',
+        descending: (params.order ?? 'desc') === 'desc',
       };
-      const data = await service.index(params);
-      rows.value = data.data;
-      pagination.value.page = data.current_page;
-      pagination.value.rowsPerPage = data.per_page;
-      pagination.value.rowsNumber = data.total;
     } finally {
       loading.value = false;
       $q.loading.hide();
     }
   };
 
-  const viewLog = async (id) => {
-    const data = await service.get(id);
-    return data;
+  const handleSearch = async (value) => {
+    searchText.value = value;
+    await listPage();
+  };
+
+  const handleResetSearch = async () => {
+    searchText.value = '';
+    await listPage();
+  };
+
+  const updatePagination = async (pagination) => {
+    await listPage({
+      column: pagination.sortBy,
+      order: pagination.descending ? 'desc' : 'asc',
+      page: pagination.page,
+      perPage: pagination.rowsPerPage,
+    });
   };
 
   return {
     loading,
     rows,
     pagination,
+    searchText,
+    errors,
+    filter: searchText,
+    columnMap,
     listPage,
-    viewLog,
+    handleSearch,
+    handleResetSearch,
+    updatePagination,
   };
 }
