@@ -1,13 +1,25 @@
 <script setup>
 import PageTopTitle from '@/components/shared/PageTopTitle.vue';
 import SearchInput from '@/components/shared/SearchInput.vue';
-import TableSync from '@/components/users/TableSync.vue';
+import TableSync from '@/components/logs/TableSync.vue';
+import LogDetailModal from '@/components/logs/LogDetailModal.vue';
 import useLog from '@/composables/Log/useLog';
 import useLogConfigListPage from '@/composables/Log/useLogConfigListPage';
 import PageWrapper from '@/pages/admin/PageWrapper.vue';
 
 const { columns } = useLogConfigListPage();
-const { filter, handleSearch, loading, rows, pagination, updatePagination } = useLog();
+const {
+  filter,
+  handleSearch,
+  loading,
+  rows,
+  pagination,
+  updatePagination,
+  showModal,
+  selectedLog,
+  onConsult,
+  closeModal,
+} = useLog();
 </script>
 
 <template>
@@ -36,7 +48,13 @@ const { filter, handleSearch, loading, rows, pagination, updatePagination } = us
         :columns="columns"
         :rows="rows"
         :pagination="pagination"
-        @update-pagination="updatePagination" />
+        @update-pagination="updatePagination"
+        @on-consult="onConsult" />
+
+      <LogDetailModal
+        v-model="showModal"
+        :log="selectedLog"
+        @update:model-value="closeModal" />
     </template>
   </PageWrapper>
 </template>

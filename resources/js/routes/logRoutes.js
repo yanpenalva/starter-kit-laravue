@@ -15,19 +15,6 @@ const logRoutes = {
         roles: [LOG_PERMISSION.LIST],
       },
     },
-    // {
-    //   path: 'show/:id',
-    //   name: 'showLog',
-    //   component: async () => import('@pages/admin/logs/ShowPage.vue'),
-    //   meta: {
-    //     requiresAuth: true,
-    //     module: 'Logs',
-    //     icon: 'history',
-    //     iconColor: '#344955',
-    //     iconBg: '#FFAA30',
-    //     roles: [LOG_PERMISSION.LIST],
-    //   },
-    // },
   ],
 };
 

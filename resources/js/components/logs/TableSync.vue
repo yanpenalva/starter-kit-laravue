@@ -2,6 +2,7 @@
 import Pagination from '@/components/shared/Pagination.vue';
 
 const emit = defineEmits(['updatePagination', 'onConsult']);
+
 const props = defineProps({
   loading: Boolean,
   pagination: Object,
@@ -33,22 +34,34 @@ const props = defineProps({
       </q-tr>
     </template>
 
-    <template #body-cell-action="props">
-      <q-td :props="props">
-        <q-btn dense flat round icon="more_horiz" class="button-more-horiz">
-          <q-menu>
-            <q-list dense style="min-width: 150px">
-              <q-item
-                v-if="props.col.methods?.onConsult"
-                clickable
-                v-close-popup
-                @click="emit('onConsult', props.row)">
-                <q-item-section>Ver detalhes</q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
-      </q-td>
+    <template #body="bodyProps">
+      <q-tr :props="bodyProps">
+        <q-td v-for="col in bodyProps.cols" :key="col.name" :props="bodyProps">
+          <!-- Botão só aparece se não for coluna action OU se for action mas não for evento 'view' -->
+          <q-btn
+            v-if="col.name === 'action' && bodyProps.row.event !== 'view'"
+            dense
+            flat
+            round
+            icon="more_horiz"
+            class="button-more-horiz">
+            <q-menu>
+              <q-list dense style="min-width: 150px">
+                <q-item
+                  v-if="col.methods?.onConsult"
+                  clickable
+                  v-close-popup
+                  @click="emit('onConsult', bodyProps.row)">
+                  <q-item-section>Ver detalhes</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+          <span v-else-if="col.name !== 'action'">
+            {{ bodyProps.row[col.field] ?? '-' }}
+          </span>
+        </q-td>
+      </q-tr>
     </template>
 
     <template #pagination="scope">

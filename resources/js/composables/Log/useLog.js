@@ -11,6 +11,9 @@ export default function useLog() {
   const rows = ref([]);
   const errors = ref({});
 
+  const showModal = ref(false);
+  const selectedLog = ref(null);
+
   const validColumns = ['description', 'event', 'causer', 'subject', 'createdAt'];
 
   const getValidColumn = (column) => {
@@ -35,7 +38,6 @@ export default function useLog() {
 
       const response = store.getLogs;
       rows.value = response.data || response || [];
-
       pagination.value.rowsPerPage = response.meta?.per_page || response.per_page || 10;
       pagination.value.page = response.meta?.current_page || response.current_page || 1;
       pagination.value.rowsNumber = response.meta?.total || response.total || 0;
@@ -76,6 +78,15 @@ export default function useLog() {
       column: event.pagination?.sortBy || 'createdAt',
     });
   };
+  const onConsult = (row) => {
+    selectedLog.value = row;
+    showModal.value = true;
+  };
+
+  const closeModal = () => {
+    showModal.value = false;
+    selectedLog.value = null;
+  };
 
   return {
     loading,
@@ -88,5 +99,9 @@ export default function useLog() {
     handleSearch,
     handleResetSearch,
     updatePagination,
+    showModal,
+    selectedLog,
+    onConsult,
+    closeModal,
   };
 }

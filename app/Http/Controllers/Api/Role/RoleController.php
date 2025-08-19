@@ -70,7 +70,6 @@ class RoleController extends Controller
         );
 
     }
-
     public function listAll(): JsonResource
     {
         $roles = app(ListAllRoleAction::class)->execute();

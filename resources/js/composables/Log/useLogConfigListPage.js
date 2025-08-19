@@ -3,6 +3,7 @@ import { LOG_PERMISSION } from '@utils/permissions';
 import { ref } from 'vue';
 
 export default function useLogConfigListPage() {
+  const ACTION_VIEW = 'view';
   const columns = ref([
     {
       name: 'description',
@@ -15,7 +16,6 @@ export default function useLogConfigListPage() {
       name: 'causer',
       label: 'Executado por',
       field: 'causer',
-      format: (val) => val?.name ?? '-',
       align: 'left',
       sortable: true,
     },
@@ -23,7 +23,6 @@ export default function useLogConfigListPage() {
       name: 'subject',
       label: 'Afetado',
       field: 'subject',
-      format: (val) => val?.name ?? '-',
       align: 'left',
       sortable: true,
     },
@@ -40,7 +39,11 @@ export default function useLogConfigListPage() {
       align: 'center',
       field: 'id',
       methods: {
-        onConsult: hasPermission([LOG_PERMISSION.LIST]),
+        onConsult: (row) => {
+          const hasPermissionValue = hasPermission([LOG_PERMISSION.LIST]);
+          const isNotView = row.event !== ACTION_VIEW;
+          return hasPermissionValue && isNotView;
+        },
       },
     },
   ]);
