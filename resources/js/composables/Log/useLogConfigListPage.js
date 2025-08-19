@@ -4,14 +4,6 @@ import { ref } from 'vue';
 
 export default function useLogConfigListPage() {
   const columns = ref([
-    { name: 'id', align: 'left', label: 'ID', field: 'id', sortable: true },
-    {
-      name: 'eventPt',
-      label: 'Ação',
-      field: 'eventPt',
-      align: 'left',
-      sortable: true,
-    },
     {
       name: 'description',
       label: 'Descrição',

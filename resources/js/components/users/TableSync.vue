@@ -17,7 +17,6 @@ const loading = ref();
 const pagination = ref({});
 const columns = ref();
 const rows = ref();
-const deletionReason = ref('');
 const itemDelete = ref(null);
 const confirmRowDelete = ref(false);
 

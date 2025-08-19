@@ -33,7 +33,7 @@ final class IndexLogRequest extends FormRequest {
             'column' => [
                 'sometimes',
                 'string',
-                'in:id,logName,description,event,causer,subject,created_at'
+                'in:description,event,causer,subject,createdAt'
             ],
             'order' => ['sometimes', 'string', 'in:asc,desc'],
             'search' => ['sometimes', 'string', 'nullable'],

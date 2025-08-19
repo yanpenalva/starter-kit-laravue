@@ -36,7 +36,6 @@ const { filter, handleSearch, loading, rows, pagination, updatePagination } = us
         :columns="columns"
         :rows="rows"
         :pagination="pagination"
-        :pagination-values="pagination"
         @update-pagination="updatePagination" />
     </template>
   </PageWrapper>

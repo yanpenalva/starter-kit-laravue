@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
+use App\Helpers\EventTranslator;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
@@ -38,7 +39,7 @@ final class LogResource extends JsonResource {
             'id' => $activity->getKey(),
             'logName' => $activity->log_name,
             'event' => $activity->event ?? null,
-            'eventPt' => $this->translateEvent($activity->event ?? null),
+            'eventPt' => EventTranslator::translateEvent($activity->event ?? null),
             'description' => $activity->description,
             'causer' => $causer,
             'subject' => $subject,
@@ -46,15 +47,5 @@ final class LogResource extends JsonResource {
             'createdAt' => $activity->created_at?->translatedFormat('d/m/Y H\hi\m\i\n'),
             'updatedAt' => $activity->updated_at?->translatedFormat('d/m/Y H\hi\m\i\n'),
         ];
-    }
-
-    private function translateEvent(?string $event): string {
-        return match ($event) {
-            'view' => 'Visualizar',
-            'create' => 'Criar',
-            'update' => 'Atualizar',
-            'delete' => 'Excluir',
-            default => ucfirst((string) $event ?: 'Evento'),
-        };
     }
 }

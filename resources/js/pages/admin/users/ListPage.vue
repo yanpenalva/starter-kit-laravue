@@ -56,7 +56,6 @@ const {
         :columns="columns"
         :rows="rows"
         :pagination="pagination"
-        :pagination-values="pagination"
         @update-pagination="updatePagination"
         @on-status="onStatus"
         @on-edit="onEdit"
