@@ -24,14 +24,14 @@ const ROLE_FIELDS = {
   ],
 };
 
-const normalizeRoleData = (data = {}) => ({
+const normalizeRoleData = (data = {}, log = {}) => ({
   id: data.id,
   name: data.name,
   slug: data.slug,
   description: data.description ?? '-',
-  created_at: data.created_at,
-  updated_at: data.updated_at,
-  deleted_at: data.deleted_at,
+  created_at: log.createdAt ?? data.created_at,
+  updated_at: log.updatedAt ?? data.updated_at,
+  deleted_at: log.deletedAt ?? data.deleted_at,
   permissions:
     Array.isArray(data.permissions) && data.permissions.length > 0
       ? data.permissions.map((p) => p.name ?? String(p)).join(', ')
@@ -48,5 +48,5 @@ export const useRoleLogFormatter = (log) =>
       delete: 'Perfil Excluído',
     },
     fields: ROLE_FIELDS,
-    normalize: normalizeRoleData,
+    normalize: (data) => normalizeRoleData(data, log),
   });

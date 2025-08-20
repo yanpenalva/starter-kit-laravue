@@ -29,26 +29,6 @@ const normalizeActive = (value) => {
 // --- Formatters ---
 const formatBoolean = (booleanValue) => (booleanValue ? 'Sim' : 'Não');
 
-const formatDateTime = (dateValue) => {
-  const date = new Date(dateValue);
-  if (isNaN(date.getTime())) return String(dateValue);
-
-  const formattedDate = date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-
-  const formattedTime = date
-    .toLocaleTimeString('pt-BR', {
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-    .replace(':', 'h');
-
-  return `${formattedDate} ${formattedTime}min`;
-};
-
 const formatObject = (objectValue) => JSON.stringify(objectValue, null, 2);
 
 // --- Rules ---
@@ -60,18 +40,6 @@ const rules = [
   {
     match: (_value, field) => field === 'active',
     format: (value) => formatBoolean(normalizeActive(value)),
-  },
-  {
-    match: (_value, field) =>
-      [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-        'createdAt',
-        'updatedAt',
-        'deletedAt',
-      ].includes(field),
-    format: formatDateTime,
   },
   {
     match: (value) =>

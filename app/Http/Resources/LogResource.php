@@ -42,13 +42,7 @@ final class LogResource extends JsonResource {
             'properties' => $props,
             'createdAt' => $activity->created_at?->translatedFormat('d/m/Y H\hi\m\i\n'),
             'updatedAt' => $activity->updated_at?->translatedFormat('d/m/Y H\hi\m\i\n'),
-            'deletedAt' => !empty($props['attributes']['before']['deleted_at'])
-                ? \Carbon\Carbon::parse($props['attributes']['before']['deleted_at'])
-                ->translatedFormat('d/m/Y H\hi\m\i\n')
-                : null,
-
-
-
+            'deletedAt' => $props['attributes']['before']['deleted_at'] ?? null,
         ];
     }
 }

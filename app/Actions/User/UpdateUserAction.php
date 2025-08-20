@@ -21,12 +21,18 @@ final readonly class UpdateUserAction {
             /** @var User $user */
             $user = User::findOrFail($id);
 
+            $oldData = $user->only($user->getFillable());
+
             $fillableParams = array_intersect_key(
                 $params->toArray(),
                 array_flip($user->getFillable())
             );
 
-            $user->update($fillableParams);
+            $user->fill($fillableParams);
+
+            $dirty = $user->getDirty();
+
+            $user->save();
             $user->syncRoles([$params->get('role_id')]);
 
             /** @var bool $notify */
@@ -36,7 +42,16 @@ final readonly class UpdateUserAction {
                 Mail::to($user)->queue(new \App\Mail\SendNotificationUserActivation($user));
             }
 
-            $this->logUpdateActivity('users', $user, $user->getDirty(), 'Atualizou um usuário');
+            $this->logUpdateActivity(
+                'users',
+                $user,
+                $dirty,
+                'Atualizou um usuário',
+                [],
+                $oldData,
+                $user->only($user->getFillable())
+            );
+
 
             return $user->load('roles');
         });

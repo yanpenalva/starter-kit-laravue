@@ -27,16 +27,17 @@ const USER_FIELDS = {
   ],
 };
 
-const normalizeUserData = (data = {}) => ({
+const normalizeUserData = (data = {}, log = {}) => ({
   id: data.id,
   name: data.name,
   email: data.email,
   cpf: data.cpf,
   active: data.active,
-  created_at: data.created_at,
-  updated_at: data.updated_at,
-  deleted_at: data.deleted_at,
+  created_at: log.createdAt ?? data.created_at,
+  updated_at: log.updatedAt ?? data.updated_at,
+  deleted_at: log.deletedAt ?? data.deleted_at,
 });
+
 export const useUserLogFormatter = (log) =>
   useGenericLogFormatter(log, {
     titles: {
@@ -45,5 +46,5 @@ export const useUserLogFormatter = (log) =>
       delete: 'Usuário Excluído',
     },
     fields: USER_FIELDS,
-    normalize: normalizeUserData,
+    normalize: (data) => normalizeUserData(data, log),
   });
