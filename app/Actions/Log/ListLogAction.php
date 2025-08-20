@@ -18,23 +18,17 @@ final readonly class ListLogAction {
     public function execute(Fluent $params): LengthAwarePaginator|Collection {
         $query = Activity::query()
             ->with(['causer', 'subject'])
-            ->selectRaw("
-                activity_log.*,
-                COALESCE(
-                    subject_users.name,
-                    (activity_log.properties->'attributes'->>'name'),
-                    (activity_log.properties->'attributes'->'before'->>'name')
-                ) as subject_fallback
-            ")
+            ->selectRaw($this->subjectFallbackSelect())
             ->leftJoin('users as causer_users', 'activity_log.causer_id', '=', 'causer_users.id')
             ->leftJoin('users as subject_users', 'activity_log.subject_id', '=', 'subject_users.id');
 
+        /** @var string|null $search */
         $search = $params->get('search');
 
         $query->when(
             is_string($search) && $search !== '',
             function ($query) use ($search) {
-                $eventSearch = EventTranslator::translateSearchEvent($search);
+                $eventSearch = EventTranslator::translateSearchEvent((string) $search);
 
                 $query->when(
                     $eventSearch !== null,
@@ -45,16 +39,19 @@ final readonly class ListLogAction {
                     $eventSearch === null,
                     function ($query) use ($search) {
                         $query->where(function ($query) use ($search) {
-                            $query->where('activity_log.description', 'ILIKE', "%{$search}%")
-                                ->orWhere('causer_users.name', 'ILIKE', "%{$search}%")
-                                ->orWhere('subject_users.name', 'ILIKE', "%{$search}%")
-                                ->orWhereRaw("(activity_log.properties->'attributes'->>'name') ILIKE ?", ["%{$search}%"])
-                                ->orWhereRaw("(activity_log.properties->'attributes'->'before'->>'name') ILIKE ?", ["%{$search}%"]);
+                            $like = "%{$search}%";
 
-                            $date = \DateTime::createFromFormat('d/m/Y', $search);
+                            $query->where('activity_log.description', 'ILIKE', $like)
+                                ->orWhere('causer_users.name', 'ILIKE', $like)
+                                ->orWhere('subject_users.name', 'ILIKE', $like)
+                                ->orWhereRaw("(activity_log.properties->'attributes'->>'name') ILIKE ?", [$like])
+                                ->orWhereRaw("(activity_log.properties->'attributes'->'before'->>'name') ILIKE ?", [$like]);
+
+                            $date = \DateTime::createFromFormat('d/m/Y', (string) $search) ?: null;
+
                             $query->when(
-                                $date !== false,
-                                fn($query) => $query->orWhereDate('activity_log.created_at', $date->format('Y-m-d'))
+                                $date instanceof \DateTimeInterface,
+                                fn($query) => $query->orWhereDate('activity_log.created_at', $date?->format('Y-m-d'))
                             );
                         });
                     }
@@ -62,21 +59,21 @@ final readonly class ListLogAction {
             }
         );
 
+        /** @var string|null $order */
         $order = $params->get('order');
-        $column = $params->get('column', 'createdAt');
+        $order = is_string($order) ? $order : 'desc';
 
-        $query->when(
-            is_string($order),
-            fn($query) => $query->orderBy(
-                match ($column) {
-                    'description' => 'activity_log.description',
-                    'causer'      => 'causer_users.name',
-                    'subject'     => 'subject_fallback',
-                    'createdAt'   => 'activity_log.created_at',
-                    default       => 'activity_log.created_at',
-                },
-                $order
-            )
+        $column = is_string($params->get('column')) ? $params->get('column') : 'createdAt';
+
+        $query->orderBy(
+            match ($column) {
+                'description' => 'activity_log.description',
+                'causer'      => 'causer_users.name',
+                'subject'     => 'subject_fallback',
+                'createdAt'   => 'activity_log.created_at',
+                default       => 'activity_log.created_at',
+            },
+            $order
         );
 
         $paginated = (bool) $params->get('paginated', false);
@@ -85,5 +82,16 @@ final readonly class ListLogAction {
         return $paginated
             ? $query->paginate($limit)
             : $query->get();
+    }
+
+    private function subjectFallbackSelect(): string {
+        return "
+            activity_log.*,
+            COALESCE(
+                subject_users.name,
+                (activity_log.properties->'attributes'->>'name'),
+                (activity_log.properties->'attributes'->'before'->>'name')
+            ) as subject_fallback
+        ";
     }
 }

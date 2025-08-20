@@ -21,23 +21,33 @@ final readonly class UpdateUserAction {
             /** @var User $user */
             $user = User::findOrFail($id);
 
-            $oldData = $user->only($user->getFillable());
-            $oldData['roles'] = $user->roles->pluck('name')->toArray();
+            /** @var array<string, mixed> $oldData */
+            $oldData = (array) $user->only($user->getFillable());
+            /** @var array<int, string> $oldRoles */
+            $oldRoles = $user->roles->pluck('name')->all();
+            $oldData['roles'] = $oldRoles;
 
+            /** @var array<string, mixed> $fillableParams */
             $fillableParams = array_intersect_key(
                 $params->toArray(),
                 array_flip($user->getFillable())
             );
 
             $user->fill($fillableParams);
-            $dirty = $user->getDirty();
+
+            /** @var array<string, mixed> $dirty */
+            $dirty = (array) $user->getDirty();
             $user->save();
 
+            /** @var array<int, int|string|null> $newRoles */
             $newRoles = [$params->get('role_id')];
             $user->syncRoles($newRoles);
 
-            $newData = $user->only($user->getFillable());
-            $newData['roles'] = $user->roles->pluck('name')->toArray();
+            /** @var array<string, mixed> $newData */
+            $newData = (array) $user->only($user->getFillable());
+            /** @var array<int, string> $newRolesNames */
+            $newRolesNames = $user->roles->pluck('name')->all();
+            $newData['roles'] = $newRolesNames;
 
             if ($oldData['roles'] !== $newData['roles']) {
                 $dirty['roles'] = true;

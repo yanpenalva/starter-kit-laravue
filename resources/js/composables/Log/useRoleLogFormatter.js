@@ -34,7 +34,9 @@ const normalizeRoleData = (data = {}, log = {}) => ({
   deleted_at: log.deletedAt ?? data.deleted_at,
   permissions:
     Array.isArray(data.permissions) && data.permissions.length > 0
-      ? data.permissions.map((p) => p.name ?? String(p)).join(', ')
+      ? data.permissions
+          .map((permission) => permission.name ?? String(permission))
+          .join(', ')
       : data.permissions
         ? String(data.permissions)
         : undefined,

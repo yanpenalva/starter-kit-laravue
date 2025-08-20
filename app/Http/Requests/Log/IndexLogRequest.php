@@ -26,6 +26,9 @@ final class IndexLogRequest extends FormRequest {
         ]);
     }
 
+    /**
+     * @return array<string, array<int, string>>
+     */
     public function rules(): array {
         return [
             'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
