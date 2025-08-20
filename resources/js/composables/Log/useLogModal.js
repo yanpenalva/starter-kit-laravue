@@ -1,5 +1,5 @@
 import { formatValue, getFieldLabel } from '@/utils/logFields';
-import { MODAL_TYPES } from '@/utils/logTypes';
+import { MODAL_TYPES, MODULE_LABELS } from '@/utils/logTypes';
 import { computed } from 'vue';
 import { FORMATTERS } from './formatters';
 
@@ -9,9 +9,12 @@ export function useLogModal(props, emit) {
     set: (value) => emit('update:modelValue', value),
   });
 
-  const modalTitle = computed(() =>
-    props.log ? `Detalhes da Ação - ${props.log.eventPt || props.log.event}` : '',
-  );
+  const modalTitle = computed(() => {
+    if (!props.log) return '';
+    const moduleName = MODULE_LABELS[props.log.logName] || props.log.logName;
+    const eventName = props.log.eventPt || props.log.event;
+    return `Detalhes da Ação - ${moduleName} (${eventName})`;
+  });
 
   const modalData = computed(() => {
     if (!props.log) return null;

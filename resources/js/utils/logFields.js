@@ -12,6 +12,7 @@ export const LABELS_MAP = new Map([
   ['createdAt', 'Criado em'],
   ['updatedAt', 'Atualizado em'],
   ['deletedAt', 'Excluído em'],
+  ['roles', 'Perfil'],
   ['permissions', 'Permissões'],
   ['slug', 'Apelido'],
 ]);

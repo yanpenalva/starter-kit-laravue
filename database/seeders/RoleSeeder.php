@@ -1,20 +1,21 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\{Permission, Role};
+use App\Enums\RolesEnum;
 
-class RoleSeeder extends Seeder
-{
-    public function run(): void
-    {
+final class RoleSeeder extends Seeder {
+    public function run(): void {
         $adminRole = Role::updateOrCreate(
-            ['slug' => 'administrator'],
+            ['slug' => RolesEnum::ADMINISTRATOR->value],
             [
-                'name' => 'Administrador',
+                'name' => RolesEnum::ADMINISTRATOR->label(),
                 'guard_name' => 'web',
-                'slug' => 'administrator',
+                'slug' => RolesEnum::ADMINISTRATOR->value,
                 'description' => 'Administrador da plataforma com acesso completo.',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -25,16 +26,15 @@ class RoleSeeder extends Seeder
         $adminRole->syncPermissions($permissions);
 
         Role::updateOrCreate(
-            ['slug' => 'guest'],
+            ['slug' => RolesEnum::GUEST->value],
             [
-                'name' => 'Visitante',
+                'name' => RolesEnum::GUEST->label(),
                 'guard_name' => 'web',
-                'slug' => 'guest',
+                'slug' => RolesEnum::GUEST->value,
                 'description' => 'Visitante na plataforma com acesso limitado.',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
         );
-
     }
 }

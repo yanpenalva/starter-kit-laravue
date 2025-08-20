@@ -46,8 +46,13 @@ trait LogsActivity {
 
             if (is_string($value) && method_exists($model, $value)) {
                 $changes['before'][$value] = $model->{$value}()->pluck('name')->all();
-                $changes['after'][$value]  = $model->refresh()->{$value}()->pluck('name')->all();
+                $changes['after'][$value]  = $model->{$value}()->pluck('name')->all();
             }
+        }
+
+        if (isset($beforeAttributes['roles']) && isset($afterAttributes['roles'])) {
+            $changes['before']['roles'] = $beforeAttributes['roles'];
+            $changes['after']['roles']  = $afterAttributes['roles'];
         }
 
         activity($activityName)
@@ -57,7 +62,6 @@ trait LogsActivity {
             ->withProperties(['attributes' => $changes])
             ->log($description);
     }
-
 
     public function logDeleteActivity(
         string $activityName,
@@ -69,6 +73,10 @@ trait LogsActivity {
             ->timezone('America/Sao_Paulo')
             ->format('d/m/Y H\hi\m\i\n');
 
+        if (method_exists($model, 'roles')) {
+            $before['roles'] = $model->roles()->pluck('name')->all();
+        }
+
         activity($activityName)
             ->event('delete')
             ->performedOn($model)
@@ -77,24 +85,22 @@ trait LogsActivity {
             ->log($description);
     }
 
-
-    /**
-     * Logs a create activity.
-     *
-     * @param string $activityName
-     * @param Model $model
-     * @param string $description
-     */
     public function logCreateActivity(
         string $activityName,
         Model $model,
         string $description,
     ): void {
+        $after = $model->toArray();
+
+        if (method_exists($model, 'roles')) {
+            $after['roles'] = $model->roles()->pluck('name')->all();
+        }
+
         activity($activityName)
             ->event('create')
             ->performedOn($model)
             ->causedBy(auth()->user())
-            ->withProperties(['attributes' => $model->toArray()])
+            ->withProperties(['attributes' => ['after' => $after]])
             ->log($description);
     }
 }

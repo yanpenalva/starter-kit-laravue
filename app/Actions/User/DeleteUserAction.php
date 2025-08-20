@@ -26,9 +26,11 @@ final readonly class DeleteUserAction {
                 'Não é possível realizar essa ação.'
             );
 
-            app(RemoveRole::class)->execute($user);
+            $rolesBefore = $user->roles()->pluck('name')->all();
 
-            $this->logDeleteActivity('users', $user, 'Excluiu um usuário');
+            $this->logDeleteActivity('users', $user, 'Excluiu um usuário', $rolesBefore);
+
+            app(RemoveRole::class)->execute($user);
 
             return (bool) $user->delete();
         });

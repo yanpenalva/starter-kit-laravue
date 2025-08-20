@@ -13,7 +13,7 @@ export function useGenericLogFormatter(log, config) {
         type: MODAL_TYPES.CREATE,
         title: config.titles?.create || 'Registro Criado',
         fields: config.fields?.create || [],
-        data: normalize(attributes),
+        data: normalize(attributes.after || attributes),
       }),
     ],
     [
@@ -22,8 +22,8 @@ export function useGenericLogFormatter(log, config) {
         type: MODAL_TYPES.UPDATE,
         title: config.titles?.update || 'Registro Atualizado',
         fields: config.fields?.update || [],
-        before: normalize(attributes.before || {}),
-        after: normalize(attributes.after || {}),
+        before: normalize(attributes.before || attributes),
+        after: normalize(attributes.after || attributes),
       }),
     ],
     [
@@ -32,7 +32,7 @@ export function useGenericLogFormatter(log, config) {
         type: MODAL_TYPES.DELETE,
         title: config.titles?.delete || 'Registro Excluído',
         fields: config.fields?.delete || [],
-        data: normalize(attributes.before || {}),
+        data: normalize(attributes.before || attributes),
       }),
     ],
   ]);
