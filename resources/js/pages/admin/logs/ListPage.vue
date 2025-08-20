@@ -29,18 +29,27 @@ const {
     </template>
 
     <template #actions>
-      <div class="row justify-between">
-        <div class="col-md-4">
+      <div class="row justify-between items-center">
+        <div class="col-md-4 row items-center no-wrap">
           <SearchInput
             :value="filter"
             @update-search="handleSearch"
             @trigger-search="handleSearch" />
 
-          <small class="text-grey-7 q-mt-xs">
-            🔍 Pesquise por <strong>descrição</strong>, <strong>executado por</strong>,
-            <strong>afetado</strong> ou por <strong>data</strong> (ex:
-            <code>DD/MM/AAAA</code>).
-          </small>
+          <q-icon
+            name="help_outline"
+            size="20px"
+            color="grey-7"
+            class="q-ml-sm cursor-pointer">
+            <q-tooltip
+              class="bg-grey-9 text-white text-body2"
+              anchor="top middle"
+              self="bottom middle">
+              Pesquise por <b>descrição</b>, <b>executado por</b>, <b>afetado</b> ou por
+              <b>data</b>.<br />
+              Datas devem ser no formato <code>DD/MM/YYYY</code>.
+            </q-tooltip>
+          </q-icon>
         </div>
 
         <div class="col-md-4 offset-md-4">
