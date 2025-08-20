@@ -4,26 +4,29 @@ declare(strict_types=1);
 
 namespace App\Traits;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use DateTimeInterface;
+use Illuminate\Support\Collection;
 
 trait LogsActivity {
     /**
-     * @param array<string, mixed> $attributes
+     * @param array<mixed> $attributes
      * @return array<string, mixed>
      */
     private function extractAttributesWithDates(Model $model, array $attributes): array {
-        /** @var array<string, mixed> $result */
-        $result = collect($attributes)
-            ->map(function (mixed $value, string $key) use ($model): mixed {
-                return in_array($key, $model->getDates(), true) && $model->{$key} instanceof DateTimeInterface
+        /** @var array<string, mixed> $normalized */
+        $normalized = collect($attributes)
+            ->map(function (mixed $value, string|int $key) use ($model): mixed {
+                return is_string($key)
+                    && in_array($key, $model->getDates(), true)
+                    && $model->{$key} instanceof DateTimeInterface
                     ? $model->{$key}
                     : $value;
             })
             ->all();
 
-        return $result;
+        return $normalized;
     }
 
     /**
@@ -41,15 +44,8 @@ trait LogsActivity {
         ?array $oldData = null,
         ?array $newData = null
     ): void {
-        /** @var array<string, mixed> $beforeAttributes */
-        $beforeAttributes = $oldData ?? $this->extractAttributesWithDates($model, (array) $model->getOriginal());
-
-        /** @var array<string, mixed> $afterAttributes */
-        $afterAttributes = $newData ?? $this->extractAttributesWithDates(
-            $model,
-            /** @var array<string, mixed> */
-            array_merge((array) $model->getOriginal(), $dirty)
-        );
+        $beforeAttributes = $oldData ?? $this->extractAttributesWithDates($model, $model->getOriginal());
+        $afterAttributes  = $newData ?? $this->extractAttributesWithDates($model, array_merge($model->getOriginal(), $dirty));
 
         $changes = [
             'before' => $beforeAttributes,
@@ -65,12 +61,11 @@ trait LogsActivity {
             }
 
             if (is_string($value) && method_exists($model, $value)) {
-                /** @var Relation $relation */
+                /** @var Relation<Model, Model, Collection<int, string>> $relation */
                 $relation = $model->{$value}();
 
                 /** @var array<int, string> $before */
                 $before = $relation->pluck('name')->all();
-
                 /** @var array<int, string> $after */
                 $after  = $relation->pluck('name')->all();
 
@@ -104,7 +99,7 @@ trait LogsActivity {
             ->format('d/m/Y H\hi\m\i\n');
 
         if (method_exists($model, 'roles')) {
-            /** @var Relation $relation */
+            /** @var Relation<Model, Model, Collection<int, string>> $relation */
             $relation = $model->roles();
 
             /** @var array<int, string> $roles */
@@ -129,7 +124,7 @@ trait LogsActivity {
         $after = $model->toArray();
 
         if (method_exists($model, 'roles')) {
-            /** @var Relation $relation */
+            /** @var Relation<Model, Model, Collection<int, string>> $relation */
             $relation = $model->roles();
 
             /** @var array<int, string> $roles */
