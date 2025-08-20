@@ -28,10 +28,6 @@ const useLogStore = defineStore('logs', {
       const data = await service.index(params);
       this.logs = data;
     },
-    async consult(id) {
-      const { data } = await service.get(id);
-      this.log = data;
-    },
   },
 });
 

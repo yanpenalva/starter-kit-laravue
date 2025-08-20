@@ -1,249 +1,100 @@
 <script setup>
-import { computed } from 'vue';
-
-const MODAL_TYPES = Object.freeze({
-  CREATE: 'create',
-  UPDATE: 'update',
-  DELETE: 'delete',
-});
+import { useLogModal } from '@/composables/Log/useLogModal';
 
 const props = defineProps({
-  modelValue: Boolean,
-  log: Object,
+  modelValue: { type: Boolean, required: true },
+  log: { type: [Object, null], default: null },
 });
 
 const emit = defineEmits(['update:modelValue']);
 
-const isVisible = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value),
-});
-
-const modalTitle = computed(() => {
-  if (!props.log) return '';
-  return `Detalhes da Ação - ${props.log.eventPt || props.log.event}`;
-});
-
-const modalData = computed(() => {
-  if (!props.log?.properties?.attributes) return null;
-
-  const event = props.log.event;
-  const attributes = props.log.properties.attributes;
-
-  switch (event) {
-    case MODAL_TYPES.CREATE:
-      return {
-        type: MODAL_TYPES.CREATE,
-        title: 'Dados Criados',
-        data: attributes,
-      };
-
-    case MODAL_TYPES.UPDATE:
-      return {
-        type: MODAL_TYPES.UPDATE,
-        title: 'Comparação - Antes vs Depois',
-        before: attributes.before,
-        after: attributes.after,
-      };
-
-    case MODAL_TYPES.DELETE:
-      return {
-        type: MODAL_TYPES.DELETE,
-        title: 'Dados Excluídos',
-        data: attributes,
-      };
-
-    default:
-      return null;
-  }
-});
-
-const formatValue = (value, field = null) => {
-  if (value === null || value === undefined) return '-';
-  if (typeof value === 'boolean') return value ? 'Sim' : 'Não';
-
-  if (field === 'created_at' || field === 'updated_at') {
-    const date = new Date(value);
-    return isNaN(date.getTime())
-      ? String(value)
-      : date.toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-        }) +
-          ' ' +
-          date
-            .toLocaleTimeString('pt-BR', {
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-            .replace(':', 'h') +
-          'min';
-  }
-
-  if (typeof value === 'object') return JSON.stringify(value, null, 2);
-  return String(value);
-};
-
-const getFieldsToShow = (data) => {
-  if (!data) return [];
-
-  const commonFields = [
-    'id',
-    'name',
-    'email',
-    'cpf',
-    'active',
-    'description',
-    'created_at',
-    'updated_at',
-  ];
-
-  return Object.keys(data).filter((key) => {
-    return (
-      commonFields.includes(key) ||
-      ((!key.includes('_') || key.endsWith('_at')) && !Array.isArray(data[key]))
-    );
-  });
-};
-
-const getFieldLabel = (field) => {
-  const labels = {
-    id: 'ID',
-    name: 'Nome',
-    email: 'E-mail',
-    cpf: 'CPF',
-    active: 'Ativo',
-    description: 'Descrição',
-    created_at: 'Criado em',
-    updated_at: 'Atualizado em',
-  };
-
-  return labels[field] || field.replace('_', ' ').toUpperCase();
-};
+const { MODAL_TYPES, isVisible, modalTitle, modalData, getFieldLabel, formatValue } =
+  useLogModal(props, emit);
 </script>
 
 <template>
   <q-dialog v-model="isVisible" persistent>
     <q-card class="modal-card">
-      <q-card-section class="q-pb-sm">
-        <div class="row items-center justify-between q-mb-md">
-          <div class="text-h6">{{ modalTitle }}</div>
-          <q-btn icon="close" flat round dense v-close-popup />
-        </div>
+      <q-card-section>
+        <div class="text-h6 text-weight-bold">{{ modalTitle }}</div>
+      </q-card-section>
 
-        <div class="row q-gutter-xs q-mb-md">
-          <q-chip color="primary" text-color="white" icon="person">
-            <strong>Executado por:</strong> {{ log?.causer || '-' }}
-          </q-chip>
-          <q-chip color="secondary" text-color="white" icon="account_circle">
-            <strong>Afetado:</strong> {{ log?.subject || '-' }}
-          </q-chip>
-          <q-chip color="accent" text-color="white" icon="schedule">
-            <strong>Data:</strong> {{ formatValue(log?.createdAt, 'created_at') }}
-          </q-chip>
-        </div>
+      <q-separator />
 
-        <div v-if="modalData?.type === MODAL_TYPES.CREATE">
-          <q-separator />
-          <div class="row items-center q-my-sm">
-            <q-icon name="add_circle" color="positive" class="q-mr-sm" />
-            <span class="text-subtitle1 text-positive text-weight-medium">{{
-              modalData.title
-            }}</span>
-          </div>
-
-          <div class="q-gutter-sm">
-            <q-input
-              v-for="field in getFieldsToShow(modalData.data)"
-              :key="field"
-              :label="getFieldLabel(field)"
-              :model-value="formatValue(modalData.data[field], field)"
-              readonly
-              outlined
-              dense
-              hide-bottom-space />
-          </div>
-        </div>
-
-        <div v-else-if="modalData?.type === MODAL_TYPES.UPDATE">
-          <q-separator />
-          <div class="row items-center q-my-sm">
-            <q-icon name="compare_arrows" color="warning" class="q-mr-sm" />
-            <span class="text-subtitle1 text-warning text-weight-medium">{{
-              modalData.title
-            }}</span>
-          </div>
-
-          <div class="row q-gutter-md">
-            <div class="col">
-              <div class="row items-center q-mb-sm">
-                <q-icon name="history" color="negative" class="q-mr-sm" size="sm" />
-                <span class="text-subtitle2 text-negative text-weight-medium">Antes</span>
-              </div>
-              <div class="q-gutter-sm">
-                <q-input
-                  v-for="field in getFieldsToShow(modalData.before)"
-                  :key="'before-' + field"
-                  :label="getFieldLabel(field)"
-                  :model-value="formatValue(modalData.before[field], field)"
-                  readonly
-                  outlined
-                  dense
-                  class="before-input"
-                  hide-bottom-space />
-              </div>
+      <!-- =========================================
+           CREATE e DELETE
+           - CREATE: mostra os dados criados
+           - DELETE: mostra os dados antes de excluir
+           ========================================= -->
+      <q-card-section
+        v-if="
+          modalData &&
+          (modalData.type === MODAL_TYPES.CREATE || modalData.type === MODAL_TYPES.DELETE)
+        ">
+        <div class="q-gutter-sm">
+          <div
+            v-for="field in modalData.fields"
+            :key="field.key"
+            class="row items-center q-py-xs">
+            <!-- Label → ocupa só o espaço necessário -->
+            <div class="col-auto text-grey-7 text-body2 q-pr-sm">
+              {{ getFieldLabel(field.key) }}:
             </div>
 
-            <div class="col">
-              <div class="row items-center q-mb-sm">
-                <q-icon name="update" color="positive" class="q-mr-sm" size="sm" />
-                <span class="text-subtitle2 text-positive text-weight-medium"
-                  >Depois</span
-                >
-              </div>
-              <div class="q-gutter-sm">
-                <q-input
-                  v-for="field in getFieldsToShow(modalData.after)"
-                  :key="'after-' + field"
-                  :label="getFieldLabel(field)"
-                  :model-value="formatValue(modalData.after[field], field)"
-                  readonly
-                  outlined
-                  dense
-                  class="after-input"
-                  hide-bottom-space />
-              </div>
+            <!-- Valor → ocupa o resto da linha -->
+            <div
+              class="col text-body1 text-weight-medium"
+              :class="{
+                'text-grey': formatValue(modalData.data?.[field.key], field.key) === '-',
+              }">
+              {{ formatValue(modalData.data?.[field.key], field.key) }}
             </div>
-          </div>
-        </div>
-
-        <div v-else-if="modalData?.type === MODAL_TYPES.DELETE">
-          <q-separator />
-          <div class="row items-center q-my-sm">
-            <q-icon name="delete_forever" color="negative" class="q-mr-sm" />
-            <span class="text-subtitle1 text-negative text-weight-medium">{{
-              modalData.title
-            }}</span>
-          </div>
-
-          <div class="q-gutter-sm">
-            <q-input
-              v-for="field in getFieldsToShow(modalData.data)"
-              :key="field"
-              :label="getFieldLabel(field)"
-              :model-value="formatValue(modalData.data[field], field)"
-              readonly
-              outlined
-              dense
-              class="delete-input"
-              hide-bottom-space />
           </div>
         </div>
       </q-card-section>
 
-      <q-card-actions align="right" class="q-pt-none">
-        <q-btn label="Fechar" color="primary" v-close-popup />
+      <!-- =========================================
+           UPDATE
+           - Mostra comparação Antes / Depois
+           - Campos com compare: exibem os dois
+           - Campos sem compare: exibem o valor atual
+           ========================================= -->
+      <q-card-section v-else-if="modalData && modalData.type === MODAL_TYPES.UPDATE">
+        <div v-for="field in modalData.fields" :key="field.key" class="q-mb-md">
+          <!-- Label -->
+          <div class="text-caption text-grey-7 q-mb-xs">
+            {{ getFieldLabel(field.key) }}
+          </div>
+
+          <!-- Valores -->
+          <div class="q-ml-sm">
+            <template v-if="field.compare">
+              <div>
+                <em>Antes:</em>
+                {{ formatValue(modalData.before?.[field.key], field.key) }}
+              </div>
+              <div>
+                <em>Depois:</em>
+                {{ formatValue(modalData.after?.[field.key], field.key) }}
+              </div>
+            </template>
+            <template v-else>
+              {{
+                formatValue(
+                  modalData.after?.[field.key] ?? modalData.before?.[field.key],
+                  field.key,
+                )
+              }}
+            </template>
+          </div>
+        </div>
+      </q-card-section>
+
+      <q-separator />
+
+      <!-- Ações -->
+      <q-card-actions align="right">
+        <q-btn flat label="Fechar" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -251,19 +102,7 @@ const getFieldLabel = (field) => {
 
 <style scoped>
 .modal-card {
-  min-width: 500px;
-  max-width: 90vw;
-}
-
-.before-input {
-  background-color: #ffebee;
-}
-
-.after-input {
-  background-color: #e8f5e9;
-}
-
-.delete-input {
-  background-color: #ffebee;
+  max-width: 700px;
+  width: 100%;
 }
 </style>

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Actions\User;
 
@@ -10,15 +10,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
 use Mail;
 
-final readonly class UpdateUserAction
-{
+final readonly class UpdateUserAction {
     use LogsActivity;
 
     /**
      * @param Fluent<string, mixed> $params
      */
-    public function execute(Fluent $params, int|string $id): User
-    {
+    public function execute(Fluent $params, int|string $id): User {
         return DB::transaction(function () use ($id, $params): User {
             /** @var User $user */
             $user = User::findOrFail($id);
@@ -38,7 +36,7 @@ final readonly class UpdateUserAction
                 Mail::to($user)->queue(new \App\Mail\SendNotificationUserActivation($user));
             }
 
-            $this->logUpdateActivity('Gestão de Perfis', $user, $user->getDirty(), 'Atualizou um perfil');
+            $this->logUpdateActivity('users', $user, $user->getDirty(), 'Atualizou um usuário');
 
             return $user->load('roles');
         });

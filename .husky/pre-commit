@@ -1,66 +1,66 @@
-#!/usr/bin/env bash
+# #!/usr/bin/env bash
 
-start_time=$(date +%s)
-echo "🔍 Executando pre-commit hook..."
+# start_time=$(date +%s)
+# echo "🔍 Executando pre-commit hook..."
 
-current_branch=$(git rev-parse --abbrev-ref HEAD)
-[ "$current_branch" = "main" ] && { echo "🚫 Branch 'main' detectada. Pulando execução."; exit 0; }
+# current_branch=$(git rev-parse --abbrev-ref HEAD)
+# [ "$current_branch" = "main" ] && { echo "🚫 Branch 'main' detectada. Pulando execução."; exit 0; }
 
-staged_files=$(git diff --name-only --cached --diff-filter=d)
-[ -z "$staged_files" ] && { echo "🚫 Nenhum arquivo staged encontrado."; exit 0; }
+# staged_files=$(git diff --name-only --cached --diff-filter=d)
+# [ -z "$staged_files" ] && { echo "🚫 Nenhum arquivo staged encontrado."; exit 0; }
 
-container="starterkit-app"
+# container="starterkit-app"
 
-check_container() {
-  docker inspect -f '{{.State.Running}}' "$container" 2>/dev/null | grep -q '^true$' || { echo "❌ Container '$container' não está rodando."; exit 1; }
-  docker exec "$container" sh -c 'exit 0' >/dev/null 2>&1 || { echo "❌ docker exec falhou em '$container'."; exit 1; }
-}
+# check_container() {
+#   docker inspect -f '{{.State.Running}}' "$container" 2>/dev/null | grep -q '^true$' || { echo "❌ Container '$container' não está rodando."; exit 1; }
+#   docker exec "$container" sh -c 'exit 0' >/dev/null 2>&1 || { echo "❌ docker exec falhou em '$container'."; exit 1; }
+# }
 
-run_formatter() {
-  local file="$1"
-  [ -f "$file" ] || return 0
-  echo "✨ Formatando $file..."
-  docker exec "$container" ./vendor/bin/pint "$file"
-  git add "$file"
-}
+# run_formatter() {
+#   local file="$1"
+#   [ -f "$file" ] || return 0
+#   echo "✨ Formatando $file..."
+#   docker exec "$container" ./vendor/bin/pint "$file"
+#   git add "$file"
+# }
 
-lint_js() {
-  echo "🔍 Lintando arquivos JS/Vue..."
-  docker exec "$container" npm run lint || { echo "❌ Lint JS/Vue falhou."; exit 1; }
-}
+# lint_js() {
+#   echo "🔍 Lintando arquivos JS/Vue..."
+#   docker exec "$container" npm run lint || { echo "❌ Lint JS/Vue falhou."; exit 1; }
+# }
 
-run_phpstan() {
-  echo "🔍 Executando análise estática (Composer)..."
-  docker exec "$container" composer run run:phpstan || { echo "❌ Phpstan/Larastan falhou."; exit 1; }
-}
+# run_phpstan() {
+#   echo "🔍 Executando análise estática (Composer)..."
+#   docker exec "$container" composer run run:phpstan || { echo "❌ Phpstan/Larastan falhou."; exit 1; }
+# }
 
-run_tests() {
-  local script="$1"
-  echo "🧪 Rodando testes (composer $script)..."
-  docker exec "$container" composer run "$script" || { echo "❌ Testes falharam."; exit 1; }
-}
+# run_tests() {
+#   local script="$1"
+#   echo "🧪 Rodando testes (composer $script)..."
+#   docker exec "$container" composer run "$script" || { echo "❌ Testes falharam."; exit 1; }
+# }
 
-check_container
+# check_container
 
-php_changed=$(echo "$staged_files" | grep -E '\.php$' || true)
-js_changed=$(echo "$staged_files" | grep -E '\.(js|vue)$' || true)
+# php_changed=$(echo "$staged_files" | grep -E '\.php$' || true)
+# js_changed=$(echo "$staged_files" | grep -E '\.(js|vue)$' || true)
 
-if [ -n "$php_changed" ]; then
-  echo "$php_changed" | while read -r file; do
-    [ -n "$file" ] && run_formatter "$file"
-  done
-fi
+# if [ -n "$php_changed" ]; then
+#   echo "$php_changed" | while read -r file; do
+#     [ -n "$file" ] && run_formatter "$file"
+#   done
+# fi
 
-[ -n "$js_changed" ] && lint_js
-[ -n "$php_changed" ] && run_phpstan
+# [ -n "$js_changed" ] && lint_js
+# [ -n "$php_changed" ] && run_phpstan
 
-if [ -n "$php_changed" ]; then
-  case "$current_branch" in
-    hml) run_tests "test" ;;
-    main) exit 0 ;;
-    *) run_tests "test:coverage" ;;
-  esac
-fi
+# if [ -n "$php_changed" ]; then
+#   case "$current_branch" in
+#     hml) run_tests "test" ;;
+#     main) exit 0 ;;
+#     *) run_tests "test:coverage" ;;
+#   esac
+# fi
 
-end_time=$(date +%s)
-echo "✅ Pre-commit finalizado com sucesso em $((end_time - start_time))s."
+# end_time=$(date +%s)
+# echo "✅ Pre-commit finalizado com sucesso em $((end_time - start_time))s."

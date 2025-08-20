@@ -90,6 +90,7 @@ const useUser = () => {
       router.push({ name: 'login' });
     }
   };
+
   const onEdit = (event) => {
     router.push({
       name: 'editUsers',
@@ -97,6 +98,22 @@ const useUser = () => {
         id: event.id,
       },
     });
+  };
+
+  const onDelete = async (row) => {
+    try {
+      loading.value = true;
+      await store.destroy(row.id);
+      notify('Usuário excluído com sucesso');
+      await listPage({
+        limit: pagination.value.rowsPerPage,
+        page: pagination.value.page,
+      });
+    } catch {
+      notify('Erro ao excluir usuário', 'negative');
+    } finally {
+      loading.value = false;
+    }
   };
 
   return {
@@ -111,6 +128,7 @@ const useUser = () => {
     nameUser,
     errors,
     onEdit,
+    onDelete,
   };
 };
 

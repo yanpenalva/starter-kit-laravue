@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Actions\Role;
 
@@ -9,15 +9,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\{Fluent, Str};
 use Spatie\Permission\Models\Role;
 
-final readonly class CreateRoleAction
-{
+final readonly class CreateRoleAction {
     use LogsActivity;
 
     /**
      * @param Fluent<string, mixed> $params
      */
-    public function execute(Fluent $params): Role
-    {
+    public function execute(Fluent $params): Role {
         return DB::transaction(function () use ($params): Role {
             $name = $params->get('name');
             assert(is_string($name));
@@ -45,10 +43,9 @@ final readonly class CreateRoleAction
         });
     }
 
-    private function writeOnLog(Role $role): void
-    {
+    private function writeOnLog(Role $role): void {
         $this->logGeneralActivity(
-            activityName: 'Gestão de Perfis',
+            activityName: 'roles',
             model: $role,
             description: sprintf(
                 'Criou um novo perfil "%s" com %d permissões',
