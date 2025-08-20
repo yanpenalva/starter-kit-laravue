@@ -37,7 +37,8 @@ final class LogResource extends JsonResource {
             'eventPt' => EventTranslator::translateEvent($activity->event ?? null),
             'description' => $activity->description,
             'causer' => $causerName,
-            'subject' => $subjectName,
+            'subject' => $subjectName
+                ?? ($props['attributes']['name'] ?? $props['attributes']['before']['name'] ?? null),
             'properties' => $props,
             'createdAt' => $activity->created_at?->translatedFormat('d/m/Y H\hi\m\i\n'),
             'updatedAt' => $activity->updated_at?->translatedFormat('d/m/Y H\hi\m\i\n'),

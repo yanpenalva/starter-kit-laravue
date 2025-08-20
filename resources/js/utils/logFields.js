@@ -14,11 +14,11 @@ export const LABELS_MAP = new Map([
 export const getFieldLabel = (field) =>
   LABELS_MAP.has(field) ? LABELS_MAP.get(field) : field.replace(/_/g, ' ').toUpperCase();
 
-const formatBoolean = (value) => (value ? 'Sim' : 'Não');
+const formatBoolean = (booleanValue) => (booleanValue ? 'Sim' : 'Não');
 
-const formatDateTime = (value) => {
-  const date = new Date(value);
-  if (isNaN(date.getTime())) return String(value);
+const formatDateTime = (dateValue) => {
+  const date = new Date(dateValue);
+  if (isNaN(date.getTime())) return String(dateValue);
 
   const formattedDate = date.toLocaleDateString('pt-BR', {
     day: '2-digit',
@@ -36,12 +36,30 @@ const formatDateTime = (value) => {
   return `${formattedDate} ${formattedTime}min`;
 };
 
-const formatObject = (value) => JSON.stringify(value, null, 2);
+const formatObject = (objectValue) => JSON.stringify(objectValue, null, 2);
+
+const rules = [
+  {
+    match: (value) => value === null || value === undefined || value === '',
+    format: () => '-',
+  },
+  {
+    match: (value) => typeof value === 'boolean',
+    format: formatBoolean,
+  },
+  {
+    match: (_value, field) => field === 'created_at' || field === 'updated_at',
+    format: formatDateTime,
+  },
+  {
+    match: (value) => typeof value === 'object',
+    format: formatObject,
+  },
+];
 
 export const formatValue = (value, field = null) => {
-  if (value === null || value === undefined || value === '') return '-';
-  if (typeof value === 'boolean') return formatBoolean(value);
-  if (field === 'created_at' || field === 'updated_at') return formatDateTime(value);
-  if (typeof value === 'object') return formatObject(value);
+  for (const { match, format } of rules) {
+    if (match(value, field)) return format(value);
+  }
   return String(value);
 };

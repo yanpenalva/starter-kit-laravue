@@ -18,7 +18,14 @@ final readonly class ListLogAction {
     public function execute(Fluent $params): LengthAwarePaginator|Collection {
         $query = Activity::query()
             ->with(['causer', 'subject'])
-            ->select('activity_log.*')
+            ->selectRaw("
+                activity_log.*,
+                COALESCE(
+                    subject_users.name,
+                    (activity_log.properties->'attributes'->>'name'),
+                    (activity_log.properties->'attributes'->'before'->>'name')
+                ) as subject_fallback
+            ")
             ->leftJoin('users as causer_users', 'activity_log.causer_id', '=', 'causer_users.id')
             ->leftJoin('users as subject_users', 'activity_log.subject_id', '=', 'subject_users.id');
 
@@ -38,12 +45,13 @@ final readonly class ListLogAction {
                     $eventSearch === null,
                     function ($query) use ($search) {
                         $query->where(function ($query) use ($search) {
-                            $query->whereLike('activity_log.description', "%{$search}%")
-                                ->orWhereLike('causer_users.name', "%{$search}%")
-                                ->orWhereLike('subject_users.name', "%{$search}%");
+                            $query->where('activity_log.description', 'ILIKE', "%{$search}%")
+                                ->orWhere('causer_users.name', 'ILIKE', "%{$search}%")
+                                ->orWhere('subject_users.name', 'ILIKE', "%{$search}%")
+                                ->orWhereRaw("(activity_log.properties->'attributes'->>'name') ILIKE ?", ["%{$search}%"])
+                                ->orWhereRaw("(activity_log.properties->'attributes'->'before'->>'name') ILIKE ?", ["%{$search}%"]);
 
                             $date = \DateTime::createFromFormat('d/m/Y', $search);
-
                             $query->when(
                                 $date !== false,
                                 fn($query) => $query->orWhereDate('activity_log.created_at', $date->format('Y-m-d'))
@@ -63,7 +71,7 @@ final readonly class ListLogAction {
                 match ($column) {
                     'description' => 'activity_log.description',
                     'causer'      => 'causer_users.name',
-                    'subject'     => 'subject_users.name',
+                    'subject'     => 'subject_fallback',
                     'createdAt'   => 'activity_log.created_at',
                     default       => 'activity_log.created_at',
                 },
