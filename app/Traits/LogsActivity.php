@@ -69,13 +69,17 @@ trait LogsActivity {
         Model $model,
         string $description = 'Deleted record'
     ): void {
+        $before = $model->toArray();
+        $before['deleted_at'] = now()->toDateTimeString();
+
         activity($activityName)
             ->event('delete')
             ->performedOn($model)
             ->causedBy(auth()->user())
-            ->withProperties(['attributes' => ['before' => $model->toArray()]])
+            ->withProperties(['attributes' => ['before' => $before]])
             ->log($description);
     }
+
 
     /**
      * Logs a general activity.

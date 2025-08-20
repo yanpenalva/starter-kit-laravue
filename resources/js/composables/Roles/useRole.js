@@ -55,7 +55,7 @@ const useRole = () => {
   });
 
   const isProtectedRole = (slugRoleRow) => {
-    return slugRoleRow === ROLES.ADMINISTRATOR || slugRoleRow === ROLES.GUEST;
+    return slugRoleRow === ROLES.ADMINISTRATOR;
   };
 
   const handleSearch = async (value) => {

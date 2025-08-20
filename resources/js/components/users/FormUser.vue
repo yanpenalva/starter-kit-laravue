@@ -170,7 +170,7 @@ watch([formData, () => formData.value.send_random_password], () => {
         class="text-weight-bold"
         label="Salvar"
         type="submit"
-        color="secondary" />
+        color="primary" />
       <q-btn
         flat
         class="text-weight-bold"

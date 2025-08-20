@@ -47,7 +47,6 @@ const confirmDeleteRow = (isStatus) => {
     :no-data-label="loading ? '' : 'Nenhum registro encontrado'"
     @update:pagination="emit('updatePagination', $event)"
     @request="emit('updatePagination', $event)">
-    
     <template #header="props">
       <q-dialog v-model="confirmRowDelete" persistent>
         <q-card>
@@ -64,12 +63,12 @@ const confirmDeleteRow = (isStatus) => {
               v-close-popup
               outline
               label="Sim"
-              color="secondary"
+              color="primary"
               @click="confirmDeleteRow(true)" />
             <q-btn
               v-close-popup
               label="Não"
-              color="secondary"
+              color="primary"
               @click="confirmDeleteRow(false)" />
           </q-card-actions>
         </q-card>

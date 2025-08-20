@@ -20,6 +20,7 @@ const ROLE_FIELDS = {
     { key: 'name', compare: false },
     { key: 'slug', compare: false },
     { key: 'description', compare: false },
+    { key: 'deleted_at', compare: false },
   ],
 };
 
@@ -30,6 +31,7 @@ const normalizeRoleData = (data = {}) => ({
   description: data.description ?? '-',
   created_at: data.created_at,
   updated_at: data.updated_at,
+  deleted_at: data.deleted_at,
   permissions:
     Array.isArray(data.permissions) && data.permissions.length > 0
       ? data.permissions.map((p) => p.name ?? String(p)).join(', ')

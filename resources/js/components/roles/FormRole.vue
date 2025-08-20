@@ -1,8 +1,8 @@
 <script setup>
+import RequiredLabel from '@/components/shared/RequiredLabel.vue';
 import useRole from '@/composables/Roles/useRole';
 import usePermissionStore from '@/store/usePermissionStore';
 import ErrorInput from '@components/shared/ErrorInput.vue';
-import RequiredLabel from '@/components/shared/RequiredLabel.vue';
 import { onBeforeMount, onUnmounted } from 'vue';
 
 const {
@@ -109,7 +109,7 @@ onUnmounted(() => {
         class="text-weight-bold"
         label="Salvar"
         type="submit"
-        color="secondary"
+        color="primary"
         :loading="loading"
         @click.prevent="saveRole()" />
 
