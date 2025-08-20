@@ -76,4 +76,25 @@ trait LogsActivity {
             ->withProperties(['attributes' => ['before' => $before]])
             ->log($description);
     }
+
+
+    /**
+     * Logs a create activity.
+     *
+     * @param string $activityName
+     * @param Model $model
+     * @param string $description
+     */
+    public function logCreateActivity(
+        string $activityName,
+        Model $model,
+        string $description,
+    ): void {
+        activity($activityName)
+            ->event('create')
+            ->performedOn($model)
+            ->causedBy(auth()->user())
+            ->withProperties(['attributes' => $model->toArray()])
+            ->log($description);
+    }
 }

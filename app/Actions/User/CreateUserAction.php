@@ -39,8 +39,7 @@ final readonly class CreateUserAction {
                 Mail::to($user)->queue(new SendRandomPassword($user, $generated));
             }
 
-            $this->writeOnLog($user); // TODO: Move to Event or Log
-
+            $this->writeOnLog($user);
             return $user;
         });
     }
@@ -55,11 +54,10 @@ final readonly class CreateUserAction {
             $role->name ?? 'Nenhum perfil associado'
         );
 
-        $this->logGeneralActivity(
+        $this->logCreateActivity(
             activityName: 'users',
             model: $user,
             description: $description,
-            event: 'create'
         );
     }
 }

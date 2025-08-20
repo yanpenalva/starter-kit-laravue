@@ -44,15 +44,14 @@ final readonly class CreateRoleAction {
     }
 
     private function writeOnLog(Role $role): void {
-        $this->logGeneralActivity(
+        $this->logCreateActivity(
             activityName: 'roles',
             model: $role,
             description: sprintf(
                 'Criou um novo perfil "%s" com %d permissões',
                 $role->name,
                 $role->permissions()->count()
-            ),
-            event: 'create'
+            )
         );
     }
 }
