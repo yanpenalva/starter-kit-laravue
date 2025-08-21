@@ -4,7 +4,7 @@ export default function useAuthenticateConfig() {
       title: 'Acesse o sistema',
       message: 'Faça login ou registre-se para começar',
       routeFooter: '/cadastro',
-      labelFooter: 'Inscreva-se',
+      labelFooter: 'Cadastre-se',
       textFooter: 'Ainda não tem conta?',
     },
     register: {

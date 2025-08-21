@@ -1,13 +1,13 @@
-import { ref, watch } from 'vue';
 import { ldapRegister } from '@/services/LdapLoginService';
 import { Notify } from 'quasar';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 export function useRegisterForm(props, emit) {
   const show = ref({ isPassword: true, isPasswordConfirmation: true });
 
   const formData = ref({
-    role: { name: 'Aluno', value: 'aluno' },
+    role: { name: 'Administrador', value: 'administrator' },
     name: '',
     email: '',
     cpf: '',

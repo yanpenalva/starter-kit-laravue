@@ -87,10 +87,7 @@ watch(
           label="Lembre-me" />
       </div>
       <div class="col-md-4 flex flex-center">
-        <RouterLink
-          to="/esqueci-minha-senha"
-          class="link--style text--font-13"
-          color="primary">
+        <RouterLink to="/esqueci-minha-senha" class="link--style text--font-13">
           Esqueceu a senha?
         </RouterLink>
       </div>
