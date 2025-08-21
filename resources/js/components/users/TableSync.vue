@@ -92,7 +92,7 @@ const confirmDeleteRow = (isStatus) => {
         <q-td v-for="col in bodyProps.cols" :key="col.name" :props="bodyProps">
           <span v-if="col.name === 'setSituation'">
             <q-toggle
-              v-model="bodyProps.row.active"
+              :model-value="!!bodyProps.row.active"
               color="primary"
               keep-color
               @update:model-value="

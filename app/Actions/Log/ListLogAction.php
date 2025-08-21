@@ -63,7 +63,7 @@ final readonly class ListLogAction
 
         /** @var string|null $order */
         $order = $params->get('order');
-        $order = is_string($order) ? $order : 'desc';
+        $order = mb_strtolower((string) $order) === 'asc' ? 'asc' : 'desc';
 
         $column = is_string($params->get('column')) ? $params->get('column') : 'createdAt';
 

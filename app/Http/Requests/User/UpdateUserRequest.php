@@ -15,6 +15,7 @@ use Illuminate\Validation\Rule;
 class UpdateUserRequest extends FormRequest
 {
     use FailedValidation;
+
     public function authorize(): bool
     {
         return true;
@@ -95,8 +96,13 @@ class UpdateUserRequest extends FormRequest
     protected function baseRules(): array
     {
         return [
-            'name' => ['required', 'string'],
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->route('id'))],
+            'name' => ['sometimes', 'required', 'string'],
+            'email' => [
+                'sometimes',
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($this->route('id')),
+            ],
             'active' => ['required', Rule::in(StatusEnum::ENABLED, StatusEnum::DISABLED)],
             'role_id' => ['sometimes', 'required', 'exists:roles,id'],
             'notify_status' => ['boolean'],
@@ -145,5 +151,15 @@ class UpdateUserRequest extends FormRequest
     protected function roleSlugRule(): array
     {
         return $this->filled('role_slug') ? ['role_slug' => ['required']] : [];
+    }
+
+    /**
+     * Remove role_id se vier nulo ou vazio para não apagar perfil em updates parciais.
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('role_id') && empty($this->input('role_id'))) {
+            $this->request->remove('role_id');
+        }
     }
 }

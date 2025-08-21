@@ -20,6 +20,13 @@ export default function useLog() {
     return validColumns.includes(column) ? column : 'createdAt';
   };
 
+  const getOrder = (order, descending) => {
+    if (order) return order;
+    if (descending === true) return 'desc';
+    if (descending === false) return 'asc';
+    return 'desc';
+  };
+
   const listPage = async (params = {}) => {
     try {
       $q.loading.show();
@@ -31,7 +38,7 @@ export default function useLog() {
         page: params.page || pagination.value.page || 1,
         limit: params.limit || pagination.value.rowsPerPage || 10,
         column: getValidColumn(params.column || pagination.value.sortBy || 'createdAt'),
-        order: params.order || (pagination.value.descending ? 'desc' : 'asc') || 'desc',
+        order: getOrder(params.order, pagination.value.descending),
       };
 
       await store.list(requestParams);
@@ -52,7 +59,7 @@ export default function useLog() {
     await listPage({
       page: 1,
       limit: pagination.value?.rowsPerPage || 10,
-      order: pagination.value?.descending ? 'desc' : 'asc',
+      order: getOrder(null, pagination.value?.descending),
       column: pagination.value?.sortBy || 'createdAt',
     });
   };
@@ -62,7 +69,7 @@ export default function useLog() {
     await listPage({
       page: 1,
       limit: pagination.value?.rowsPerPage || 10,
-      order: pagination.value?.descending ? 'desc' : 'asc',
+      order: getOrder(null, pagination.value?.descending),
       column: pagination.value?.sortBy || 'createdAt',
     });
   };
@@ -74,10 +81,11 @@ export default function useLog() {
     await listPage({
       page: event.pagination?.page || 1,
       limit: event.pagination?.rowsPerPage || 10,
-      order: event.pagination?.descending ? 'desc' : 'asc',
+      order: getOrder(null, event.pagination?.descending),
       column: event.pagination?.sortBy || 'createdAt',
     });
   };
+
   const onConsult = (row) => {
     selectedLog.value = row;
     showModal.value = true;
