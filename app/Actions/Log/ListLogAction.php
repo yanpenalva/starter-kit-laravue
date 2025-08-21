@@ -1,21 +1,25 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Actions\Log;
 
 use App\Helpers\EventTranslator;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Fluent;
 use Spatie\Activitylog\Models\Activity;
 
-final readonly class ListLogAction {
+final readonly class ListLogAction
+{
     /**
      * @param Fluent<string, mixed> $params
      * @return LengthAwarePaginator<int, Activity>|Collection<int, Activity>
      */
-    public function execute(Fluent $params): LengthAwarePaginator|Collection {
+    public function execute(Fluent $params): LengthAwarePaginator|Collection
+    {
         $query = Activity::query()
             ->with(['causer', 'subject'])
             ->selectRaw($this->subjectFallbackSelect())
@@ -32,27 +36,25 @@ final readonly class ListLogAction {
 
                 $query->when(
                     $eventSearch !== null,
-                    fn($query) => $query->where('activity_log.event', $eventSearch)
+                    fn ($query) => $query->where('activity_log.event', $eventSearch)
                 );
 
                 $query->when(
                     $eventSearch === null,
                     function ($query) use ($search) {
                         $query->where(function ($query) use ($search) {
-                            $like = "%{$search}%";
+                            $query->whereLike('activity_log.description', "%{$search}%")
+                                ->orWhereLike('causer_users.name', "%{$search}%")
+                                ->orWhereLike('subject_users.name', "%{$search}%")
+                                ->orWhereRaw("(activity_log.properties->'attributes'->>'name') ILIKE ?", ["%{$search}%"])
+                                ->orWhereRaw("(activity_log.properties->'attributes'->'before'->>'name') ILIKE ?", ["%{$search}%"]);
 
-                            $query->where('activity_log.description', 'ILIKE', $like)
-                                ->orWhere('causer_users.name', 'ILIKE', $like)
-                                ->orWhere('subject_users.name', 'ILIKE', $like)
-                                ->orWhereRaw("(activity_log.properties->'attributes'->>'name') ILIKE ?", [$like])
-                                ->orWhereRaw("(activity_log.properties->'attributes'->'before'->>'name') ILIKE ?", [$like]);
+                            /** @var DateTimeInterface|null $date */
+                            $date = DateTimeImmutable::createFromFormat('d/m/Y', (string) $search);
 
-                            $date = \DateTime::createFromFormat('d/m/Y', (string) $search) ?: null;
-
-                            $query->when(
-                                $date instanceof \DateTimeInterface,
-                                fn($query) => $query->orWhereDate('activity_log.created_at', $date?->format('Y-m-d'))
-                            );
+                            if ($date instanceof DateTimeInterface) {
+                                $query->orWhereDate('activity_log.created_at', $date->format('Y-m-d'));
+                            }
                         });
                     }
                 );
@@ -68,10 +70,10 @@ final readonly class ListLogAction {
         $query->orderBy(
             match ($column) {
                 'description' => 'activity_log.description',
-                'causer'      => 'causer_users.name',
-                'subject'     => 'subject_fallback',
-                'createdAt'   => 'activity_log.created_at',
-                default       => 'activity_log.created_at',
+                'causer' => 'causer_users.name',
+                'subject' => 'subject_fallback',
+                'createdAt' => 'activity_log.created_at',
+                default => 'activity_log.created_at',
             },
             $order
         );
@@ -84,7 +86,8 @@ final readonly class ListLogAction {
             : $query->get();
     }
 
-    private function subjectFallbackSelect(): string {
+    private function subjectFallbackSelect(): string
+    {
         return "
             activity_log.*,
             COALESCE(
