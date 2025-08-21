@@ -59,13 +59,10 @@ class UserController extends Controller
         $this->authorize('delete', User::class);
 
         try {
-            $response = app(DeleteUserAction::class)->execute(params: $request->fluent(), user: $user);
-
-            if (!$response) {
-                return response()->json([
-                    'message' => 'Erro ao deletar usuário. Ação não concluída.',
-                ], Response::HTTP_BAD_REQUEST);
-            }
+            app(DeleteUserAction::class)->execute(
+                params: $request->fluent(),
+                user: $user
+            );
 
             return response()->json([
                 'message' => 'Usuário deletado com sucesso!',
@@ -77,7 +74,6 @@ class UserController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
     public function register(RegisterExternalUserRequest $request): JsonResponse
     {
         $user = app(CreateExternalUserAction::class)->execute($request->fluent());
@@ -89,12 +85,11 @@ class UserController extends Controller
 
     public function verify(Request $request): JsonResponse
     {
-        try {
-            app(VerifyAction::class)->execute($request->fluent());
+        app(VerifyAction::class)->execute($request->fluent());
 
-            return response()->json(['message' => 'O seu cadastro foi verificado com sucesso!'], Response::HTTP_OK);
-        } catch (Throwable $exception) {
-            return response()->json(['message' => $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return response()->json(
+            ['message' => 'O seu cadastro foi verificado com sucesso!'],
+            Response::HTTP_OK
+        );
     }
 }

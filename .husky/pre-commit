@@ -20,7 +20,7 @@ run_formatter() {
   local file="$1"
   [ -f "$file" ] || return 0
   echo "✨ Formatando $file..."
-  docker exec "$container" ./vendor/bin/pint "$file"
+  docker exec "$container" composer pint:format "$file"
   git add "$file"
 }
 

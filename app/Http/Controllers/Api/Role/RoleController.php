@@ -55,21 +55,14 @@ class RoleController extends Controller
     {
         $this->authorize('delete', $role);
 
-        $deleted = app(DeleteRoleAction::class)->execute($role);
-
-        if ($deleted) {
-            return response()->json(
-                ['message' => 'Perfil excluído com sucesso'],
-                Response::HTTP_NO_CONTENT
-            );
-        }
+        app(DeleteRoleAction::class)->execute($role);
 
         return response()->json(
-            ['message' => 'Erro ao excluir o perfil.'],
-            Response::HTTP_INTERNAL_SERVER_ERROR
+            ['message' => 'Perfil excluído com sucesso'],
+            Response::HTTP_NO_CONTENT
         );
-
     }
+
     public function listAll(): JsonResource
     {
         $roles = app(ListAllRoleAction::class)->execute();

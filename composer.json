@@ -65,7 +65,10 @@
         "@php artisan key:generate --ansi"
         ],
         "doc:generate": [
-        "php artisan doc:generate"
+        "php artisan scramble:export"
+        ],
+        "pint:format": [
+            "vendor/bin/pint"
         ],
         "test": "php artisan optimize:clear && env APP_ENV=testing php artisan test --env=testing --parallel",
         "test:coverage": "php artisan optimize:clear && env APP_ENV=testing php artisan test --env=testing --parallel --coverage",

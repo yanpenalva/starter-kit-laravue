@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
 
 namespace Tests\Feature\Users;
 
@@ -336,15 +338,11 @@ describe('Users Management', function () {
             $this->assertDatabaseMissing('users', ['id' => $userToDelete->id]);
         });
 
-        it('should return an error status code when trying to delete own account', function () {
+        it('should throw exception when trying to delete own account', function () {
             $response = actingAs($this->asAdmin)
-                ->delete(route('users.delete', $this->asAdmin), ['reason' => 'Test deletion reason']);
+                ->delete(route('users.delete', $this->asAdmin));
 
-            $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
-                ->assertJson([
-                    'message' => 'Erro ao deletar usuário.',
-                    'error' => 'Não é possível realizar essa ação.',
-                ]);
+            $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
 
             $this->assertDatabaseHas('users', ['id' => $this->asAdmin->id]);
         });
@@ -433,7 +431,6 @@ describe('Users Management', function () {
             $updatedUser = User::find($this->asAdmin->id);
 
             Mail::assertQueued(SendNotificationUserActivation::class, fn ($mail) => $mail->hasTo($updatedUser->email));
-
         }
     )->with('updateUserData')
         ->with('userJsonValidStructure');
@@ -451,5 +448,30 @@ describe('Users Management', function () {
         expect($mail->envelope()->subject)->toBe('Ativação de usuário');
         expect($rendered)->toContain('John Doe');
         expect($mail->attachments())->toBeArray()->toBeEmpty();
+    });
+
+    it('should return 500 when exception is thrown during destroy', function () {
+        $response = actingAs($this->asAdmin)
+            ->delete(route('users.delete', $this->asAdmin), ['reason' => 'force error']);
+
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
+            ->assertJson([
+                'message' => 'Erro ao deletar usuário.',
+                'error' => 'Não é possível realizar essa ação.',
+            ]);
+
+        $this->assertDatabaseHas('users', ['id' => $this->asAdmin->id]);
+    });
+
+    it('should return 403 when VerifyAction fails due to invalid signature', function () {
+        $user = createUser([
+            'email_verified_at' => null,
+        ]);
+
+        $url = createTemporaryUrlForUser($user, now()->subHour());
+
+        get($url)
+            ->assertStatus(Response::HTTP_FORBIDDEN) // 403
+            ->assertJson(['message' => 'Invalid signature.']);
     });
 })->group('users');

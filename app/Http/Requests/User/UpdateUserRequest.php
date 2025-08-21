@@ -153,9 +153,6 @@ class UpdateUserRequest extends FormRequest
         return $this->filled('role_slug') ? ['role_slug' => ['required']] : [];
     }
 
-    /**
-     * Remove role_id se vier nulo ou vazio para não apagar perfil em updates parciais.
-     */
     protected function prepareForValidation(): void
     {
         if ($this->has('role_id') && empty($this->input('role_id'))) {
