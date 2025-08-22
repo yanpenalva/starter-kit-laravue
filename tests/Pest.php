@@ -1,9 +1,8 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-use Illuminate\Support\Facades\{Event, Http, Mail};
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\{Bus, Event, Http, Mail, Queue, Storage};
 
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
@@ -22,10 +21,6 @@ pest()->extend(Tests\TestCase::class)
 
 pest()->printer()->compact();
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
+expect()->extend('toBeUuid', function () {
+    return $this->toMatch('/^[0-9a-fA-F-]{36}$/');
 });
-
-function something() {
-    //
-}

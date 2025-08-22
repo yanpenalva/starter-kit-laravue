@@ -10,12 +10,10 @@ staged_files=$(git diff --name-only --cached --diff-filter=d)
 [ -z "$staged_files" ] && { echo "🚫 Nenhum arquivo staged encontrado."; exit 0; }
 
 container="starterkit-app"
-
 check_container() {
   docker inspect -f '{{.State.Running}}' "$container" 2>/dev/null | grep -q '^true$' || { echo "❌ Container '$container' não está rodando."; exit 1; }
   docker exec "$container" sh -c 'exit 0' >/dev/null 2>&1 || { echo "❌ docker exec falhou em '$container'."; exit 1; }
 }
-
 run_formatter() {
   local file="$1"
   [ -f "$file" ] || return 0
@@ -23,7 +21,6 @@ run_formatter() {
   docker exec "$container" composer pint:format "$file"
   git add "$file"
 }
-
 lint_js() {
   echo "🔍 Lintando arquivos JS/Vue..."
   docker exec "$container" npm run lint || { echo "❌ Lint JS/Vue falhou."; exit 1; }
@@ -55,6 +52,9 @@ fi
 [ -n "$php_changed" ] && run_phpstan
 
 if [ -n "$php_changed" ]; then
+  echo "🔍 Executando verificação de Profanity..."
+  docker exec "$container" composer run run:profanity || { echo "❌ Profanity check falhou."; exit 1; }
+
   case "$current_branch" in
     hml) run_tests "test" ;;
     main) exit 0 ;;

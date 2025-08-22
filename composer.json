@@ -1,4 +1,4 @@
-    {
+{
     "name": "yanpenalva/starter-kit-laravue",
     "type": "project",
     "description": "Starter kit with Laravel , Vue 3, Quasar, Vite and Docker support",
@@ -32,10 +32,10 @@
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.1",
-        "nunomaduro/phpinsights": "^2.13",
-        "pestphp/pest": "^3.0",
-        "pestphp/pest-plugin-laravel": "^3.0",
-        "phpunit/phpunit": "^11.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "pestphp/pest-plugin-profanity": "^4.0",
+        "phpunit/phpunit": "^12.0",
         "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
@@ -77,7 +77,7 @@
         "test:profile": "php artisan optimize:clear && env APP_ENV=testing php artisan test --env=testing --profile",
         "test:ci": "php artisan optimize:clear && env APP_ENV=testing php artisan test --env=testing --coverage --bail",
         "run:phpstan": "php artisan optimize:clear && ./vendor/bin/phpstan analyse",
-        "run:phpinsights": "php artisan optimize:clear && ./vendor/bin/phpinsights"
+        "run:profanity": "php artisan optimize:clear && env APP_ENV=testing ./vendor/bin/pest --profanity"
     },
     "extra": {
         "laravel": {
