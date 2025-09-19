@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types = 1);
 
 use App\Http\Controllers\Api\Permission\PermissionController;
 use Illuminate\Support\Facades\Route;

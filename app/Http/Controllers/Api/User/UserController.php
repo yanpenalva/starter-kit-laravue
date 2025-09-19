@@ -14,7 +14,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class UserController extends Controller
+final class UserController extends Controller
 {
     public function index(IndexUserRequest $request): JsonResource
     {

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Actions\Role;
 
@@ -10,20 +10,22 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
 use Spatie\Permission\Models\Role;
 
-final readonly class UpdateRoleAction {
+final readonly class UpdateRoleAction
+{
     use LogsActivity;
 
     /**
      * @phpstan-param Fluent<string, mixed> $params
      */
-    public function execute(Role $role, Fluent $params): Role {
+    public function execute(Role $role, Fluent $params): Role
+    {
         return DB::transaction(function () use ($role, $params): Role {
             $oldPermissions = $role->permissions()->pluck('name')->all();
 
             $role->update([
-                'name'        => $params->get('name', $role->name),
+                'name' => $params->get('name', $role->name),
                 'description' => $params->get('description', $role->getAttribute('description')),
-                'guard_name'  => 'web',
+                'guard_name' => 'web',
             ]);
 
             $permissions = $params->get('permissions', []);

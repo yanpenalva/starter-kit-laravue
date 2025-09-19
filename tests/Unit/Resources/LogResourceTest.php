@@ -12,11 +12,11 @@ use Spatie\Activitylog\Models\Activity;
 
 describe('LogResource', function () {
     it('transforms activity with causer and subject correctly', function () {
-        $causer = new User();
+        $causer = new User;
         $causer->id = 1;
         $causer->name = 'Causer Name';
 
-        $subject = new User();
+        $subject = new User;
         $subject->id = 2;
         $subject->name = 'Subject Name';
 
@@ -51,7 +51,7 @@ describe('LogResource', function () {
     });
 
     it('falls back to causer email when name is null', function () {
-        $causer = new User();
+        $causer = new User;
         $causer->id = 1;
         $causer->email = 'test@example.com';
 
@@ -75,7 +75,7 @@ describe('LogResource', function () {
     });
 
     it('falls back to subject title when name is null', function () {
-        $subject = new User();
+        $subject = new User;
         $subject->id = 2;
         $subject->name = null;
         $subject->title = 'Custom Title';

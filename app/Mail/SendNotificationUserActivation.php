@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendNotificationUserActivation extends Mailable
+final class SendNotificationUserActivation extends Mailable
 {
     use Queueable;
     use SerializesModels;

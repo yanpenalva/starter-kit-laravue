@@ -8,7 +8,7 @@ use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Fluent;
 
-class ResetPasswordRequest extends FormRequest
+final class ResetPasswordRequest extends FormRequest
 {
     use FailedValidation;
 
@@ -57,8 +57,6 @@ class ResetPasswordRequest extends FormRequest
     /**
      * Retorna os dados validados encapsulados em um objeto Fluent.
      *
-     * @param string|null $key
-     * @param mixed|null $default
      * @return Fluent<string, mixed>
      */
     public function fluentParams(?string $key = null, mixed $default = null): Fluent
@@ -66,7 +64,7 @@ class ResetPasswordRequest extends FormRequest
         $validated = parent::validated($key, $default);
         assert(is_array($validated));
 
-        if (!array_key_exists('password_confirmation', $validated)) {
+        if (! array_key_exists('password_confirmation', $validated)) {
             /** @var string|null $passwordConfirmation */
             $passwordConfirmation = $this->input('password_confirmation');
             $validated['password_confirmation'] = $passwordConfirmation;

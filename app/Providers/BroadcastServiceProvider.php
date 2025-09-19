@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\ServiceProvider;
 
 // @codeCoverageIgnoreStart
-class BroadcastServiceProvider extends ServiceProvider
+final class BroadcastServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {

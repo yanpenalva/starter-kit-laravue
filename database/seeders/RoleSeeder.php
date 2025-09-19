@@ -1,15 +1,17 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Database\Seeders;
 
+use App\Enums\RolesEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\{Permission, Role};
-use App\Enums\RolesEnum;
 
-final class RoleSeeder extends Seeder {
-    public function run(): void {
+final class RoleSeeder extends Seeder
+{
+    public function run(): void
+    {
         $adminRole = Role::updateOrCreate(
             ['slug' => RolesEnum::ADMINISTRATOR->value],
             [

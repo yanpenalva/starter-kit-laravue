@@ -9,7 +9,6 @@ use Spatie\Permission\Models\{Permission, Role};
 
 final readonly class ShowRoleAction
 {
-
     public function execute(Role $role): Role
     {
         $role->load('permissions');

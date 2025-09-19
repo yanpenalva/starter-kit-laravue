@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types = 1);
 
 namespace Tests\Unit\Exceptions;
 
@@ -6,7 +7,7 @@ use App\Exceptions\AuthenticationException;
 
 describe('AuthenticationException', function () {
     it('returns the default error message when no parameters are passed', function () {
-        $exception = new AuthenticationException();
+        $exception = new AuthenticationException;
 
         expect($exception->getMessage())->toBe('Não Autenticado');
     });
@@ -19,7 +20,7 @@ describe('AuthenticationException', function () {
     });
 
     it('returns an empty guards array when no guards parameter is passed', function () {
-        $exception = new AuthenticationException();
+        $exception = new AuthenticationException;
 
         expect($exception->guards())->toBe([]);
     });
@@ -32,7 +33,7 @@ describe('AuthenticationException', function () {
     });
 
     it('returns null for redirectTo when no redirectTo parameter is passed and no Request object is provided', function () {
-        $exception = new AuthenticationException();
+        $exception = new AuthenticationException;
 
         expect($exception->redirectTo())->toBeNull();
     });

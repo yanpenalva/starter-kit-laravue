@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Actions\User;
 
@@ -11,13 +11,15 @@ use Illuminate\Support\Facades\{DB, Mail};
 use Illuminate\Support\Fluent;
 use Spatie\Permission\Models\Role;
 
-final readonly class CreateUserAction {
+final readonly class CreateUserAction
+{
     use LogsActivity;
 
     /**
-     * @param Fluent<string, mixed> $params
+     * @param  Fluent<string, mixed>  $params
      */
-    public function execute(Fluent $params): User {
+    public function execute(Fluent $params): User
+    {
         return DB::transaction(function () use ($params): User {
             $sendRandom = (bool) $params->get('send_random_password', false);
 
@@ -40,11 +42,13 @@ final readonly class CreateUserAction {
             }
 
             $this->writeOnLog($user);
+
             return $user;
         });
     }
 
-    private function writeOnLog(User $user): void {
+    private function writeOnLog(User $user): void
+    {
         /** @var Role|null $role */
         $role = $user->roles()->first();
 

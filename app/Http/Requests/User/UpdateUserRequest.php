@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
 use Illuminate\Validation\Rule;
 
-class UpdateUserRequest extends FormRequest
+final class UpdateUserRequest extends FormRequest
 {
     use FailedValidation;
 
@@ -77,7 +77,6 @@ class UpdateUserRequest extends FormRequest
     /**
      * Retorna os dados validados usando Fluent, com opção de filtrar por chave.
      *
-     * @param string|null $key
      * @return Fluent<string, mixed>
      */
     public function fluentParams(?string $key = null): Fluent
@@ -114,7 +113,7 @@ class UpdateUserRequest extends FormRequest
      */
     protected function cpfRule(): array
     {
-        if (!$this->filled('cpf')) {
+        if (! $this->filled('cpf')) {
             return [];
         }
 
@@ -122,7 +121,7 @@ class UpdateUserRequest extends FormRequest
             'cpf' => [
                 'required',
                 'string',
-                new \App\Rules\ValidateCPF(),
+                new \App\Rules\ValidateCPF,
                 Rule::unique('users', 'cpf')
                     ->where(function (Builder $query): void {
                         $query->whereExists(function (Builder $subQuery): void {

@@ -12,7 +12,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\{Config, URL};
 
-class SendVerifyEmail extends Mailable
+final class SendVerifyEmail extends Mailable
 {
     use Queueable;
     use SerializesModels;
@@ -20,10 +20,7 @@ class SendVerifyEmail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(private User $user)
-    {
-
-    }
+    public function __construct(private User $user) {}
 
     /**
      * Get the message envelope.

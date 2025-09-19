@@ -12,7 +12,7 @@ use ReflectionClass;
 
 describe('UserPolicy', function () {
     beforeEach(function () {
-        $this->policy = new UserPolicy();
+        $this->policy = new UserPolicy;
     });
 
     afterEach(function () {

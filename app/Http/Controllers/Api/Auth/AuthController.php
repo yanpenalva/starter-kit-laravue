@@ -12,11 +12,14 @@ use Illuminate\Http\JsonResponse;
 
 /**
  * @apiInfo
+ *
  * @title SP 2.0
+ *
  * @version 1.0.0
+ *
  * @description staterkit
  */
-class AuthController extends Controller
+final class AuthController extends Controller
 {
     public function login(LoginRequest $request): JsonResponse
     {

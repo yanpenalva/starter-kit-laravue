@@ -8,7 +8,7 @@ use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class IndexRoleRequest extends FormRequest
+final class IndexRoleRequest extends FormRequest
 {
     use FailedValidation;
     /**

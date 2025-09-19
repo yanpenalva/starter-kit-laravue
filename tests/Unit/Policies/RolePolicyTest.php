@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Tests\Unit\Policies;
 
@@ -12,7 +12,7 @@ use Spatie\Permission\Models\Role;
 
 describe('RolePolicy', function () {
     beforeEach(function () {
-        $this->policy = new RolePolicy();
+        $this->policy = new RolePolicy;
     });
 
     it('allows users with roles.list permission to view index', function () {

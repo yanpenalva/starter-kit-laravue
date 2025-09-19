@@ -12,19 +12,19 @@ use Illuminate\Support\Fluent;
 final readonly class LoginAction
 {
     /**
-     * @param Fluent<string, string> $params
+     * @param  Fluent<string, string>  $params
      * @return array<string, mixed>
      */
     public function execute(Fluent $params): array
     {
         $credentials = ['email' => $params->get('email'), 'password' => $params->get('password')];
 
-        throw_if(!Auth::guard('web')->attempt($credentials), InvalidCredentialsException::class);
+        throw_if(! Auth::guard('web')->attempt($credentials), InvalidCredentialsException::class);
 
         /** @var User|null $user */
         $user = Auth::guard('web')->user();
 
-        throw_if(!$user || !$user->active, UnactivatedUserException::class);
+        throw_if(! $user || ! $user->active, UnactivatedUserException::class);
 
         Session::regenerate();
 

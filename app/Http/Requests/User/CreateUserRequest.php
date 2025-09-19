@@ -10,7 +10,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\{Fluent, Str};
 use Illuminate\Validation\Rule;
 
-class CreateUserRequest extends FormRequest
+final class CreateUserRequest extends FormRequest
 {
     use FailedValidation;
     /**
@@ -34,7 +34,7 @@ class CreateUserRequest extends FormRequest
             'cpf' => [
                 'required',
                 'string',
-                new \App\Rules\ValidateCPF(),
+                new \App\Rules\ValidateCPF,
                 Rule::unique('users', 'cpf')->ignore($this->id),
             ],
             'active' => ['required', Rule::in(StatusEnum::ENABLED, StatusEnum::DISABLED)],
@@ -42,7 +42,7 @@ class CreateUserRequest extends FormRequest
             'send_random_password' => ['boolean'],
         ];
 
-        if (!$this->send_random_password && $this->role_slug !== RolesEnum::ADMINISTRATOR->value) {
+        if (! $this->send_random_password && $this->role_slug !== RolesEnum::ADMINISTRATOR->value) {
             $rules['password'] = ['required', 'min:8'];
         }
 
@@ -92,7 +92,6 @@ class CreateUserRequest extends FormRequest
     /**
      * Retorna os dados validados encapsulados em um objeto Fluent.
      *
-     * @param string|null $key
      * @return Fluent<string, mixed>
      */
     public function fluentParams(?string $key = null): Fluent

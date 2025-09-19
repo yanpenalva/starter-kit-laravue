@@ -8,7 +8,7 @@ use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Fluent;
 
-class LoginRequest extends FormRequest
+final class LoginRequest extends FormRequest
 {
     use FailedValidation;
     /**

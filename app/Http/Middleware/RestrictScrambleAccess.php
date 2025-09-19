@@ -7,13 +7,12 @@ use Closure;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
 // @codeCoverageIgnoreStart
-class RestrictScrambleAccess
+final class RestrictScrambleAccess
 {
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -26,8 +25,6 @@ class RestrictScrambleAccess
     }
     /**
      * Check if the current environment is restricted.
-     *
-     * @return bool
      */
     private function isRestrictedEnvironment(): bool
     {
@@ -36,7 +33,6 @@ class RestrictScrambleAccess
     /**
      * Return a forbidden response.
      *
-     * @param  ?string  $message
      * @return \Illuminate\Http\JsonResponse
      */
     private function forbiddenResponse(?string $message = null)

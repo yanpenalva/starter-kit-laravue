@@ -18,7 +18,7 @@ run_formatter() {
   local file="$1"
   [ -f "$file" ] || return 0
   echo "✨ Formatando $file..."
-  docker exec "$container" composer pint:format "$file"
+  docker exec "$container" composer pint "$file"
   git add "$file"
 }
 lint_js() {
@@ -28,7 +28,7 @@ lint_js() {
 
 run_phpstan() {
   echo "🔍 Executando análise estática (Composer)..."
-  docker exec "$container" composer run run:phpstan || { echo "❌ Phpstan/Larastan falhou."; exit 1; }
+  docker exec "$container" composer phpstan || { echo "❌ Phpstan/Larastan falhou."; exit 1; }
 }
 
 run_tests() {
@@ -53,7 +53,7 @@ fi
 
 if [ -n "$php_changed" ]; then
   echo "🔍 Executando verificação de Profanity..."
-  docker exec "$container" composer run run:profanity || { echo "❌ Profanity check falhou."; exit 1; }
+  docker exec "$container" composer profanity || { echo "❌ Profanity check falhou."; exit 1; }
 
   case "$current_branch" in
     hml) run_tests "test" ;;

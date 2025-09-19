@@ -8,22 +8,17 @@ use Exception;
 
 // @codeCoverageIgnoreStart
 
-class AuthenticationException extends Exception
+final class AuthenticationException extends Exception
 {
     /**
-     * @var array<int, string> $guards
+     * @var array<int, string>
      */
     protected array $guards;
 
-    /**
-     * @var string|null $redirectTo
-     */
     protected ?string $redirectTo;
 
     /**
-     * @param string $message
-     * @param array<int, string> $guards
-     * @param string|null $redirectTo
+     * @param  array<int, string>  $guards
      */
     public function __construct(string $message = 'Não Autenticado', array $guards = [], ?string $redirectTo = null)
     {
@@ -41,9 +36,6 @@ class AuthenticationException extends Exception
         return $this->guards;
     }
 
-    /**
-     * @return string|null
-     */
     public function redirectTo(): ?string
     {
         return $this->redirectTo;

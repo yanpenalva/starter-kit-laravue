@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PermissionGroupResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class PermissionController extends Controller
+final class PermissionController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {

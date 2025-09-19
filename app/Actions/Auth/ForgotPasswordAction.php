@@ -20,8 +20,8 @@ final readonly class ForgotPasswordAction
      *
      * @template TKey of array-key
      * @template TValue
+     *
      * @param  Fluent<TKey, TValue>  $params
-     * @return void
      */
     public function execute(Fluent $params): void
     {
@@ -29,13 +29,12 @@ final readonly class ForgotPasswordAction
             $status = Password::sendResetLink(
                 $params->toArray(),
                 /**
-                 * @param User&CanResetPassword $user
+                 * @param  User&CanResetPassword  $user
                  */
                 function (CanResetPassword $user, string $token): void {
                     /** @var User $user */
-
                     throw_if(
-                        !$user->roles->where('slug', RolesEnum::GUEST->value)->count(),
+                        ! $user->roles->where('slug', RolesEnum::GUEST->value)->count(),
                         new Exception(
                             'Usuário não disponível para solicitar a redefinição de senha.',
                             Response::HTTP_CONFLICT

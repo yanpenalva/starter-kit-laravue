@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types = 1);
 
 use App\Http\Middleware\ForceJsonResponse;
 use Illuminate\Http\Request;
@@ -6,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 describe('ForceJsonResponse Middleware', function () {
     it('sets accept header to json and modifies content-type in response', function () {
-        $middleware = new ForceJsonResponse();
+        $middleware = new ForceJsonResponse;
         $request = Request::create('/test-url', 'GET');
 
         $response = $middleware->handle($request, function ($req) {
@@ -18,11 +19,11 @@ describe('ForceJsonResponse Middleware', function () {
     });
 
     it('handles exceptions with json response', function () {
-        $middleware = new ForceJsonResponse();
+        $middleware = new ForceJsonResponse;
         $request = Request::create('/test-url', 'GET');
 
         $response = $middleware->handle($request, function ($req) {
-            throw new \Exception('Error occurred');
+            throw new Exception('Error occurred');
         });
 
         expect($response->getStatusCode())->toEqual(500);

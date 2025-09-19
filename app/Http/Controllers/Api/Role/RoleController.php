@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
 
-class RoleController extends Controller
+final class RoleController extends Controller
 {
     public function index(IndexRoleRequest $request): JsonResource
     {

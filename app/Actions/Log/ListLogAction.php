@@ -15,7 +15,7 @@ use Spatie\Activitylog\Models\Activity;
 final readonly class ListLogAction
 {
     /**
-     * @param Fluent<string, mixed> $params
+     * @param  Fluent<string, mixed>  $params
      * @return LengthAwarePaginator<int, Activity>|Collection<int, Activity>
      */
     public function execute(Fluent $params): LengthAwarePaginator|Collection

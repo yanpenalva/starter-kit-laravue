@@ -12,7 +12,7 @@ use Illuminate\Support\Fluent;
 final readonly class ListUserAction
 {
     /**
-     * @param Fluent<string, mixed> $params
+     * @param  Fluent<string, mixed>  $params
      * @return LengthAwarePaginator<int, User>|Collection<int, User>
      */
     public function execute(Fluent $params): LengthAwarePaginator|Collection

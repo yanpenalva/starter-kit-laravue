@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendRandomPassword extends Mailable
+final class SendRandomPassword extends Mailable
 {
     use Queueable;
     use SerializesModels;

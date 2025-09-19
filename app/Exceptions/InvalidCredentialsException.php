@@ -8,18 +8,10 @@ use Exception;
 use Illuminate\Http\Response;
 use Throwable;
 
-class InvalidCredentialsException extends Exception
+final class InvalidCredentialsException extends Exception
 {
-    /**
-     * @var string
-     */
     public string $error;
 
-    /**
-     * @param string $message
-     * @param int $code
-     * @param Throwable|null $previous
-     */
     public function __construct(
         string $message = 'Usuário ou senha inválidos',
         int $code = Response::HTTP_UNAUTHORIZED,

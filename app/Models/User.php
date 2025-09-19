@@ -49,11 +49,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
-    /**
-     *
-     * @param string|null $value
-     * @return void
-     */
     public function setCpfAttribute(?string $value): void
     {
         $this->attributes['cpf'] = $value !== null ? preg_replace('/\D/', '', $value) : null;

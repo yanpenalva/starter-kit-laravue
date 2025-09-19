@@ -14,6 +14,7 @@ final readonly class ListRoleAction
 {
     /**
      * @phpstan-param Fluent<string, mixed> $params
+     *
      * @phpstan-return LengthAwarePaginator<int, Role>
      */
     public function execute(Fluent $params): LengthAwarePaginator|Collection

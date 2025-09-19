@@ -9,9 +9,9 @@ use Exception;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ForceJsonResponse
+final class ForceJsonResponse
 {
-    protected $defaultAcceptHeader = 'application/json';
+    private $defaultAcceptHeader = 'application/json';
 
     public function handle(Request $request, Closure $next): Response
     {

@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendForgetPasswordMail extends Mailable
+final class SendForgetPasswordMail extends Mailable
 {
     use Queueable;
     use SerializesModels;
@@ -21,8 +21,7 @@ class SendForgetPasswordMail extends Mailable
     public function __construct(
         private string $token,
         private User $user
-    ) {
-    }
+    ) {}
 
     /**
      * Get the message envelope.

@@ -7,7 +7,7 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule as Rule;
 
-class ValidateCPF implements Rule
+final class ValidateCPF implements Rule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {

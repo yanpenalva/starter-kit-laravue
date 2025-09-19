@@ -15,7 +15,7 @@ final readonly class ShowUserAction
         $user = User::with(['roles.permissions'])->whereKey($id)->first();
 
         throw_if(
-            !$user,
+            ! $user,
             ModelNotFoundException::class,
             'Usuário não encontrado',
             Response::HTTP_NOT_FOUND

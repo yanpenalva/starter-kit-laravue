@@ -8,18 +8,10 @@ use Exception;
 use Illuminate\Http\Response;
 use Throwable;
 
-class UnactivatedUserException extends Exception
+final class UnactivatedUserException extends Exception
 {
-    /**
-     * @var string
-     */
     public string $error;
 
-    /**
-     * @param string $message
-     * @param int $code
-     * @param Throwable|null $previous
-     */
     public function __construct(
         string $message = 'O Usuário não está ativo. Por favor contate o administrador do sistema.',
         int $code = Response::HTTP_FORBIDDEN,

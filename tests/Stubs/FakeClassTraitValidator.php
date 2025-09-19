@@ -1,11 +1,12 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types = 1);
 
 namespace Tests\Stubs;
 
 use App\Traits\FailedValidation;
 use Illuminate\Support\Facades\Validator;
 
-class FakeClassTraitValidator
+final class FakeClassTraitValidator
 {
     use FailedValidation;
 

@@ -7,7 +7,7 @@ namespace App\Http\Middleware;
 use Illuminate\Cookie\Middleware\EncryptCookies as Middleware;
 
 // @codeCoverageIgnoreStart
-class EncryptCookies extends Middleware
+final class EncryptCookies extends Middleware
 {
     protected $except = [
         //

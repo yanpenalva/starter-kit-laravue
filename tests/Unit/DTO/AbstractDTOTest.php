@@ -7,13 +7,13 @@ namespace Tests\Unit\DTO;
 use App\DTO\AbstractDTO;
 
 beforeEach(function () {
-    $this->sampleDto = new class ('John Doe', 30, ['admin', 'editor']) extends AbstractDTO {
+    $this->sampleDto = new class('John Doe', 30, ['admin', 'editor']) extends AbstractDTO
+    {
         public function __construct(
             public string $name,
             public int $age,
             public array $roles
-        ) {
-        }
+        ) {}
     };
 });
 

@@ -1,10 +1,11 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types = 1);
 
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Tests\Stubs\FakeClassTraitValidator;
 
 test('it throws an HttpResponseException with detailed validation errors', function () {
-    $fake = new FakeClassTraitValidator();
+    $fake = new FakeClassTraitValidator;
     $invalidInput = [];
 
     try {

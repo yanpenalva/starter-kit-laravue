@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types = 1);
 
 // use Dedoc\Scramble\Http\Middleware\RestrictedDocsAccess;
 
@@ -42,7 +43,7 @@ return [
     'middleware' => [
         'web',
         // RestrictedDocsAccess::class,
-        \App\Http\Middleware\RestrictScrambleAccess::class,
+        App\Http\Middleware\RestrictScrambleAccess::class,
 
     ],
 

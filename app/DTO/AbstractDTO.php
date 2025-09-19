@@ -15,7 +15,7 @@ abstract class AbstractDTO implements Arrayable, JsonSerializable
     /**
      * @return array<string, mixed>
      */
-    public function toArray(): array
+    final public function toArray(): array
     {
         $recursiveConversion = function ($item) use (&$recursiveConversion): mixed {
             if (is_object($item)) {
@@ -38,7 +38,7 @@ abstract class AbstractDTO implements Arrayable, JsonSerializable
         return $result;
     }
 
-    public function toJson(int $options = 0): string
+    final public function toJson(int $options = 0): string
     {
         return (string) json_encode($this->toArray(), $options);
     }
@@ -46,7 +46,7 @@ abstract class AbstractDTO implements Arrayable, JsonSerializable
     /**
      * @return array<string, mixed>
      */
-    public function jsonSerialize(): array
+    final public function jsonSerialize(): array
     {
         return $this->toArray();
     }

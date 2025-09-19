@@ -19,12 +19,11 @@ use Spatie\Permission\Models\Permission;
  *
  * @phpstan-consistent-constructor
  */
-class RoleResource extends BaseResource
+final class RoleResource extends BaseResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param Request $request
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

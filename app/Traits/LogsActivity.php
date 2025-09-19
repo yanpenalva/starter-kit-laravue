@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Traits;
 
@@ -9,31 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 
-trait LogsActivity {
+trait LogsActivity
+{
     /**
-     * @param array<mixed> $attributes
-     * @return array<string, mixed>
-     */
-    private function extractAttributesWithDates(Model $model, array $attributes): array {
-        /** @var array<string, mixed> $normalized */
-        $normalized = collect($attributes)
-            ->map(function (mixed $value, string|int $key) use ($model): mixed {
-                return is_string($key)
-                    && in_array($key, $model->getDates(), true)
-                    && $model->{$key} instanceof DateTimeInterface
-                    ? $model->{$key}
-                    : $value;
-            })
-            ->all();
-
-        return $normalized;
-    }
-
-    /**
-     * @param array<string, mixed> $dirty
-     * @param array<string, mixed> $relations
-     * @param array<string, mixed>|null $oldData
-     * @param array<string, mixed>|null $newData
+     * @param  array<string, mixed>  $dirty
+     * @param  array<string, mixed>  $relations
+     * @param  array<string, mixed>|null  $oldData
+     * @param  array<string, mixed>|null  $newData
      */
     public function logUpdateActivity(
         string $activityName,
@@ -45,18 +27,19 @@ trait LogsActivity {
         ?array $newData = null
     ): void {
         $beforeAttributes = $oldData ?? $this->extractAttributesWithDates($model, $model->getOriginal());
-        $afterAttributes  = $newData ?? $this->extractAttributesWithDates($model, array_merge($model->getOriginal(), $dirty));
+        $afterAttributes = $newData ?? $this->extractAttributesWithDates($model, array_merge($model->getOriginal(), $dirty));
 
         $changes = [
             'before' => $beforeAttributes,
-            'after'  => $afterAttributes,
+            'after' => $afterAttributes,
         ];
 
         foreach ($relations as $key => $value) {
             if (is_string($key) && is_array($value) && count($value) === 2) {
                 [$beforeRelation, $afterRelation] = $value;
                 $changes['before'][$key] = $beforeRelation;
-                $changes['after'][$key]  = $afterRelation;
+                $changes['after'][$key] = $afterRelation;
+
                 continue;
             }
 
@@ -67,16 +50,16 @@ trait LogsActivity {
                 /** @var array<int, string> $before */
                 $before = $relation->pluck('name')->all();
                 /** @var array<int, string> $after */
-                $after  = $relation->pluck('name')->all();
+                $after = $relation->pluck('name')->all();
 
                 $changes['before'][$value] = $before;
-                $changes['after'][$value]  = $after;
+                $changes['after'][$value] = $after;
             }
         }
 
         if (isset($beforeAttributes['roles']) && isset($afterAttributes['roles'])) {
             $changes['before']['roles'] = $beforeAttributes['roles'];
-            $changes['after']['roles']  = $afterAttributes['roles'];
+            $changes['after']['roles'] = $afterAttributes['roles'];
         }
 
         activity($activityName)
@@ -138,5 +121,24 @@ trait LogsActivity {
             ->causedBy(auth()->user())
             ->withProperties(['attributes' => ['after' => $after]])
             ->log($description);
+    }
+    /**
+     * @param  array<mixed>  $attributes
+     * @return array<string, mixed>
+     */
+    private function extractAttributesWithDates(Model $model, array $attributes): array
+    {
+        /** @var array<string, mixed> $normalized */
+        $normalized = collect($attributes)
+            ->map(function (mixed $value, string|int $key) use ($model): mixed {
+                return is_string($key)
+                    && in_array($key, $model->getDates(), true)
+                    && $model->{$key} instanceof DateTimeInterface
+                    ? $model->{$key}
+                    : $value;
+            })
+            ->all();
+
+        return $normalized;
     }
 }

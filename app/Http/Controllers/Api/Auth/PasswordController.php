@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\{ForgotPasswordRequest, ResetPasswordRequest};
 use Illuminate\Http\{JsonResponse, Response};
 
-class PasswordController extends Controller
+final class PasswordController extends Controller
 {
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {

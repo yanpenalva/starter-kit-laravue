@@ -21,9 +21,8 @@ class BaseResource extends JsonResource
     /**
      * Adds pagination information to the response.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param array<string, mixed> $paginated
-     * @param array<string, mixed> $default
+     * @param  array<string, mixed>  $paginated
+     * @param  array<string, mixed>  $default
      * @return array<string, mixed>
      */
     public function paginationInformation(
@@ -44,8 +43,7 @@ class BaseResource extends JsonResource
     /**
      * Transforms the keys of the resource data based on allowed keys.
      *
-     * @param array<string> $allowedKeys
-     * @param \Illuminate\Http\Request|null $request
+     * @param  array<string>  $allowedKeys
      * @return array<string, mixed>
      */
     protected function transformKeys(array $allowedKeys, ?\Illuminate\Http\Request $request = null): array

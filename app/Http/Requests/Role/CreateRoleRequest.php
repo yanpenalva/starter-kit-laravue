@@ -44,7 +44,7 @@ final class CreateRoleRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
-                new UniqueRoleNameRule(),
+                new UniqueRoleNameRule,
             ],
             'description' => ['max:258'],
             'permissions' => ['array'],

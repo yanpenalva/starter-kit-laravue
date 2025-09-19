@@ -8,7 +8,7 @@ use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Fluent;
 
-class ForgotPasswordRequest extends FormRequest
+final class ForgotPasswordRequest extends FormRequest
 {
     use FailedValidation;
     /**
@@ -44,11 +44,11 @@ class ForgotPasswordRequest extends FormRequest
             'email.exists' => 'Nenhum cadastro encontrado com o e-mail informado.',
         ];
     }
-    /** @return \Illuminate\Support\Fluent<string, mixed> */
+    /** @return Fluent<string, mixed> */
     public function fluentParams(?string $key = null, mixed $default = null): Fluent
     {
         /** @var array<string, mixed> $data */
-        $data = null === $key
+        $data = $key === null
             ? $this->validated()
             : [(string) $key => $this->validated($key, $default)];
 

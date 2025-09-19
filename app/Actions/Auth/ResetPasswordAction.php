@@ -16,7 +16,7 @@ final readonly class ResetPasswordAction
     /**
      * Send the password reset link to the user.
      *
-     * @param  Fluent<string, mixed> $params
+     * @param  Fluent<string, mixed>  $params
      */
     public function execute(Fluent $params): void
     {

@@ -9,7 +9,7 @@ use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class RegisterExternalUserRequest extends FormRequest
+final class RegisterExternalUserRequest extends FormRequest
 {
     use FailedValidation;
     /**
@@ -30,7 +30,7 @@ class RegisterExternalUserRequest extends FormRequest
         return [
             'name' => ['required', 'string'],
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->id)],
-            'cpf' => ['required', new \App\Rules\ValidateCPF(), Rule::unique('users', 'cpf')->ignore($this->id)],
+            'cpf' => ['required', new \App\Rules\ValidateCPF, Rule::unique('users', 'cpf')->ignore($this->id)],
             'role' => [
                 'required',
                 Rule::in([

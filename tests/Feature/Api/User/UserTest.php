@@ -62,7 +62,7 @@ describe('Users Management', function () {
                 actingAs($this->asAdmin)
                     ->post(route('users.register'), $registerUser)
                     ->assertStatus(Response::HTTP_OK)
-                    ->assertExactJson(["message" => "Um e-mail de confirmação foi encaminhado para {$registerUser['email']}. Por favor, realize os procedimentos para ativação da sua conta."]);
+                    ->assertExactJson(['message' => "Um e-mail de confirmação foi encaminhado para {$registerUser['email']}. Por favor, realize os procedimentos para ativação da sua conta."]);
             }
         )->with('registerUser')
             ->with('validJsonStructure');
@@ -379,7 +379,7 @@ describe('Users Management', function () {
 
         $response->assertStatus(Response::HTTP_OK);
 
-        Mail::assertQueued(\App\Mail\SendVerifyEmail::class, function ($mail) use ($registerUser) {
+        Mail::assertQueued(SendVerifyEmail::class, function ($mail) use ($registerUser) {
             return $mail->hasTo($registerUser['email']);
         });
     })->with('registerUser');

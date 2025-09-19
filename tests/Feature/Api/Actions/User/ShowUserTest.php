@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types = 1);
 
 use App\Actions\User\ShowUserAction;
 use App\Models\User;
@@ -32,7 +33,7 @@ describe('ShowUserAction (Feature)', function () {
     });
 
     it('throws exception when user is not found', function () {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Usuário não encontrado');
 
         app(ShowUserAction::class)->execute(9999); // ID inexistente

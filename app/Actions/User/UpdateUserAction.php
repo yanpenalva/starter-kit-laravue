@@ -15,7 +15,7 @@ final readonly class UpdateUserAction
     use LogsActivity;
 
     /**
-     * @param Fluent<string, mixed> $params
+     * @param  Fluent<string, mixed>  $params
      */
     public function execute(Fluent $params, int|string $id): User
     {
@@ -61,7 +61,7 @@ final readonly class UpdateUserAction
     }
 
     /**
-     * @param Fluent<string, mixed> $params
+     * @param  Fluent<string, mixed>  $params
      */
     private function applyFillableUpdates(User $user, Fluent $params): void
     {
@@ -74,7 +74,7 @@ final readonly class UpdateUserAction
     }
 
     /**
-     * @param Fluent<string, mixed> $params
+     * @param  Fluent<string, mixed>  $params
      */
     private function applyRoles(User $user, Fluent $params): void
     {

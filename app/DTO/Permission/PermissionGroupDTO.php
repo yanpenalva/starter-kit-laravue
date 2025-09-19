@@ -14,12 +14,11 @@ use Spatie\Permission\Models\Permission;
 final class PermissionGroupDTO extends AbstractDTO
 {
     /**
-     * @param PermissionCollection $permissions
+     * @param  PermissionCollection  $permissions
      */
     public function __construct(
         public string $group,
         public string $label,
         public EloquentCollection $permissions
-    ) {
-    }
+    ) {}
 }

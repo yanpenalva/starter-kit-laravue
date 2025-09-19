@@ -83,7 +83,7 @@ final class UpdateRoleRequest extends FormRequest
     }
 
     /**
-     * @param array<string>|string|int|null $key
+     * @param  array<string>|string|int|null  $key
      * @return Fluent<string, mixed>
      */
     public function fluent($key = null): Fluent

@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types = 1);
 
 use App\Actions\Role\RoleBySlugAction;
 use Spatie\Permission\Models\{Permission, Role};
@@ -47,7 +48,7 @@ describe('RoleBySlugAction (Feature)', function () {
     });
 
     it('throws exception when role slug does not exist', function () {
-        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        $this->expectException(Illuminate\Database\Eloquent\ModelNotFoundException::class);
 
         app(RoleBySlugAction::class)->execute('non-existent-slug');
     });

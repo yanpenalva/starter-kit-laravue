@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+declare(strict_types = 1);
 
 namespace Database\Seeders;
 
@@ -7,7 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\{DB, Hash};
 
-class UserSeeder extends Seeder
+final class UserSeeder extends Seeder
 {
     private $adminPassword;
 

@@ -11,7 +11,7 @@ use Log;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class Handler extends ExceptionHandler
+final class Handler extends ExceptionHandler
 {
     protected $dontFlash = [
         'current_password',
@@ -19,9 +19,7 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
-    public function register(): void
-    {
-    }
+    public function register(): void {}
 
     public function render($request, Throwable $exception): mixed
     {

@@ -16,7 +16,7 @@ final readonly class MyProfileAction
         /** @var User|null $user */
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return [];
         }
 
