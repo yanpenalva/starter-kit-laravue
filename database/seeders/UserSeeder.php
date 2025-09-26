@@ -8,29 +8,25 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\{DB, Hash};
 
-final class UserSeeder extends Seeder
-{
+final class UserSeeder extends Seeder {
     private $adminPassword;
 
     private $adminEmail;
 
     private $adminRole;
-    public function __construct()
-    {
+    public function __construct() {
         $this->adminPassword = config('starterkit.admin.password');
         $this->adminEmail = config('starterkit.admin.email');
         $this->adminRole = config('starterkit.admin.role');
     }
 
-    public function run()
-    {
+    public function run() {
         DB::transaction(function () {
             $this->createAdminUser();
             $this->assignAdminRole();
         });
     }
-    private function createAdminUser()
-    {
+    private function createAdminUser() {
         DB::table('users')->updateOrInsert(
             ['email' => $this->adminEmail],
             [
@@ -45,8 +41,7 @@ final class UserSeeder extends Seeder
             ]
         );
     }
-    private function assignAdminRole()
-    {
+    private function assignAdminRole() {
         $user = User::where('email', $this->adminEmail)->first();
         $roleId = DB::table('roles')
             ->where('name', $this->adminRole)

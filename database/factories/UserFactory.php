@@ -10,10 +10,8 @@ use Illuminate\Support\Str;
 
 use function random_int;
 
-final class UserFactory extends Factory
-{
-    public function definition(): array
-    {
+final class UserFactory extends Factory {
+    public function definition(): array {
         return [
             'name' => fake('pt_BR')->name(),
             'email' => fake('pt_BR')->unique()->safeEmail(),

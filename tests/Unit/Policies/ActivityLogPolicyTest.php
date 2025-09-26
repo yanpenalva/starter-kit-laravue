@@ -12,7 +12,7 @@ use ReflectionClass;
 
 describe('ActivityLogPolicy', function () {
     beforeEach(function () {
-        $this->policy = new ActivityLogPolicy;
+        $this->policy = new ActivityLogPolicy();
     });
 
     it('allows users with activity logs list permission to view index', function () {

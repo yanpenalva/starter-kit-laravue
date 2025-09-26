@@ -7,8 +7,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\{DB, Log};
 
-final class CleanActivityLogCommand extends Command
-{
+final class CleanActivityLogCommand extends Command {
     protected const LOG_CHANNEL = 'activity_rotation';
     protected const WITHOUT_RECORDS = 0;
     protected const TABLE_NAME = 'activity_log';
@@ -21,8 +20,7 @@ final class CleanActivityLogCommand extends Command
 
     protected $description = 'Limpa registros antigos da tabela activity_log';
 
-    public function handle(): int
-    {
+    public function handle(): int {
         $this->info(self::INITIAL_MESSAGE);
 
         $total = DB::table(self::TABLE_NAME)->count();

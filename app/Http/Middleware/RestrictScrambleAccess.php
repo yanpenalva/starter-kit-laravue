@@ -7,16 +7,14 @@ use Closure;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 
 // @codeCoverageIgnoreStart
-final class RestrictScrambleAccess
-{
+final class RestrictScrambleAccess {
     /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
-    public function handle($request, Closure $next)
-    {
+    public function handle($request, Closure $next) {
         if ($this->isRestrictedEnvironment()) {
             return $this->forbiddenResponse();
         }
@@ -26,8 +24,7 @@ final class RestrictScrambleAccess
     /**
      * Check if the current environment is restricted.
      */
-    private function isRestrictedEnvironment(): bool
-    {
+    private function isRestrictedEnvironment(): bool {
         return in_array(config('app.env'), ['production', 'staging'], true);
     }
     /**
@@ -35,8 +32,7 @@ final class RestrictScrambleAccess
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    private function forbiddenResponse(?string $message = null)
-    {
+    private function forbiddenResponse(?string $message = null) {
         return response()->json([
             'code' => HttpFoundationResponse::HTTP_FORBIDDEN,
             'message' => $message ?? 'O acesso a esta rota está restrito neste ambiente.',

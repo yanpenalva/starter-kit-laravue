@@ -7,10 +7,8 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Middleware\TrustHosts as Middleware;
 
 // @codeCoverageIgnoreStart
-final class TrustHosts extends Middleware
-{
-    public function hosts(): array
-    {
+final class TrustHosts extends Middleware {
+    public function hosts(): array {
         return [
             $this->allSubdomainsOfApplicationUrl(),
         ];

@@ -11,18 +11,17 @@ use Log;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-final class Handler extends ExceptionHandler
-{
+final class Handler extends ExceptionHandler {
     protected $dontFlash = [
         'current_password',
         'password',
         'password_confirmation',
     ];
 
-    public function register(): void {}
+    public function register(): void {
+    }
 
-    public function render($request, Throwable $exception): mixed
-    {
+    public function render($request, Throwable $exception): mixed {
         $status = match (true) {
             $exception instanceof InvalidCredentialsException => (int) ($exception->getCode() ?: Response::HTTP_UNAUTHORIZED),
             $exception instanceof AuthenticationException => (int) Response::HTTP_UNAUTHORIZED,

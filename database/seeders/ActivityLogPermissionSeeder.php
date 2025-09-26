@@ -8,10 +8,8 @@ use App\Enums\PermissionEnum;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-final class ActivityLogPermissionSeeder extends Seeder
-{
-    public function run(): void
-    {
+final class ActivityLogPermissionSeeder extends Seeder {
+    public function run(): void {
         $permissions = [
             PermissionEnum::ACTIVITY_LOGS_LIST,
         ];

@@ -11,10 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 // @codeCoverageIgnoreStart
-final class RedirectIfAuthenticated
-{
-    public function handle(Request $request, Closure $next, string ...$guards): Response
-    {
+final class RedirectIfAuthenticated {
+    public function handle(Request $request, Closure $next, string ...$guards): Response {
         $guards = collect($guards)->whenEmpty(fn () => collect([null]));
 
         return $guards->first(fn ($guard) => Auth::guard($guard)->check())

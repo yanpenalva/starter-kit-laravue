@@ -10,24 +10,21 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-final class SendNotificationUserActivation extends Mailable
-{
+final class SendNotificationUserActivation extends Mailable {
     use Queueable;
     use SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(private User $user)
-    {
+    public function __construct(private User $user) {
         //
     }
 
     /**
      * Get the message envelope.
      */
-    public function envelope(): Envelope
-    {
+    public function envelope(): Envelope {
         return new Envelope(
             subject: 'Ativação de usuário',
         );
@@ -38,8 +35,7 @@ final class SendNotificationUserActivation extends Mailable
      *
      * @return $this
      */
-    public function build(): mixed
-    {
+    public function build(): mixed {
         return $this->markdown('emails.sendNotificationUserActivation', [
             'user' => $this->user,
         ]);
@@ -50,8 +46,7 @@ final class SendNotificationUserActivation extends Mailable
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
-    public function attachments(): array
-    {
+    public function attachments(): array {
         return [];
     }
 }

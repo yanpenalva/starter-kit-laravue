@@ -10,15 +10,13 @@ use Illuminate\Database\Eloquent\Relations\{BelongsToMany, Relation};
 use Illuminate\Support\Fluent;
 use Spatie\Permission\Models\{Permission, Role};
 
-final readonly class ListRoleAction
-{
+final readonly class ListRoleAction {
     /**
      * @phpstan-param Fluent<string, mixed> $params
      *
      * @phpstan-return LengthAwarePaginator<int, Role>
      */
-    public function execute(Fluent $params): LengthAwarePaginator|Collection
-    {
+    public function execute(Fluent $params): LengthAwarePaginator|Collection {
         return Role::query()
             ->with([
                 /** @param BelongsToMany<Permission, Role> $relation */

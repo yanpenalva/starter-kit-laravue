@@ -19,15 +19,13 @@ use Spatie\Permission\Models\Permission;
  *
  * @phpstan-consistent-constructor
  */
-final class RoleResource extends BaseResource
-{
+final class RoleResource extends BaseResource {
     /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array
-    {
+    public function toArray(Request $request): array {
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -44,8 +42,7 @@ final class RoleResource extends BaseResource
      *
      * @return array<array{value: int|null, label: string}>
      */
-    protected function getPermissionsForSelect(): array
-    {
+    protected function getPermissionsForSelect(): array {
         return ($this->permissions ?? collect())->map(
             fn (Permission $permission): array => [
                 'value' => $permission->id,

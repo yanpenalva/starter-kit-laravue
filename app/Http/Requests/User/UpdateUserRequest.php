@@ -12,20 +12,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
 use Illuminate\Validation\Rule;
 
-final class UpdateUserRequest extends FormRequest
-{
+final class UpdateUserRequest extends FormRequest {
     use FailedValidation;
 
-    public function authorize(): bool
-    {
+    public function authorize(): bool {
         return true;
     }
 
     /**
      * @return array<string, mixed>
      */
-    public function rules(): array
-    {
+    public function rules(): array {
         return array_merge(
             $this->baseRules(),
             $this->cpfRule(),
@@ -37,8 +34,7 @@ final class UpdateUserRequest extends FormRequest
     /**
      * @return array<string, string>
      */
-    public function attributes(): array
-    {
+    public function attributes(): array {
         return [
             'name' => 'Nome',
             'email' => 'E-mail',
@@ -55,8 +51,7 @@ final class UpdateUserRequest extends FormRequest
     /**
      * @return array<string, string>
      */
-    public function messages(): array
-    {
+    public function messages(): array {
         /** @var string $appName */
         $appName = config('app.name');
 
@@ -79,8 +74,7 @@ final class UpdateUserRequest extends FormRequest
      *
      * @return Fluent<string, mixed>
      */
-    public function fluentParams(?string $key = null): Fluent
-    {
+    public function fluentParams(?string $key = null): Fluent {
         $validated = $this->validated($key);
 
         /** @var array<string, mixed> $validated */
@@ -92,8 +86,7 @@ final class UpdateUserRequest extends FormRequest
     /**
      * @return array<string, mixed>
      */
-    protected function baseRules(): array
-    {
+    protected function baseRules(): array {
         return [
             'name' => ['sometimes', 'required', 'string'],
             'email' => [
@@ -111,9 +104,8 @@ final class UpdateUserRequest extends FormRequest
     /**
      * @return array<string, mixed>
      */
-    protected function cpfRule(): array
-    {
-        if (! $this->filled('cpf')) {
+    protected function cpfRule(): array {
+        if (!$this->filled('cpf')) {
             return [];
         }
 
@@ -121,7 +113,7 @@ final class UpdateUserRequest extends FormRequest
             'cpf' => [
                 'required',
                 'string',
-                new \App\Rules\ValidateCPF,
+                new \App\Rules\ValidateCPF(),
                 Rule::unique('users', 'cpf')
                     ->where(function (Builder $query): void {
                         $query->whereExists(function (Builder $subQuery): void {
@@ -139,21 +131,18 @@ final class UpdateUserRequest extends FormRequest
     /**
      * @return array<string, mixed>
      */
-    protected function passwordRule(): array
-    {
+    protected function passwordRule(): array {
         return $this->filled('password') ? ['password' => ['nullable', 'min:8']] : [];
     }
 
     /**
      * @return array<string, mixed>
      */
-    protected function roleSlugRule(): array
-    {
+    protected function roleSlugRule(): array {
         return $this->filled('role_slug') ? ['role_slug' => ['required']] : [];
     }
 
-    protected function prepareForValidation(): void
-    {
+    protected function prepareForValidation(): void {
         if ($this->has('role_id') && empty($this->input('role_id'))) {
             $this->request->remove('role_id');
         }

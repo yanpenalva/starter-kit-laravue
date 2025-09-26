@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 describe('ForceJsonResponse Middleware', function () {
     it('sets accept header to json and modifies content-type in response', function () {
-        $middleware = new ForceJsonResponse;
+        $middleware = new ForceJsonResponse();
         $request = Request::create('/test-url', 'GET');
 
         $response = $middleware->handle($request, function ($req) {
@@ -19,7 +19,7 @@ describe('ForceJsonResponse Middleware', function () {
     });
 
     it('handles exceptions with json response', function () {
-        $middleware = new ForceJsonResponse;
+        $middleware = new ForceJsonResponse();
         $request = Request::create('/test-url', 'GET');
 
         $response = $middleware->handle($request, function ($req) {

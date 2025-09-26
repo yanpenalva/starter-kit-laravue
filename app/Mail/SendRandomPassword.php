@@ -10,24 +10,21 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-final class SendRandomPassword extends Mailable
-{
+final class SendRandomPassword extends Mailable {
     use Queueable;
     use SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(private User $user, private string $password)
-    {
+    public function __construct(private User $user, private string $password) {
         //
     }
 
     /**
      * Get the message envelope.
      */
-    public function envelope(): Envelope
-    {
+    public function envelope(): Envelope {
         return new Envelope(
             subject: 'Registration in the SP 1.0 System',
         );
@@ -38,8 +35,7 @@ final class SendRandomPassword extends Mailable
      *
      * @return $this
      */
-    public function build(): mixed
-    {
+    public function build(): mixed {
         return $this->markdown('emails.sendRandomPassword', [
             'user' => $this->user,
             'password' => $this->password,
@@ -51,8 +47,7 @@ final class SendRandomPassword extends Mailable
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
-    public function attachments(): array
-    {
+    public function attachments(): array {
         return [];
     }
 }

@@ -10,14 +10,12 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\{Fluent, Str};
 use Illuminate\Validation\Rule;
 
-final class CreateUserRequest extends FormRequest
-{
+final class CreateUserRequest extends FormRequest {
     use FailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
+    public function authorize(): bool {
         return true;
     }
 
@@ -26,15 +24,14 @@ final class CreateUserRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
+    public function rules(): array {
         $rules = [
             'name' => ['required', 'string'],
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->id)],
             'cpf' => [
                 'required',
                 'string',
-                new \App\Rules\ValidateCPF,
+                new \App\Rules\ValidateCPF(),
                 Rule::unique('users', 'cpf')->ignore($this->id),
             ],
             'active' => ['required', Rule::in(StatusEnum::ENABLED, StatusEnum::DISABLED)],
@@ -42,7 +39,7 @@ final class CreateUserRequest extends FormRequest
             'send_random_password' => ['boolean'],
         ];
 
-        if (! $this->send_random_password && $this->role_slug !== RolesEnum::ADMINISTRATOR->value) {
+        if (!$this->send_random_password && $this->role_slug !== RolesEnum::ADMINISTRATOR->value) {
             $rules['password'] = ['required', 'min:8'];
         }
 
@@ -54,8 +51,7 @@ final class CreateUserRequest extends FormRequest
      *
      * @return array<string, string>
      */
-    public function attributes(): array
-    {
+    public function attributes(): array {
         return [
             'name' => 'Nome',
             'email' => 'E-mail',
@@ -73,8 +69,7 @@ final class CreateUserRequest extends FormRequest
      *
      * @return array<string, string>
      */
-    public function messages(): array
-    {
+    public function messages(): array {
         return [
             'cpf.unique' => 'CPF já cadastrado no SISTEX, realize o login com suas credenciais.',
             'email.unique' => 'O e-mail já foi cadastrado.',
@@ -94,8 +89,7 @@ final class CreateUserRequest extends FormRequest
      *
      * @return Fluent<string, mixed>
      */
-    public function fluentParams(?string $key = null): Fluent
-    {
+    public function fluentParams(?string $key = null): Fluent {
         /** @var array<string, mixed> $validated */
         $validated = is_array($this->validated($key)) ? $this->validated($key) : [];
 

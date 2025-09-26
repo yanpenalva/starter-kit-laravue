@@ -7,13 +7,11 @@ namespace App\Actions\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\{Auth, Session};
 
-final readonly class LogoutAction
-{
+final readonly class LogoutAction {
     /**
      * @return array<string, string>
      */
-    public function execute(): array
-    {
+    public function execute(): array {
         /** @var User|null $user */
         $user = Auth::guard('web')->user();
 

@@ -51,7 +51,7 @@ describe('ResetPasswordTest', function () {
     })->group('password');
 
     it('should keep password_confirmation if already present in validated data', function () {
-        $request = new ResetPasswordRequest;
+        $request = new ResetPasswordRequest();
         $data = [
             'email' => $this->user->email,
             'password' => '12345678',
@@ -70,7 +70,7 @@ describe('ResetPasswordTest', function () {
     });
 
     it('authorize should return true', function () {
-        $request = new ResetPasswordRequest;
+        $request = new ResetPasswordRequest();
         expect($request->authorize())->toBeTrue();
     })->group('password');
 });

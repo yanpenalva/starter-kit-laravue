@@ -8,13 +8,12 @@ use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\DB;
 
-final class UniqueRoleNameRule implements ValidationRule
-{
-    public function __construct(private readonly ?int $ignoreId = null) {}
+final class UniqueRoleNameRule implements ValidationRule {
+    public function __construct(private readonly ?int $ignoreId = null) {
+    }
 
-    public function validate(string $attribute, mixed $value, Closure $fail): void
-    {
-        if (! is_string($value)) {
+    public function validate(string $attribute, mixed $value, Closure $fail): void {
+        if (!is_string($value)) {
             return;
         }
 

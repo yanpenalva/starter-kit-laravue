@@ -14,18 +14,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-final class UserController extends Controller
-{
-    public function index(IndexUserRequest $request): JsonResource
-    {
+final class UserController extends Controller {
+    public function index(IndexUserRequest $request): JsonResource {
         $this->authorize('index', User::class);
 
         $users = app(ListUserAction::class)->execute($request->fluent());
 
         return new UserResource($users);
     }
-    public function store(CreateUserRequest $request): JsonResource
-    {
+    public function store(CreateUserRequest $request): JsonResource {
         $this->authorize('create', User::class);
 
         $user = app(CreateUserAction::class)->execute($request->fluent());
@@ -33,8 +30,7 @@ final class UserController extends Controller
         return new UserResource($user);
     }
 
-    public function show(int $id): JsonResource
-    {
+    public function show(int $id): JsonResource {
         $showUser = app(ShowUserAction::class)->execute($id);
 
         $this->authorize('show', $showUser);
@@ -42,8 +38,7 @@ final class UserController extends Controller
         return new UserResource($showUser);
     }
 
-    public function update(UpdateUserRequest $request, int $id): JsonResource
-    {
+    public function update(UpdateUserRequest $request, int $id): JsonResource {
         $this->authorize('update', User::class);
 
         $updatedUser = app(UpdateUserAction::class)->execute(
@@ -54,8 +49,7 @@ final class UserController extends Controller
         return new UserResource($updatedUser);
     }
 
-    public function destroy(Request $request, User $user): Response
-    {
+    public function destroy(Request $request, User $user): Response {
         $this->authorize('delete', User::class);
 
         try {
@@ -74,8 +68,7 @@ final class UserController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    public function register(RegisterExternalUserRequest $request): JsonResponse
-    {
+    public function register(RegisterExternalUserRequest $request): JsonResponse {
         $user = app(CreateExternalUserAction::class)->execute($request->fluent());
 
         return response()->json([
@@ -83,8 +76,7 @@ final class UserController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function verify(Request $request): JsonResponse
-    {
+    public function verify(Request $request): JsonResponse {
         app(VerifyAction::class)->execute($request->fluent());
 
         return response()->json(

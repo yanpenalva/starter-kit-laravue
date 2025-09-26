@@ -8,10 +8,8 @@ use App\Enums\RolesEnum;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\{Permission, Role};
 
-final class RoleSeeder extends Seeder
-{
-    public function run(): void
-    {
+final class RoleSeeder extends Seeder {
+    public function run(): void {
         $adminRole = Role::updateOrCreate(
             ['slug' => RolesEnum::ADMINISTRATOR->value],
             [

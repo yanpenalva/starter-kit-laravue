@@ -15,13 +15,11 @@ use Illuminate\Support\Facades\{DB, Vite};
 use Illuminate\Support\{ServiceProvider, Sleep};
 use Laravel\Telescope\Telescope;
 
-final class AppServiceProvider extends ServiceProvider
-{
+final class AppServiceProvider extends ServiceProvider {
     /**
      * Register any application services.
      */
-    public function register(): void
-    {
+    public function register(): void {
         if ($this->app->environment() !== 'local') {
             Debugbar::disable();
         }
@@ -30,8 +28,7 @@ final class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
-    {
+    public function boot(): void {
         $this->configureModelBehavior();
         $this->configureDatabase();
         $this->configureRequest();
@@ -42,7 +39,7 @@ final class AppServiceProvider extends ServiceProvider
             Sleep::fake();
         }
 
-        if (! class_exists(Telescope::class)) {
+        if (!class_exists(Telescope::class)) {
             return;
         }
 
@@ -58,8 +55,7 @@ final class AppServiceProvider extends ServiceProvider
      *
      * @codeCoverageIgnore
      */
-    public function configureDatabase(): void
-    {
+    public function configureDatabase(): void {
         DB::prohibitDestructiveCommands(
             app()->isProduction(),
         );
@@ -68,9 +64,8 @@ final class AppServiceProvider extends ServiceProvider
     /**
      * Configure the behavior of Eloquent models.
      */
-    protected function configureModelBehavior(): void
-    {
-        Model::preventLazyLoading(! $this->app->isProduction());
+    protected function configureModelBehavior(): void {
+        Model::preventLazyLoading(!$this->app->isProduction());
         Model::shouldBeStrict();
         Model::automaticallyEagerLoadRelationships();
     }
@@ -78,16 +73,14 @@ final class AppServiceProvider extends ServiceProvider
     /**
      * Configure HTTPS for non-local environments.
      */
-    protected function configureRequest(): void
-    {
+    protected function configureRequest(): void {
         $this->app['request']->server->set('HTTPS', $this->app->environment() !== 'local');
     }
 
     /**
      * Configure the Scramble package.
      */
-    protected function configureScramble(): void
-    {
+    protected function configureScramble(): void {
         Scramble::afterOpenApiGenerated(function (OpenApi $openApi) {
             $openApi->secure(
                 SecurityScheme::http('bearer', 'JWT')
@@ -98,8 +91,7 @@ final class AppServiceProvider extends ServiceProvider
     /**
      * Configure the Vite prefetch strategy.
      */
-    protected function configureVite(): void
-    {
+    protected function configureVite(): void {
         Vite::useAggressivePrefetching();
     }
 }

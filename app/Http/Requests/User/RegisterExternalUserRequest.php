@@ -9,14 +9,12 @@ use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-final class RegisterExternalUserRequest extends FormRequest
-{
+final class RegisterExternalUserRequest extends FormRequest {
     use FailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
+    public function authorize(): bool {
         return true;
     }
 
@@ -25,12 +23,11 @@ final class RegisterExternalUserRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
+    public function rules(): array {
         return [
             'name' => ['required', 'string'],
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->id)],
-            'cpf' => ['required', new \App\Rules\ValidateCPF, Rule::unique('users', 'cpf')->ignore($this->id)],
+            'cpf' => ['required', new \App\Rules\ValidateCPF(), Rule::unique('users', 'cpf')->ignore($this->id)],
             'role' => [
                 'required',
                 Rule::in([
@@ -47,8 +44,7 @@ final class RegisterExternalUserRequest extends FormRequest
      *
      * @return array<string, string>
      */
-    public function messages(): array
-    {
+    public function messages(): array {
         return [
             'name.required' => 'O campo nome é obrigatório.',
             'name.string' => 'O campo nome deve ser string.',

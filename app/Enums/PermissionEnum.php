@@ -4,8 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Enums;
 
-enum PermissionEnum: string
-{
+enum PermissionEnum: string {
     case USERS_LIST = 'users.list';
     case USERS_CREATE = 'users.create';
     case USERS_UPDATE = 'users.update';
@@ -20,8 +19,7 @@ enum PermissionEnum: string
 
     case ACTIVITY_LOGS_LIST = 'activity_logs.list';
 
-    public function description(): string
-    {
+    public function description(): string {
         return match ($this) {
             self::USERS_LIST => 'Listar usuários',
             self::USERS_CREATE => 'Criar usuários',
@@ -39,8 +37,7 @@ enum PermissionEnum: string
         };
     }
 
-    public function resource(): string
-    {
+    public function resource(): string {
         return explode('.', $this->value)[0];
     }
 }

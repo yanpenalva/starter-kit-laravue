@@ -12,21 +12,20 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\{Config, URL};
 
-final class SendVerifyEmail extends Mailable
-{
+final class SendVerifyEmail extends Mailable {
     use Queueable;
     use SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(private User $user) {}
+    public function __construct(private User $user) {
+    }
 
     /**
      * Get the message envelope.
      */
-    public function envelope(): Envelope
-    {
+    public function envelope(): Envelope {
         return new Envelope(
             subject: 'Confirmação de cadastro',
         );
@@ -37,16 +36,14 @@ final class SendVerifyEmail extends Mailable
      *
      * @return $this
      */
-    public function build(): mixed
-    {
+    public function build(): mixed {
         return $this->markdown('emails.sendVerifyEmail', [
             'user' => $this->user,
             'link' => $this->getUrl(),
         ]);
     }
 
-    public function getUrl(): string
-    {
+    public function getUrl(): string {
         $expire = Config::get('auth.verification.expire', 48);
 
         $expiration = is_int($expire) || is_string($expire) || is_float($expire)
@@ -70,8 +67,7 @@ final class SendVerifyEmail extends Mailable
      *
      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
-    public function attachments(): array
-    {
+    public function attachments(): array {
         return [];
     }
 }

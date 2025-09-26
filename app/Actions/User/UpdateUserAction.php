@@ -10,15 +10,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
 use Mail;
 
-final readonly class UpdateUserAction
-{
+final readonly class UpdateUserAction {
     use LogsActivity;
 
     /**
      * @param  Fluent<string, mixed>  $params
      */
-    public function execute(Fluent $params, int|string $id): User
-    {
+    public function execute(Fluent $params, int|string $id): User {
         return DB::transaction(function () use ($id, $params): User {
             /** @var User $user */
             $user = User::findOrFail($id);
@@ -63,8 +61,7 @@ final readonly class UpdateUserAction
     /**
      * @param  Fluent<string, mixed>  $params
      */
-    private function applyFillableUpdates(User $user, Fluent $params): void
-    {
+    private function applyFillableUpdates(User $user, Fluent $params): void {
         $fillableParams = array_intersect_key(
             $params->toArray(),
             array_flip($user->getFillable())
@@ -76,8 +73,7 @@ final readonly class UpdateUserAction
     /**
      * @param  Fluent<string, mixed>  $params
      */
-    private function applyRoles(User $user, Fluent $params): void
-    {
+    private function applyRoles(User $user, Fluent $params): void {
         if ($params->filled('role_id')) {
             $user->syncRoles([$params->get('role_id')]);
         }

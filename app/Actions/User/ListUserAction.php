@@ -9,14 +9,12 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Fluent;
 
-final readonly class ListUserAction
-{
+final readonly class ListUserAction {
     /**
      * @param  Fluent<string, mixed>  $params
      * @return LengthAwarePaginator<int, User>|Collection<int, User>
      */
-    public function execute(Fluent $params): LengthAwarePaginator|Collection
-    {
+    public function execute(Fluent $params): LengthAwarePaginator|Collection {
         $query = User::query()->with('roles');
 
         $query->select([

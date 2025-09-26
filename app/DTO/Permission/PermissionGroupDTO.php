@@ -11,8 +11,7 @@ use Spatie\Permission\Models\Permission;
 /**
  * @phpstan-type PermissionCollection EloquentCollection<int, Permission>
  */
-final class PermissionGroupDTO extends AbstractDTO
-{
+final class PermissionGroupDTO extends AbstractDTO {
     /**
      * @param  PermissionCollection  $permissions
      */
@@ -20,5 +19,6 @@ final class PermissionGroupDTO extends AbstractDTO
         public string $group,
         public string $label,
         public EloquentCollection $permissions
-    ) {}
+    ) {
+    }
 }

@@ -11,15 +11,13 @@ use Illuminate\Support\Fluent;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-final readonly class ResetPasswordAction
-{
+final readonly class ResetPasswordAction {
     /**
      * Send the password reset link to the user.
      *
      * @param  Fluent<string, mixed>  $params
      */
-    public function execute(Fluent $params): void
-    {
+    public function execute(Fluent $params): void {
         try {
             $status = Password::reset(
                 $params->toArray(),

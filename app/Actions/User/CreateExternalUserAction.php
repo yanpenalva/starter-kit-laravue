@@ -11,15 +11,13 @@ use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\{DB, Mail};
 use Illuminate\Support\Fluent;
 
-final readonly class CreateExternalUserAction
-{
+final readonly class CreateExternalUserAction {
     use LogsActivity;
 
     /**
      * @phpstan-param Fluent<string, mixed> $params
      */
-    public function execute(Fluent $params): User
-    {
+    public function execute(Fluent $params): User {
         return DB::transaction(function () use ($params): User {
             $user = User::create([
                 'name' => $params->get('name'),

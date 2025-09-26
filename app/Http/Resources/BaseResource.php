@@ -16,8 +16,7 @@ use Illuminate\Support\Str;
  *
  * @property mixed $preserveKeys
  */
-class BaseResource extends JsonResource
-{
+class BaseResource extends JsonResource {
     /**
      * Adds pagination information to the response.
      *
@@ -46,8 +45,7 @@ class BaseResource extends JsonResource
      * @param  array<string>  $allowedKeys
      * @return array<string, mixed>
      */
-    protected function transformKeys(array $allowedKeys, ?\Illuminate\Http\Request $request = null): array
-    {
+    protected function transformKeys(array $allowedKeys, ?\Illuminate\Http\Request $request = null): array {
         $resource = is_array($parentArray = parent::toArray($request)) ? $parentArray : $parentArray->toArray();
 
         return collect($allowedKeys)->mapWithKeys(function (string $allowedKey) use ($resource) {

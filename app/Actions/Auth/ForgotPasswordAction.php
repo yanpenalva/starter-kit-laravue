@@ -13,8 +13,7 @@ use Illuminate\Support\Facades\{DB, Mail, Password};
 use Illuminate\Support\Fluent;
 use Symfony\Component\HttpFoundation\Response;
 
-final readonly class ForgotPasswordAction
-{
+final readonly class ForgotPasswordAction {
     /**
      * Send the password reset link to the user.
      *
@@ -23,8 +22,7 @@ final readonly class ForgotPasswordAction
      *
      * @param  Fluent<TKey, TValue>  $params
      */
-    public function execute(Fluent $params): void
-    {
+    public function execute(Fluent $params): void {
         DB::transaction(function () use ($params) {
             $status = Password::sendResetLink(
                 $params->toArray(),
@@ -34,7 +32,7 @@ final readonly class ForgotPasswordAction
                 function (CanResetPassword $user, string $token): void {
                     /** @var User $user */
                     throw_if(
-                        ! $user->roles->where('slug', RolesEnum::GUEST->value)->count(),
+                        !$user->roles->where('slug', RolesEnum::GUEST->value)->count(),
                         new Exception(
                             'Usuário não disponível para solicitar a redefinição de senha.',
                             Response::HTTP_CONFLICT

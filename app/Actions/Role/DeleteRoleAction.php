@@ -9,11 +9,9 @@ use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
-final readonly class DeleteRoleAction
-{
+final readonly class DeleteRoleAction {
     use LogsActivity;
-    public function execute(Role $role): bool
-    {
+    public function execute(Role $role): bool {
         return DB::transaction(function () use ($role): bool {
 
             throw_if($role->users()->exists(), RoleIsAssignedToUserException::class);

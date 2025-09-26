@@ -8,8 +8,7 @@ use Exception;
 use Illuminate\Http\Response;
 use Throwable;
 
-final class RoleIsAssignedToUserException extends Exception
-{
+final class RoleIsAssignedToUserException extends Exception {
     public string $error;
 
     public function __construct(

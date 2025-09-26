@@ -17,7 +17,7 @@ describe('UniqueRoleNameRule (Unit)', function () {
 
         $validator = Validator::make(
             ['name' => 'Gerente'],
-            ['name' => [new UniqueRoleNameRule]]
+            ['name' => [new UniqueRoleNameRule()]]
         );
 
         expect($validator->passes())->toBeTrue();
@@ -30,7 +30,7 @@ describe('UniqueRoleNameRule (Unit)', function () {
 
         $validator = Validator::make(
             ['name' => 'administrador'],
-            ['name' => [new UniqueRoleNameRule]]
+            ['name' => [new UniqueRoleNameRule()]]
         );
 
         expect($validator->fails())->toBeTrue();
@@ -69,7 +69,7 @@ describe('UniqueRoleNameRule (Unit)', function () {
 
         $validator = Validator::make(
             ['name' => 123],
-            ['name' => [new UniqueRoleNameRule]]
+            ['name' => [new UniqueRoleNameRule()]]
         );
 
         expect($validator->passes())->toBeTrue();
@@ -82,7 +82,7 @@ describe('UniqueRoleNameRule (Unit)', function () {
 
         $validator = Validator::make(
             ['name' => '  Administrador  '],
-            ['name' => [new UniqueRoleNameRule]]
+            ['name' => [new UniqueRoleNameRule()]]
         );
 
         expect($validator->fails())->toBeTrue();

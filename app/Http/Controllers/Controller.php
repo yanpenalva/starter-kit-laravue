@@ -10,8 +10,7 @@ use Illuminate\Routing\Controller as BaseController;
 
 // @codeCoverageIgnoreStart
 
-class Controller extends BaseController
-{
+class Controller extends BaseController {
     use AuthorizesRequests;
     use ValidatesRequests;
 }

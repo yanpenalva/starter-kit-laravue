@@ -12,14 +12,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Fluent;
 use Spatie\Activitylog\Models\Activity;
 
-final readonly class ListLogAction
-{
+final readonly class ListLogAction {
     /**
      * @param  Fluent<string, mixed>  $params
      * @return LengthAwarePaginator<int, Activity>|Collection<int, Activity>
      */
-    public function execute(Fluent $params): LengthAwarePaginator|Collection
-    {
+    public function execute(Fluent $params): LengthAwarePaginator|Collection {
         $query = Activity::query()
             ->with(['causer', 'subject'])
             ->selectRaw($this->subjectFallbackSelect())
@@ -86,8 +84,7 @@ final readonly class ListLogAction
             : $query->get();
     }
 
-    private function subjectFallbackSelect(): string
-    {
+    private function subjectFallbackSelect(): string {
         return "
             activity_log.*,
             COALESCE(

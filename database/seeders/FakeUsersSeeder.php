@@ -9,10 +9,8 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-final class FakeUsersSeeder extends Seeder
-{
-    public function run(): void
-    {
+final class FakeUsersSeeder extends Seeder {
+    public function run(): void {
         DB::transaction(function () {
             User::factory()
                 ->count(15)

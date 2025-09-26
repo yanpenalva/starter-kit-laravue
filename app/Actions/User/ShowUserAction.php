@@ -8,14 +8,12 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 
-final readonly class ShowUserAction
-{
-    public function execute(mixed $id): User
-    {
+final readonly class ShowUserAction {
+    public function execute(mixed $id): User {
         $user = User::with(['roles.permissions'])->whereKey($id)->first();
 
         throw_if(
-            ! $user,
+            !$user,
             ModelNotFoundException::class,
             'Usuário não encontrado',
             Response::HTTP_NOT_FOUND

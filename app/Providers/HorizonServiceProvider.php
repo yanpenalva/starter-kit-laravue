@@ -6,13 +6,11 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Horizon\{Horizon, HorizonApplicationServiceProvider};
 
-final class HorizonServiceProvider extends HorizonApplicationServiceProvider
-{
+final class HorizonServiceProvider extends HorizonApplicationServiceProvider {
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
-    {
+    public function boot(): void {
         parent::boot();
 
         // Horizon::routeSmsNotificationsTo('15556667777');
@@ -25,8 +23,7 @@ final class HorizonServiceProvider extends HorizonApplicationServiceProvider
      *
      * This gate determines who can access Horizon in non-local environments.
      */
-    protected function gate()
-    {
+    protected function gate() {
         Gate::define('viewHorizon', function ($user) {
             return $user->email === 'admin@admin.com';
         });

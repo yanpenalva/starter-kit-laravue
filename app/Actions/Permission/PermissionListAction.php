@@ -10,13 +10,11 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Permission;
 
-final readonly class PermissionListAction
-{
+final readonly class PermissionListAction {
     /**
      * @return Collection<int, PermissionGroupDTO>
      */
-    public function execute(): Collection
-    {
+    public function execute(): Collection {
         return Permission::query()
             ->select(['id', 'description', 'resource'])
             ->get()

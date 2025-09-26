@@ -11,15 +11,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
-final readonly class DeleteUserAction
-{
+final readonly class DeleteUserAction {
     use LogsActivity;
 
     /**
      * @param  Fluent<int|string, mixed>  $params
      */
-    public function execute(Fluent $params, User $user): bool
-    {
+    public function execute(Fluent $params, User $user): bool {
         return DB::transaction(function () use ($user) {
             throw_if(
                 auth()->id() === $user->id,

@@ -10,15 +10,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 
-final class LogResource extends JsonResource
-{
-    public function __construct(Activity $resource)
-    {
+final class LogResource extends JsonResource {
+    public function __construct(Activity $resource) {
         parent::__construct($resource);
     }
 
-    public function toArray(Request $request): array
-    {
+    public function toArray(Request $request): array {
         $activity = $this->resource;
 
         $causerName = $activity->causer

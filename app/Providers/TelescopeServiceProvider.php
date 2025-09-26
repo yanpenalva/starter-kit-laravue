@@ -7,13 +7,11 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Telescope\{IncomingEntry, Telescope, TelescopeApplicationServiceProvider};
 
-final class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
-{
+final class TelescopeServiceProvider extends TelescopeApplicationServiceProvider {
     /**
      * Register any application services.
      */
-    public function register(): void
-    {
+    public function register(): void {
         // Telescope::night();
 
         $this->hideSensitiveRequestDetails();
@@ -33,8 +31,7 @@ final class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     /**
      * Prevent sensitive request details from being logged by Telescope.
      */
-    protected function hideSensitiveRequestDetails(): void
-    {
+    protected function hideSensitiveRequestDetails(): void {
         if ($this->app->environment('local')) {
             return;
         }
@@ -53,8 +50,7 @@ final class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      *
      * This gate determines who can access Telescope in non-local environments.
      */
-    protected function gate(): void
-    {
+    protected function gate(): void {
         Gate::define('viewTelescope', function ($user) {
             return in_array($user->email, [
                 'admin@admin.com',
