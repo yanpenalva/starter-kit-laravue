@@ -8,10 +8,9 @@ use App\Actions\Role\{CreateRoleAction, DeleteRoleAction, ListAllRoleAction, Lis
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Role\{CreateRoleRequest, IndexRoleRequest, UpdateRoleRequest};
 use App\Http\Resources\RoleResource;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\{JsonResponse, Response};
 use Illuminate\Http\Resources\Json\JsonResource;
 use Spatie\Permission\Models\Role;
-use Symfony\Component\HttpFoundation\Response;
 
 final class RoleController extends Controller {
     public function index(IndexRoleRequest $request): JsonResource {
@@ -46,18 +45,17 @@ final class RoleController extends Controller {
         return new RoleResource($updatedRole);
     }
 
-    public function destroy(Role $role): JsonResponse {
+    public function destroy(Role $role): Response {
         $this->authorize('delete', $role);
 
         app(DeleteRoleAction::class)->execute($role);
 
-        return response()->json(
-            ['message' => 'Perfil excluído com sucesso'],
-            Response::HTTP_NO_CONTENT
-        );
+        return response()->noContent();
     }
 
     public function listAll(): JsonResource {
+        $this->authorize('listAll', Role::class);
+
         $roles = app(ListAllRoleAction::class)->execute();
 
         return RoleResource::collection($roles);

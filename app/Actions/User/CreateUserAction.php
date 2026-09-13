@@ -30,7 +30,7 @@ final readonly class CreateUserAction {
                 'email' => $params->get('email'),
                 'password' => $password,
                 'cpf' => $params->get('cpf'),
-                'active' => $params->get('active', false) ? 'true' : 'false',
+                'active' => (bool) $params->get('active', false),
             ]);
 
             $user->syncRoles([$params->get('role_id')]);

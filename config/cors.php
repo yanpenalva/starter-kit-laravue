@@ -17,11 +17,14 @@ return [
     */
 
     'paths' => ['/api/*', '/sanctum/csrf-cookie'],
-    'allowed_methods' => ['*'],
-    'allowed_origins' => ['*'],
+    'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    'allowed_origins' => array_filter(explode(',', (string) env(
+        'CORS_ALLOWED_ORIGINS',
+        'http://localhost:8001,http://localhost:3000'
+    ))),
     'allowed_origins_patterns' => [],
-    'allowed_headers' => ['*'],
+    'allowed_headers' => ['Accept', 'Authorization', 'Content-Type', 'Origin', 'X-Requested-With', 'X-XSRF-TOKEN'],
     'exposed_headers' => [],
     'max_age' => 0,
-    'supports_credentials' => true,
+    'supports_credentials' => (bool) env('CORS_SUPPORTS_CREDENTIALS', true),
 ];

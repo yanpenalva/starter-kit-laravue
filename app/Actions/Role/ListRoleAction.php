@@ -39,7 +39,7 @@ final readonly class ListRoleAction {
                 assert(is_string($column));
                 assert(is_string($direction));
 
-                return $query->orderBy($column, $direction);
+                return $query->orderBy($column, $direction === 'asc' ? 'asc' : 'desc');
             })
             ->when(
                 $params->get('paginated', true) === true,

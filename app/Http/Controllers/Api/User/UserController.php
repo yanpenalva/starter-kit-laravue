@@ -12,7 +12,6 @@ use App\Models\User;
 use Illuminate\Http\{JsonResponse, Request};
 use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\Response;
-use Throwable;
 
 final class UserController extends Controller {
     public function index(IndexUserRequest $request): JsonResource {
@@ -52,21 +51,12 @@ final class UserController extends Controller {
     public function destroy(Request $request, User $user): Response {
         $this->authorize('delete', User::class);
 
-        try {
-            app(DeleteUserAction::class)->execute(
-                params: $request->fluent(),
-                user: $user
-            );
+        app(DeleteUserAction::class)->execute(
+            params: $request->fluent(),
+            user: $user
+        );
 
-            return response()->json([
-                'message' => 'Usuário deletado com sucesso!',
-            ], Response::HTTP_NO_CONTENT);
-        } catch (Throwable $exception) {
-            return response()->json([
-                'message' => 'Erro ao deletar usuário.',
-                'error' => $exception->getMessage(),
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return response()->noContent();
     }
     public function register(RegisterExternalUserRequest $request): JsonResponse {
         $user = app(CreateExternalUserAction::class)->execute($request->fluent());

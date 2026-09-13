@@ -51,7 +51,7 @@ final readonly class ListUserAction {
                     'setSituation' => 'users.active',
                     default => 'users.id',
                 },
-                $order
+                $order === 'asc' ? 'asc' : 'desc'
             );
         }
 

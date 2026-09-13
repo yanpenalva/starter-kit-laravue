@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Policies;
 
-use App\Enums\PermissionEnum;
+use App\Enums\{PermissionEnum, RolesEnum};
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 
@@ -26,10 +26,12 @@ final class RolePolicy {
     }
 
     public function update(User $user, Role $role): bool {
-        return $user->can(PermissionEnum::ROLES_EDIT->value) && $role->id !== 1;
+        return $user->can(PermissionEnum::ROLES_EDIT->value)
+            && $role->getAttribute('slug') !== RolesEnum::ADMINISTRATOR->value;
     }
 
     public function delete(User $user, Role $role): bool {
-        return $user->can(PermissionEnum::ROLES_DELETE->value);
+        return $user->can(PermissionEnum::ROLES_DELETE->value)
+            && $role->getAttribute('slug') !== RolesEnum::ADMINISTRATOR->value;
     }
 }

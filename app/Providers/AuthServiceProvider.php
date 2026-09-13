@@ -16,6 +16,7 @@ final class AuthServiceProvider extends ServiceProvider {
         \Spatie\Permission\Models\Role::class => \App\Policies\RolePolicy::class,
         \Spatie\Activitylog\Models\Activity::class => \App\Policies\ActivityLogPolicy::class,
         \App\Models\User::class => \App\Policies\UserPolicy::class,
+        \Spatie\Permission\Models\Permission::class => \App\Policies\PermissionPolicy::class,
     ];
 
     /**

@@ -18,8 +18,7 @@ parameters:
         - ./app/Http/Kernel.php
         - ./routes/**
 
-    tmpDir: var/phpstan
+    tmpDir: /tmp/phpstan
     checkMissingTypehints: true
     checkImplicitMixed: true
     reportUnmatchedIgnoredErrors: true
-

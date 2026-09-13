@@ -1,6 +1,9 @@
 FROM composer:2 AS composer
-FROM node:24.5.0-alpine AS node
-FROM php:8.4-fpm-alpine AS base
+FROM node:26.8.2-alpine AS node
+
+RUN npm install --global npm@12.0.2
+
+FROM php:8.5.9-fpm-alpine AS base
 
 ARG APP_ENV=local
 ENV APP_ENV=$APP_ENV \
@@ -52,11 +55,8 @@ RUN composer install --no-interaction --no-progress --prefer-dist --no-scripts \
     && composer clear-cache
 
 COPY package.json package-lock.json ./
-RUN if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "staging" ]; then \
-    npm ci && npm prune --omit=dev; \
-    else \
-    npm ci; \
-    fi
+RUN npm ci --no-audit --no-fund \
+    && if [ "$APP_ENV" = "production" ] || [ "$APP_ENV" = "staging" ]; then npm prune --omit=dev; fi
 
 COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh

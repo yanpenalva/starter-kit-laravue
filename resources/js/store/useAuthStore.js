@@ -11,7 +11,7 @@ const useAuthStore = defineStore('auth', {
     users: [],
     user: null,
     errors: null,
-    activeTab: 'ldap',
+    activeTab: 'external',
     externalCredentials: {
       email: '',
       password: '',

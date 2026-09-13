@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 
 beforeEach(function () {
     $this->userAuth = User::factory()->create();
+    $this->userAuth->givePermissionTo('roles.list');
 });
 
 describe('PermissionTest', function () {

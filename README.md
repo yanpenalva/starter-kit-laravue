@@ -36,20 +36,21 @@ It includes containers for the app, Nginx, PostgreSQL, Redis, and Mailpit, ensur
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/yanbrasiliano/starter-kit-laravue.git
+git clone https://github.com/yanpenalva/starter-kit-laravue.git
 cd starter-kit-laravue
 ```
 
-### 2️⃣ Build and start containers
-
-```bash
-docker compose up -d --build --force-recreate --remove-orphans
-```
-
-### 3️⃣ Environment setup
+### 2️⃣ Environment setup
 
 ```bash
 cp .env.example .env
+```
+
+### 3️⃣ Build and start containers
+
+```bash
+docker compose up -d --build --force-recreate --remove-orphans
+docker exec starterkit-app php artisan key:generate
 ```
 
 Verify your database settings:
@@ -159,7 +160,7 @@ docker compose exec starterkit-app php artisan cache:forget spatie.permission.ca
 
 ## ⚙️ Technology Stack
 
-- **Backend:** Laravel 13 (PHP 8.4 on Alpine)
+- **Backend:** Laravel 13 (PHP 8.5 on Alpine)
 - **Frontend:** Vue 3.5 + Quasar Framework + Vite
 - **Database:** PostgreSQL 16
 - **Cache/Queue:** Redis 7
@@ -168,6 +169,27 @@ docker compose exec starterkit-app php artisan cache:forget spatie.permission.ca
 - **Testing:** PestPHP
 - **Static Analysis:** Larastan
 - **Monitoring:** Pulse, Telescope, Debugbar, Horizon
+
+## 🚢 Preparing for production
+
+This repository is configured primarily for local development. Before using it
+in production, apply the following changes:
+
+1. Use a production Compose/deployment configuration without bind mounts from
+   the host and build the frontend assets during the image build.
+2. Set `APP_ENV=production`, `APP_DEBUG=false`, a unique `APP_KEY`, and
+   production-specific values for the database, Redis, mail and application URL.
+3. Replace the development PHP configuration with
+   `docker/PHP/php-prd.ini`, disable Xdebug and run the application with a
+   non-development process configuration.
+4. Store passwords, encryption keys and tokens in the deployment secret
+   manager; never copy `.env.example` values directly to production.
+5. Restrict CORS and `SANCTUM_STATEFUL_DOMAINS` to the real frontend domains,
+   enable HTTPS and configure trusted proxies correctly.
+6. Do not expose Telescope, Horizon, Pulse or Scramble publicly without
+   authentication and an explicit production access policy.
+7. Configure persistent logs, queue workers, scheduler execution, database
+   backups and health checks before accepting traffic.
 
 ---
 
@@ -260,19 +282,19 @@ chmod +x docker-entrypoint-initdb.sh
 ### 2️⃣ Run Tests
 
 ```bash
-docker compose exec starterkit-app composer test
+docker compose exec app composer test
 ```
 
 With coverage:
 
 ```bash
-docker compose exec starterkit-app composer test:coverage
+docker compose exec app composer test:coverage
 ```
 
 Parallel mode:
 
 ```bash
-docker compose exec starterkit-app env APP_ENV=testing php artisan test --parallel
+docker compose exec app env APP_ENV=testing php artisan test --parallel
 ```
 
 ---
@@ -325,14 +347,12 @@ Follow **Conventional Commits**.
 ### Static Analysis
 
 ```bash
-docker exec -it starterkit-app composer run:phpstan
+docker exec -it starterkit-app composer phpstan
 ```
 
 ### Code Quality
 
-```bash
-docker exec -it starterkit-app composer run:phpinsights
-```
+PHP Insights is not currently installed in this starter kit.
 
 ### API Documentation
 

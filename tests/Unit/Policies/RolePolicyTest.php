@@ -87,17 +87,17 @@ describe('RolePolicy', function () {
             ->once()
             ->andReturn(true);
 
-        // Configurar o mock para retornar id = 2
+        // Configurar o mock para retornar um slug não administrativo
         $role->shouldReceive('getAttribute')
-            ->with('id')
-            ->andReturn(2);
+            ->with('slug')
+            ->andReturn('guest');
 
         $result = $this->policy->update($user, $role);
 
         expect($result)->toBeTrue();
     });
 
-    it('denies users to update the admin role (id=1)', function () {
+    it('denies users to update the administrator role', function () {
         $user = Mockery::mock(User::class);
         $role = Mockery::mock(Role::class);
 
@@ -106,10 +106,10 @@ describe('RolePolicy', function () {
             ->once()
             ->andReturn(true);
 
-        // Configurar o mock para retornar id = 1
+        // Configurar o mock para retornar o slug administrativo
         $role->shouldReceive('getAttribute')
-            ->with('id')
-            ->andReturn(1);
+            ->with('slug')
+            ->andReturn('administrator');
 
         $result = $this->policy->update($user, $role);
 
@@ -125,10 +125,10 @@ describe('RolePolicy', function () {
             ->once()
             ->andReturn(false);
 
-        // Configurar o mock para retornar id = 2
+        // Configurar o mock para retornar um slug não administrativo
         $role->shouldReceive('getAttribute')
-            ->with('id')
-            ->andReturn(2);
+            ->with('slug')
+            ->andReturn('guest');
 
         $result = $this->policy->update($user, $role);
 
@@ -144,6 +144,10 @@ describe('RolePolicy', function () {
             ->once()
             ->andReturn(true);
 
+        $role->shouldReceive('getAttribute')
+            ->with('slug')
+            ->andReturn('guest');
+
         $result = $this->policy->delete($user, $role);
 
         expect($result)->toBeTrue();
@@ -157,6 +161,10 @@ describe('RolePolicy', function () {
             ->with('roles.delete')
             ->once()
             ->andReturn(false);
+
+        $role->shouldReceive('getAttribute')
+            ->with('slug')
+            ->andReturn('guest');
 
         $result = $this->policy->delete($user, $role);
 

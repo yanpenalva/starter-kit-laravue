@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final readonly class DeleteUserAction {
     use LogsActivity;
@@ -21,7 +21,7 @@ final readonly class DeleteUserAction {
         return DB::transaction(function () use ($user) {
             throw_if(
                 auth()->id() === $user->id,
-                BadRequestException::class,
+                BadRequestHttpException::class,
                 'Não é possível realizar essa ação.'
             );
 

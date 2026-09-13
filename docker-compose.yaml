@@ -12,6 +12,8 @@ services:
       - "5173:5173"
     volumes:
       - .:/var/www/html
+      # Keep image-installed frontend dependencies out of the source bind mount.
+      - /var/www/html/node_modules
       - ./docker/SUPERVISOR/supervisord.conf:/etc/supervisord.conf
     environment:
       - APP_ENV=local
@@ -51,7 +53,7 @@ services:
       - POSTGRES_PASSWORD=admin
     volumes:
       - pg_data:/var/lib/postgresql/data
-      - ./docker/PGSQL/init_db.sql:/docker-entrypoint-initdb.sh
+      - ./docker/PGSQL-test-db.sql:/docker-entrypoint-initdb.d/01-create-test-db.sql:ro
     networks:
       - starterkit-network
     healthcheck:

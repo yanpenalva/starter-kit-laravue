@@ -145,7 +145,7 @@ const { formData, showFields, show, isLoading, isParecerista, onSubmit } =
     </div>
     <div class="q-mt-xs">
       <span class="text--policy">
-        Ao me cadastrar, concordo com os Termos e Políticas da UEFS
+        Ao me cadastrar, concordo com os Termos e Políticas do sistema
       </span>
     </div>
   </q-form>

@@ -29,7 +29,7 @@ export default function useAuthenticateConfig() {
       labelFooter: 'Clique aqui',
       textFooter: 'Voltar para o login?',
     },
-    copyright: '© Desenvolvido e Mantido pelo Escritório de Projetos e  Processos',
+    copyright: '© Developed and maintained by Yan Penalva and supporters.',
   };
 
   return {

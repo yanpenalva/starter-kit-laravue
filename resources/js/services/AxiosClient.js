@@ -62,9 +62,7 @@ function handleErrorResponse(status, message, data, config) {
       notify(message, 'negative');
       const isInvalidCredentials =
         isAuthRoute ||
-        message === 'Usuário ou senha inválidos' ||
-        message ===
-          'O domínio não é válido. Os domínios válidos são @uefs.br, @uefs.local e @discente.uefs.br.';
+        message === 'Usuário ou senha inválidos';
       if (!isInvalidCredentials) logoutAndRedirect();
       break;
 
@@ -72,7 +70,7 @@ function handleErrorResponse(status, message, data, config) {
       const errors = [
         'Usuário não ativado',
         'Usuário inativo',
-        'Usuário não é servidor UEFS',
+        'Usuário institucional não autorizado',
       ];
       const errorMessage = data?.error || data?.errors;
       if (errors.includes(errorMessage)) {

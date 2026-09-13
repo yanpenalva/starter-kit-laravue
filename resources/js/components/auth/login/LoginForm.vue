@@ -2,7 +2,7 @@
 import useAuthenticate from '@/composables/Authenticate/useAuthenticate';
 import useAuthStore from '@/store/useAuthStore';
 import notify from '@/utils/notify';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
@@ -40,19 +40,6 @@ const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value;
 };
 
-watch(
-  () => authStore.externalCredentials.email,
-  (newEmail) => {
-    const ldapDomains = ['@uefs.br', '@uefs.local', '@discente.uefs.br'];
-    ldapDomains.some((domain) => newEmail.endsWith(domain))
-      ? (authStore.setLdapCredentials({
-          ...authStore.ldapCredentials,
-          name: newEmail,
-        }),
-        authStore.setActiveTab('ldap'))
-      : null;
-  },
-);
 </script>
 
 <template>

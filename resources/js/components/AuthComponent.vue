@@ -16,15 +16,6 @@ const { textPage } = useAuthenticateConfigPage();
   <div class="row">
     <section class="gt-xs gt-sm col-md-6">
       <div class="auth__background">
-        <div class="row justify-center absolute-bottom">
-          <div class="col-10">
-            <div class="text-white q-pa-xl" style="bottom: 0px">
-              <span class="text__h3--40px text--line-height text-weight-medium"
-                >Seja bem-vinda(o)<br />ao Starter KIT!</span
-              >
-            </div>
-          </div>
-        </div>
       </div>
     </section>
     <section class="col-xs-12 col-md-6">

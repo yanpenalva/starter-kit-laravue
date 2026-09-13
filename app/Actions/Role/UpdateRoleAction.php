@@ -24,6 +24,7 @@ final readonly class UpdateRoleAction {
                 'name' => $params->get('name', $role->name),
                 'description' => $params->get('description', $role->getAttribute('description')),
                 'guard_name' => 'web',
+                'slug' => $params->get('slug', $role->getAttribute('slug')),
             ]);
 
             $permissions = $params->get('permissions', []);

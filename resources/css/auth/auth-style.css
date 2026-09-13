@@ -5,10 +5,12 @@
     position: relative;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to top, rgba(32, 117, 178, 1) 0%, rgba(32, 117, 178, 0) 70%), url('/resources/js/assets/background-auth.webp');
+    background:
+        radial-gradient(circle at 18% 18%, rgba(139, 92, 246, 0.58) 0%, transparent 32%),
+        radial-gradient(circle at 82% 24%, rgba(236, 72, 153, 0.32) 0%, transparent 28%),
+        radial-gradient(circle at 68% 88%, rgba(20, 184, 166, 0.3) 0%, transparent 36%),
+        linear-gradient(135deg, #10051f 0%, #211044 46%, #0d1f38 100%);
     background-size: cover;
-    background-position: center 30%;
-    background-repeat: no-repeat; 
     min-height: 100vh;
 }
 
@@ -21,18 +23,10 @@
     font-size: 13px;
 }
 
-.text--line-height{
- line-height: 1.3;
-}
-
 .text--policy{
    color: #718096;
    margin-right: 5px;
    font-size: 12px;
-}
-
-.text__h3--40px{
-    font-size: 40px;
 }
 
 .input--margin-bottom{

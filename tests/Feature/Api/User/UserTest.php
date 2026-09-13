@@ -342,7 +342,8 @@ describe('Users Management', function () {
             $response = actingAs($this->asAdmin)
                 ->delete(route('users.delete', $this->asAdmin));
 
-            $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
+            $response->assertStatus(Response::HTTP_BAD_REQUEST)
+                ->assertJsonMissing(['error' => 'Não é possível realizar essa ação.']);
 
             $this->assertDatabaseHas('users', ['id' => $this->asAdmin->id]);
         });
@@ -448,19 +449,6 @@ describe('Users Management', function () {
         expect($mail->envelope()->subject)->toBe('Ativação de usuário');
         expect($rendered)->toContain('John Doe');
         expect($mail->attachments())->toBeArray()->toBeEmpty();
-    });
-
-    it('should return 500 when exception is thrown during destroy', function () {
-        $response = actingAs($this->asAdmin)
-            ->delete(route('users.delete', $this->asAdmin), ['reason' => 'force error']);
-
-        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
-            ->assertJson([
-                'message' => 'Erro ao deletar usuário.',
-                'error' => 'Não é possível realizar essa ação.',
-            ]);
-
-        $this->assertDatabaseHas('users', ['id' => $this->asAdmin->id]);
     });
 
     it('should return 403 when VerifyAction fails due to invalid signature', function () {

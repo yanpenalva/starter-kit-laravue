@@ -18,16 +18,12 @@ describe('ForceJsonResponse Middleware', function () {
         expect($response->headers->get('Content-Type'))->toEqual('application/json');
     });
 
-    it('handles exceptions with json response', function () {
+    it('allows exceptions to be handled by the application exception handler', function () {
         $middleware = new ForceJsonResponse();
         $request = Request::create('/test-url', 'GET');
 
-        $response = $middleware->handle($request, function ($req) {
+        expect(fn () => $middleware->handle($request, function ($req) {
             throw new Exception('Error occurred');
-        });
-
-        expect($response->getStatusCode())->toEqual(500);
-        expect($response->headers->get('Content-Type'))->toEqual('application/json');
-        expect($response->getContent())->toContain('Error occurred');
+        }))->toThrow(Exception::class, 'Error occurred');
     });
 })->group('middleware');

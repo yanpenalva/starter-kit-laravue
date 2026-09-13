@@ -58,6 +58,6 @@ class User extends Authenticatable implements MustVerifyEmail {
     }
 
     public function isAdmin(): bool {
-        return $this->hasRole(RolesEnum::ADMINISTRATOR->label());
+        return $this->hasRole(RolesEnum::ADMINISTRATOR->value);
     }
 }

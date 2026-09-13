@@ -24,7 +24,7 @@ final readonly class CreateExternalUserAction {
                 'email' => $params->get('email'),
                 'password' => $params->get('password'),
                 'cpf' => $params->get('cpf'),
-                'active' => $params->get('active', false) ? 'true' : 'false',
+                'active' => (bool) $params->get('active', false),
             ]);
 
             $slug = $params->get('role');

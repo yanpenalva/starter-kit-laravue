@@ -71,13 +71,7 @@ const togglePasswordVisibility = () => {
           label="Lembre-me" />
       </div>
       <div class="col-md-4 flex flex-center">
-        <a
-          target="_blank"
-          href="https://cdu.uefs.br/app/password/reset"
-          class="text-primary text--font-13"
-          style="text-decoration: none"
-          >Esqueceu a senha?</a
-        >
+        <span class="text-info text--font-13">Consulte o suporte da sua instituição.</span>
       </div>
     </div>
     <div class="q-mt-xs">

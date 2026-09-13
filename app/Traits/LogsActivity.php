@@ -26,8 +26,8 @@ trait LogsActivity {
         ?array $oldData = null,
         ?array $newData = null
     ): void {
-        $beforeAttributes = $oldData ?? $this->extractAttributesWithDates($model, $model->getOriginal());
-        $afterAttributes = $newData ?? $this->extractAttributesWithDates($model, array_merge($model->getOriginal(), $dirty));
+        $beforeAttributes = $this->sanitizeSensitiveAttributes($oldData ?? $this->extractAttributesWithDates($model, $model->getOriginal()));
+        $afterAttributes = $this->sanitizeSensitiveAttributes($newData ?? $this->extractAttributesWithDates($model, array_merge($model->getOriginal(), $dirty)));
 
         $changes = [
             'before' => $beforeAttributes,
@@ -139,6 +139,18 @@ trait LogsActivity {
             ->all();
 
         return $normalized;
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     * @return array<string, mixed>
+     */
+    private function sanitizeSensitiveAttributes(array $attributes): array {
+        foreach (['password', 'password_confirmation', 'remember_token', 'token', 'access_token'] as $key) {
+            unset($attributes[$key]);
+        }
+
+        return $attributes;
     }
 }
 

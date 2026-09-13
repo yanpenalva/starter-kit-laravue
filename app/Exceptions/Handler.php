@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Log;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Throwable;
 
 final class Handler extends ExceptionHandler {
@@ -27,6 +28,7 @@ final class Handler extends ExceptionHandler {
             $exception instanceof AuthenticationException => (int) Response::HTTP_UNAUTHORIZED,
             $exception instanceof UnactivatedUserException => (int) ($exception->getCode() ?: Response::HTTP_FORBIDDEN),
             $exception instanceof RoleIsAssignedToUserException => (int) Response::HTTP_UNPROCESSABLE_ENTITY,
+            $exception instanceof BadRequestHttpException => (int) Response::HTTP_BAD_REQUEST,
             $exception instanceof ModelNotFoundException => (int) Response::HTTP_NOT_FOUND,
             default => (int) Response::HTTP_INTERNAL_SERVER_ERROR,
         };

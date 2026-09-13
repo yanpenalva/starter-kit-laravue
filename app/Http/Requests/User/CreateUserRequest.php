@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Http\Requests\User;
 
-use App\Enums\{RolesEnum, StatusEnum};
+use App\Enums\StatusEnum;
 use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\{Fluent, Str};
@@ -39,7 +39,7 @@ final class CreateUserRequest extends FormRequest {
             'send_random_password' => ['boolean'],
         ];
 
-        if (!$this->send_random_password && $this->role_slug !== RolesEnum::ADMINISTRATOR->value) {
+        if (!$this->boolean('send_random_password')) {
             $rules['password'] = ['required', 'min:8'];
         }
 
@@ -94,7 +94,7 @@ final class CreateUserRequest extends FormRequest {
         $validated = is_array($this->validated($key)) ? $this->validated($key) : [];
 
         return new Fluent(array_merge($validated, [
-            'password' => $this->has('send_random_password') ? Str::password(8) : $this->password,
+            'password' => $this->boolean('send_random_password') ? Str::password(8) : $this->password,
         ]));
     }
 }

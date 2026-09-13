@@ -54,7 +54,7 @@ describe('UserModel Test', function () {
     it('returns true for admin role using isAdmin', function () {
         $user = Mockery::mock(User::class)->makePartial();
         $user->shouldReceive('hasRole')
-            ->with(RolesEnum::ADMINISTRATOR->label())
+            ->with(RolesEnum::ADMINISTRATOR->value)
             ->andReturnTrue();
 
         expect($user->isAdmin())->toBeTrue();
@@ -63,7 +63,7 @@ describe('UserModel Test', function () {
     it('returns false for non-admin user using isAdmin', function () {
         $user = Mockery::mock(User::class)->makePartial();
         $user->shouldReceive('hasRole')
-            ->with(RolesEnum::ADMINISTRATOR->label())
+            ->with(RolesEnum::ADMINISTRATOR->value)
             ->andReturnFalse();
 
         expect($user->isAdmin())->toBeFalse();
