@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Tests\Feature\Users;
 
+use App\Enums\RolesEnum;
 use App\Mail\{SendNotificationUserActivation, SendRandomPassword, SendVerifyEmail};
 use App\Models\User;
 use Carbon\Carbon;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Config;
 use Mail;
 
 use function Pest\Laravel\{actingAs, get, post};
+
+use Spatie\Permission\Models\Role;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -47,6 +50,13 @@ describe('Users Management', function () {
             }
         )->with('paginationStructure');
 
+        it('should return a 200 status code for a valid user ID', function () {
+            actingAs($this->asAdmin)
+                ->get(route('users.show', $this->asAdmin->id))
+                ->assertStatus(Response::HTTP_OK)
+                ->assertJsonPath('data.id', $this->asAdmin->id);
+        });
+
         it('should return a 404 status code for invalid user ID', function () {
             actingAs($this->asAdmin)
                 ->get(route('users.show', $this->invalidId))
@@ -78,6 +88,29 @@ describe('Users Management', function () {
             }
         )->with('validUser')
             ->with('createUserJsonValidStructure');
+
+        it('should create a user with the provided password when random password is disabled', function () {
+            $password = 'provided-password';
+            $role = Role::where('slug', RolesEnum::GUEST->value)->firstOrFail();
+            $email = fake()->unique()->safeEmail();
+
+            actingAs($this->asAdmin)
+                ->post(route('users.create'), [
+                    'cpf' => preg_replace('/\D/', '', fake('pt_BR')->cpf()),
+                    'name' => 'User With Provided Password',
+                    'email' => $email,
+                    'password' => $password,
+                    'active' => 1,
+                    'send_random_password' => false,
+                    'role_id' => $role->id,
+                ])
+                ->assertStatus(Response::HTTP_CREATED);
+
+            $createdUser = User::where('email', $email)->firstOrFail();
+
+            expect(password_verify($password, $createdUser->getAuthPassword()))->toBeTrue();
+            Mail::assertNotQueued(SendRandomPassword::class);
+        });
 
         it(
             'should return a 422 status code when name is not provided',
@@ -434,7 +467,20 @@ describe('Users Management', function () {
             Mail::assertQueued(SendNotificationUserActivation::class, fn ($mail) => $mail->hasTo($updatedUser->email));
         }
     )->with('updateUserData')
-        ->with('userJsonValidStructure');
+            ->with('userJsonValidStructure');
+
+    it('should mark role changes when updating a user', function () {
+        $guestRole = Role::where('slug', RolesEnum::GUEST->value)->firstOrFail();
+
+        actingAs($this->asAdmin)
+            ->put(route('users.update', $this->asAdmin->id), [
+                'active' => 1,
+                'role_id' => $guestRole->id,
+            ])
+            ->assertStatus(Response::HTTP_OK);
+
+        expect($this->asAdmin->fresh()->roles()->where('slug', RolesEnum::GUEST->value)->exists())->toBeTrue();
+    });
 
     it('builds the SendNotificationUserActivation mail with correct data', function () {
         $user = User::factory()->make([

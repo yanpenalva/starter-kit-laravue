@@ -81,11 +81,13 @@ describe('CreateUserRequest', function () {
 
             public string $password = '';
 
-            public function boolean(string $key): bool {
+            public function boolean(string $key): bool
+            {
                 return $key === 'send_random_password';
             }
 
-            public function fluentParams(): Fluent {
+            public function fluentParams(): Fluent
+            {
                 $validated = ['name' => 'Yan', 'email' => 'test@ex.com'];
 
                 return new Fluent(array_merge($validated, [
@@ -106,11 +108,13 @@ describe('CreateUserRequest', function () {
 
             public string $password = '12345678';
 
-            public function boolean(string $key): bool {
+            public function boolean(string $key): bool
+            {
                 return false;
             }
 
-            public function fluentParams(): Fluent {
+            public function fluentParams(): Fluent
+            {
                 $validated = ['name' => 'Yan', 'email' => 'test@ex.com', 'password' => $this->password];
 
                 return new Fluent(array_merge($validated, [
@@ -122,5 +126,38 @@ describe('CreateUserRequest', function () {
         $fluent = $stub->fluentParams();
 
         expect($fluent->password)->toBe('12345678');
+    });
+
+    it('returns validated data and a generated password from a real request', function () {
+        $request = new CreateUserRequest();
+        $request->merge(['send_random_password' => true]);
+
+        $validator = validator(
+            ['name' => 'Yan', 'email' => 'test@example.com'],
+            ['name' => 'required', 'email' => 'required']
+        );
+        $validator->passes();
+        $request->setValidator($validator);
+
+        $fluent = $request->fluentParams();
+
+        expect($fluent->get('name'))->toBe('Yan')
+            ->and(mb_strlen($fluent->get('password')))->toBe(8);
+    });
+
+    it('returns an empty validated payload for a scalar key and the provided password', function () {
+        $request = new CreateUserRequest();
+        $request->merge([
+            'send_random_password' => false,
+            'password' => '12345678',
+        ]);
+
+        $validator = validator(['name' => 'Yan'], ['name' => 'required']);
+        $validator->passes();
+        $request->setValidator($validator);
+
+        $fluent = $request->fluentParams('name');
+
+        expect($fluent->toArray())->toBe(['password' => '12345678']);
     });
 })->group('userRequest', 'createUserRequest');

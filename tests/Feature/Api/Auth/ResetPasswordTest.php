@@ -61,12 +61,35 @@ describe('ResetPasswordTest', function () {
         $request->merge($data);
 
         $validator = validator($data, $request->rules(), $request->messages());
+        $validator->passes();
         $request->setValidator($validator);
 
         $fluent = $request->fluentParams();
 
         expect($fluent)->toBeInstanceOf(\Illuminate\Support\Fluent::class)
             ->and($fluent->get('password_confirmation'))->toBe('12345678');
+    });
+
+    it('should add a null password_confirmation when it is absent from validated data', function () {
+        $request = new ResetPasswordRequest();
+        $data = [
+            'email' => $this->user->email,
+            'password' => '12345678',
+            'token' => 'abc123',
+        ];
+        $request->merge($data);
+
+        $validator = validator($data, [
+            'email' => 'required',
+            'password' => 'required',
+            'token' => 'required',
+        ]);
+        $validator->passes();
+        $request->setValidator($validator);
+
+        $fluent = $request->fluentParams();
+
+        expect($fluent->get('password_confirmation'))->toBeNull();
     });
 
     it('authorize should return true', function () {

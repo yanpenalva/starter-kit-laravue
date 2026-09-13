@@ -200,6 +200,28 @@ describe('List Logs API', function () {
         expect($causers)->toBe(['Zeca', 'Ana']);
     });
 
+    it('applies ordering by subject asc', function (): void {
+        $subjectA = User::factory()->create(['name' => 'Alpha subject']);
+        $subjectB = User::factory()->create(['name' => 'Beta subject']);
+
+        ActivityFactory::new()
+            ->withCauser($this->user)
+            ->withSubject($subjectB)
+            ->create(['created_at' => now()]);
+        ActivityFactory::new()
+            ->withCauser($this->user)
+            ->withSubject($subjectA)
+            ->create(['created_at' => now()]);
+
+        $response = $this->getJson(route('activity_logs.list', [
+            'column' => 'subject',
+            'order' => 'asc',
+        ]));
+
+        $subjects = array_column($response->json('data'), 'subject');
+        expect($subjects)->toBe(['Alpha subject', 'Beta subject']);
+    });
+
     it('returns unpaginated logs when paginated = false', function (): void {
         ActivityFactory::new()
             ->count(2)
