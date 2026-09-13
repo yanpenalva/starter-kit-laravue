@@ -163,7 +163,9 @@ describe('RoleTest', function () {
 
         it('should return 422 when trying to remove roles that have linked users', function () {
             $this->actingAs($this->userAuth);
-            $role = $this->roles->first();
+            $role = $this->roles->where('slug', RolesEnum::GUEST->value)->first();
+            User::factory()->create()->assignRole($role);
+
             $response = $this->delete(route('roles.delete', $role->id));
             $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         });
