@@ -11,14 +11,17 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
-final class CreateRoleRequest extends FormRequest {
+final class CreateRoleRequest extends FormRequest
+{
     use FailedValidation;
 
-    public function authorize(): bool {
+    public function authorize(): bool
+    {
         return Auth::check();
     }
 
-    public function prepareForValidation(): void {
+    public function prepareForValidation(): void
+    {
         /** @var iterable<int, int|string>|null $rawPermissions */
         $rawPermissions = $this->permissions;
 
@@ -35,7 +38,8 @@ final class CreateRoleRequest extends FormRequest {
     /**
      * @return array<string, array<int, string|ValidationRule>>
      */
-    public function rules(): array {
+    public function rules(): array
+    {
         return [
             'name' => [
                 'required',
@@ -50,7 +54,8 @@ final class CreateRoleRequest extends FormRequest {
     /**
      * @return array<string, string>
      */
-    public function attributes(): array {
+    public function attributes(): array
+    {
         return [
             'name' => 'Perfil',
             'description' => 'Descrição',
@@ -61,7 +66,8 @@ final class CreateRoleRequest extends FormRequest {
     /**
      * @return array<string, string>
      */
-    public function messages(): array {
+    public function messages(): array
+    {
         return [
             'name.required' => 'O nome do perfil é obrigatório.',
             'name.string' => 'O :attribute deve conter uma palavra.',

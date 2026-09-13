@@ -8,16 +8,19 @@ use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-final class IndexUserRequest extends FormRequest {
+final class IndexUserRequest extends FormRequest
+{
     use FailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool {
+    public function authorize(): bool
+    {
         return Auth::check();
     }
 
-    public function prepareForValidation(): void {
+    public function prepareForValidation(): void
+    {
         $this->merge([
             'name' => '',
             'limit' => $this->get('limit', 10),
@@ -34,7 +37,8 @@ final class IndexUserRequest extends FormRequest {
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array {
+    public function rules(): array
+    {
         return [
             'name' => ['sometimes', 'string'],
             'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],

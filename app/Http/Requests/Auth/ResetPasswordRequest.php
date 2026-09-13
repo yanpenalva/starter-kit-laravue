@@ -8,13 +8,15 @@ use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Fluent;
 
-final class ResetPasswordRequest extends FormRequest {
+final class ResetPasswordRequest extends FormRequest
+{
     use FailedValidation;
 
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool {
+    public function authorize(): bool
+    {
         return true;
     }
 
@@ -23,7 +25,8 @@ final class ResetPasswordRequest extends FormRequest {
      *
      * @return array<string, string>
      */
-    public function rules(): array {
+    public function rules(): array
+    {
         return [
             'email' => 'required|email|exists:users,email',
             'password' => 'required|min:8|confirmed',
@@ -37,7 +40,8 @@ final class ResetPasswordRequest extends FormRequest {
      *
      * @return array<string, string>
      */
-    public function messages(): array {
+    public function messages(): array
+    {
         return [
             'email.required' => 'O campo e-mail é obrigatório.',
             'email.email' => 'O campo e-mail deve ser um endereço de e-mail válido.',
@@ -55,7 +59,8 @@ final class ResetPasswordRequest extends FormRequest {
      *
      * @return Fluent<string, mixed>
      */
-    public function fluentParams(?string $key = null, mixed $default = null): Fluent {
+    public function fluentParams(?string $key = null, mixed $default = null): Fluent
+    {
         $validated = parent::validated($key, $default);
         assert(is_array($validated));
 

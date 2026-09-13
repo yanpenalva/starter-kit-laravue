@@ -9,9 +9,11 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 
-final readonly class MyProfileAction {
+final readonly class MyProfileAction
+{
     /** @return array<string, mixed> */
-    public function execute(): array {
+    public function execute(): array
+    {
         /** @var User|null $user */
         $user = Auth::user();
 

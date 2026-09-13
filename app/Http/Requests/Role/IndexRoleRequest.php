@@ -8,16 +8,19 @@ use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-final class IndexRoleRequest extends FormRequest {
+final class IndexRoleRequest extends FormRequest
+{
     use FailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool {
+    public function authorize(): bool
+    {
         return Auth::check();
     }
 
-    public function prepareForValidation(): void {
+    public function prepareForValidation(): void
+    {
 
         $this->merge([
             'name' => $this->get('name', ''),
@@ -35,7 +38,8 @@ final class IndexRoleRequest extends FormRequest {
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array {
+    public function rules(): array
+    {
         return [
             'name' => [
                 'sometimes',
@@ -77,7 +81,8 @@ final class IndexRoleRequest extends FormRequest {
     /**
      * @return array<string, string>
      */
-    public function messages(): array {
+    public function messages(): array
+    {
         return [
             'name.string' => 'O :attribute deve conter uma palavra.',
             'limit.integer' => 'O :attribute deve ser um inteiro.',
@@ -95,7 +100,8 @@ final class IndexRoleRequest extends FormRequest {
     /**
      * @return array<string, string>
      */
-    public function attributes(): array {
+    public function attributes(): array
+    {
         return [
             'name' => 'Perfil',
             'limit' => 'Limite',

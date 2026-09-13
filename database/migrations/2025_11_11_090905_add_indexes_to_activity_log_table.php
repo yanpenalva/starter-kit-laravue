@@ -5,8 +5,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-final class AddIndexesToActivityLogTable extends Migration {
-    public function up(): void {
+final class AddIndexesToActivityLogTable extends Migration
+{
+    public function up(): void
+    {
         Schema::connection(config('activitylog.database_connection'))
             ->table(config('activitylog.table_name'), function (Blueprint $table): void {
 
@@ -18,7 +20,8 @@ final class AddIndexesToActivityLogTable extends Migration {
             });
     }
 
-    public function down(): void {
+    public function down(): void
+    {
         Schema::connection(config('activitylog.database_connection'))
             ->table(config('activitylog.table_name'), function (Blueprint $table): void {
                 $table->dropIndex(['created_at']);

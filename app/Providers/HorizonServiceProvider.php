@@ -8,8 +8,10 @@ use Illuminate\Support\Facades\Gate;
 use Laravel\Horizon\{Horizon, HorizonApplicationServiceProvider};
 
 // @codeCoverageIgnoreStart
-final class HorizonServiceProvider extends HorizonApplicationServiceProvider {
-    public function boot(): void {
+final class HorizonServiceProvider extends HorizonApplicationServiceProvider
+{
+    public function boot(): void
+    {
         parent::boot();
 
         Horizon::auth(function ($request) {
@@ -17,7 +19,8 @@ final class HorizonServiceProvider extends HorizonApplicationServiceProvider {
         });
     }
 
-    protected function gate(): void {
+    protected function gate(): void
+    {
         Gate::define('viewHorizon', fn ($user) => $user && $user->isAdmin());
     }
 }

@@ -8,12 +8,14 @@ use App\Actions\Role\{CreateRoleAction, DeleteRoleAction, ListAllRoleAction, Lis
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Role\{CreateRoleRequest, IndexRoleRequest, UpdateRoleRequest};
 use App\Http\Resources\RoleResource;
-use Illuminate\Http\{JsonResponse, Response};
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\{Response};
 use Spatie\Permission\Models\Role;
 
-final class RoleController extends Controller {
-    public function index(IndexRoleRequest $request): JsonResource {
+final class RoleController extends Controller
+{
+    public function index(IndexRoleRequest $request): JsonResource
+    {
         $this->authorize('index', Role::class);
 
         $roles = app(ListRoleAction::class)->execute($request->fluent());
@@ -21,7 +23,8 @@ final class RoleController extends Controller {
         return RoleResource::collection($roles);
     }
 
-    public function store(CreateRoleRequest $request): JsonResource {
+    public function store(CreateRoleRequest $request): JsonResource
+    {
         $this->authorize('store', Role::class);
 
         $role = app(CreateRoleAction::class)->execute($request->fluent());
@@ -29,7 +32,8 @@ final class RoleController extends Controller {
         return new RoleResource($role);
     }
 
-    public function show(Role $role): JsonResource {
+    public function show(Role $role): JsonResource
+    {
         $this->authorize('show', $role);
 
         $roleWithPermissions = app(ShowRoleAction::class)->execute($role);
@@ -37,7 +41,8 @@ final class RoleController extends Controller {
         return new RoleResource($roleWithPermissions);
     }
 
-    public function update(UpdateRoleRequest $request, Role $role): JsonResource {
+    public function update(UpdateRoleRequest $request, Role $role): JsonResource
+    {
         $this->authorize('update', $role);
 
         $updatedRole = app(UpdateRoleAction::class)->execute($role, $request->fluent());
@@ -45,7 +50,8 @@ final class RoleController extends Controller {
         return new RoleResource($updatedRole);
     }
 
-    public function destroy(Role $role): Response {
+    public function destroy(Role $role): Response
+    {
         $this->authorize('delete', $role);
 
         app(DeleteRoleAction::class)->execute($role);
@@ -53,7 +59,8 @@ final class RoleController extends Controller {
         return response()->noContent();
     }
 
-    public function listAll(): JsonResource {
+    public function listAll(): JsonResource
+    {
         $this->authorize('listAll', Role::class);
 
         $roles = app(ListAllRoleAction::class)->execute();

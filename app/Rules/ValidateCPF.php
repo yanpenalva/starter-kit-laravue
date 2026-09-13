@@ -7,8 +7,10 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule as Rule;
 
-final class ValidateCPF implements Rule {
-    public function validate(string $attribute, mixed $value, Closure $fail): void {
+final class ValidateCPF implements Rule
+{
+    public function validate(string $attribute, mixed $value, Closure $fail): void
+    {
         $value = is_string($value) ? $value : '';
 
         $cpf = preg_replace('/\D/', '', $value) ?? '';
@@ -52,7 +54,8 @@ final class ValidateCPF implements Rule {
         }
     }
 
-    public function message(): string {
+    public function message(): string
+    {
         return 'O :attribute inserido não é um CPF válido.';
     }
 }

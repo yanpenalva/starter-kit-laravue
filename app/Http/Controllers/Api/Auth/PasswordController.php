@@ -9,14 +9,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\{ForgotPasswordRequest, ResetPasswordRequest};
 use Illuminate\Http\Response;
 
-final class PasswordController extends Controller {
-    public function forgotPassword(ForgotPasswordRequest $request): Response {
+final class PasswordController extends Controller
+{
+    public function forgotPassword(ForgotPasswordRequest $request): Response
+    {
         app(ForgotPasswordAction::class)->execute($request->fluent());
 
         return response()->noContent();
     }
 
-    public function resetPassword(ResetPasswordRequest $request): Response {
+    public function resetPassword(ResetPasswordRequest $request): Response
+    {
         app(ResetPasswordAction::class)->execute($request->fluent());
 
         return response()->noContent();

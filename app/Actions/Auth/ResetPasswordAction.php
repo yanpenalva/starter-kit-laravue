@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Actions\Auth;
 
@@ -9,11 +9,13 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Fluent;
 use Symfony\Component\HttpFoundation\Response;
 
-final readonly class ResetPasswordAction {
+final readonly class ResetPasswordAction
+{
     /**
      * @param  Fluent<string, mixed>  $params
      */
-    public function execute(Fluent $params): void {
+    public function execute(Fluent $params): void
+    {
         $status = Password::reset(
             $params->toArray(),
             function (User $user, string $password): void {

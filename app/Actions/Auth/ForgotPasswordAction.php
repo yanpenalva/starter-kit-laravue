@@ -11,18 +11,21 @@ use Illuminate\Support\Facades\{DB, Mail, Password};
 use Illuminate\Support\Fluent;
 use Symfony\Component\HttpFoundation\Response;
 
-final readonly class ForgotPasswordAction {
+final readonly class ForgotPasswordAction
+{
     /**
      * @param  Fluent<string,mixed>  $params
      */
-    public function execute(Fluent $params): void {
+    public function execute(Fluent $params): void
+    {
         DB::transaction(fn () => $this->process($params));
     }
 
     /**
      * @param  Fluent<string,mixed>  $params
      */
-    private function process(Fluent $params): void {
+    private function process(Fluent $params): void
+    {
         $status = Password::sendResetLink(
             $params->toArray(),
             fn (CanResetPassword $passwordResettableUser, string $resetToken) => $this->queueResetEmail($passwordResettableUser, $resetToken)
@@ -41,7 +44,8 @@ final readonly class ForgotPasswordAction {
     /**
      * @param CanResetPassword $passwordResettableUser
      */
-    private function queueResetEmail(CanResetPassword $passwordResettableUser, string $resetToken): void {
+    private function queueResetEmail(CanResetPassword $passwordResettableUser, string $resetToken): void
+    {
         /** @var User $user */
         $user = User::findOrFail($passwordResettableUser->getAuthIdentifier());
 

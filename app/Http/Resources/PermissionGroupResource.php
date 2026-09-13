@@ -11,8 +11,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @mixin PermissionGroupDTO
  */
-final class PermissionGroupResource extends JsonResource {
-    public function toArray(Request $request): array {
+final class PermissionGroupResource extends JsonResource
+{
+    public function toArray(Request $request): array
+    {
         return [
             'group' => $this->group,
             'label' => $this->label,

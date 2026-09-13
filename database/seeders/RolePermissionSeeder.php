@@ -8,8 +8,10 @@ use App\Enums\PermissionEnum;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-final class RolePermissionSeeder extends Seeder {
-    public function run(): void {
+final class RolePermissionSeeder extends Seeder
+{
+    public function run(): void
+    {
         $permissions = [
             PermissionEnum::ROLES_LIST,
             PermissionEnum::ROLES_VIEW,

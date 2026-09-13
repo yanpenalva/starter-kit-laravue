@@ -8,14 +8,17 @@ use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-final class IndexLogRequest extends FormRequest {
+final class IndexLogRequest extends FormRequest
+{
     use FailedValidation;
 
-    public function authorize(): bool {
+    public function authorize(): bool
+    {
         return Auth::check();
     }
 
-    public function prepareForValidation(): void {
+    public function prepareForValidation(): void
+    {
         $this->merge([
             'limit' => $this->get('limit', 10),
             'page' => $this->get('page', 1),
@@ -29,7 +32,8 @@ final class IndexLogRequest extends FormRequest {
     /**
      * @return array<string, array<int, string>>
      */
-    public function rules(): array {
+    public function rules(): array
+    {
         return [
             'limit' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'page' => ['sometimes', 'integer', 'min:1'],

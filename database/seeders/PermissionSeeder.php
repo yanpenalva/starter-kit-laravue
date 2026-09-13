@@ -6,8 +6,10 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-final class PermissionSeeder extends Seeder {
-    public function run(): void {
+final class PermissionSeeder extends Seeder
+{
+    public function run(): void
+    {
         $this->call([
             UserPermissionSeeder::class,
             RolePermissionSeeder::class,

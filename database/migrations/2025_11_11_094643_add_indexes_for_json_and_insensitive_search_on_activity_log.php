@@ -1,13 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\{DB, Schema};
 
-final class AddIndexesForJsonAndInsensitiveSearchOnActivityLog extends Migration {
-    public function up(): void {
+final class AddIndexesForJsonAndInsensitiveSearchOnActivityLog extends Migration
+{
+    public function up(): void
+    {
         DB::statement("
             ALTER TABLE activity_log
             ALTER COLUMN properties
@@ -29,7 +30,8 @@ final class AddIndexesForJsonAndInsensitiveSearchOnActivityLog extends Migration
         }
     }
 
-    public function down(): void {
+    public function down(): void
+    {
         DB::statement("DROP INDEX IF EXISTS idx_activity_log_properties;");
         DB::statement("DROP INDEX IF EXISTS idx_users_name_lower;");
     }

@@ -6,7 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\{DB, Schema};
 
 return new class () extends Migration {
-    public function up(): void {
+    public function up(): void
+    {
         if (!Schema::hasTable('users')) {
             return;
         }
@@ -19,7 +20,8 @@ return new class () extends Migration {
         DB::statement('CREATE INDEX users_name_trgm_idx ON users USING gin (name gin_trgm_ops)');
     }
 
-    public function down(): void {
+    public function down(): void
+    {
         DB::statement('DROP INDEX IF EXISTS users_active_created_at_idx');
         DB::statement('DROP INDEX IF EXISTS users_unverified_idx');
         DB::statement('DROP INDEX IF EXISTS users_inactive_idx');

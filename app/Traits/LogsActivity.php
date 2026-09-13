@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 
 // @codeCoverageIgnoreStart
-trait LogsActivity {
+trait LogsActivity
+{
     /**
      * @param  array<string, mixed>  $dirty
      * @param  array<string, mixed>  $relations
@@ -126,7 +127,8 @@ trait LogsActivity {
      * @param  array<mixed>  $attributes
      * @return array<string, mixed>
      */
-    private function extractAttributesWithDates(Model $model, array $attributes): array {
+    private function extractAttributesWithDates(Model $model, array $attributes): array
+    {
         /** @var array<string, mixed> $normalized */
         $normalized = collect($attributes)
             ->map(function (mixed $value, string|int $key) use ($model): mixed {
@@ -145,7 +147,8 @@ trait LogsActivity {
      * @param  array<string, mixed>  $attributes
      * @return array<string, mixed>
      */
-    private function sanitizeSensitiveAttributes(array $attributes): array {
+    private function sanitizeSensitiveAttributes(array $attributes): array
+    {
         foreach (['password', 'password_confirmation', 'remember_token', 'token', 'access_token'] as $key) {
             unset($attributes[$key]);
         }

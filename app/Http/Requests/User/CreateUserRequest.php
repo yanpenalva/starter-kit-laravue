@@ -10,12 +10,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\{Fluent, Str};
 use Illuminate\Validation\Rule;
 
-final class CreateUserRequest extends FormRequest {
+final class CreateUserRequest extends FormRequest
+{
     use FailedValidation;
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool {
+    public function authorize(): bool
+    {
         return true;
     }
 
@@ -24,7 +26,8 @@ final class CreateUserRequest extends FormRequest {
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array {
+    public function rules(): array
+    {
         $rules = [
             'name' => ['required', 'string'],
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->id)],
@@ -51,7 +54,8 @@ final class CreateUserRequest extends FormRequest {
      *
      * @return array<string, string>
      */
-    public function attributes(): array {
+    public function attributes(): array
+    {
         return [
             'name' => 'Nome',
             'email' => 'E-mail',
@@ -69,7 +73,8 @@ final class CreateUserRequest extends FormRequest {
      *
      * @return array<string, string>
      */
-    public function messages(): array {
+    public function messages(): array
+    {
         return [
             'cpf.unique' => 'CPF já cadastrado no SISTEX, realize o login com suas credenciais.',
             'email.unique' => 'O e-mail já foi cadastrado.',
@@ -89,7 +94,8 @@ final class CreateUserRequest extends FormRequest {
      *
      * @return Fluent<string, mixed>
      */
-    public function fluentParams(?string $key = null): Fluent {
+    public function fluentParams(?string $key = null): Fluent
+    {
         /** @var array<string, mixed> $validated */
         $validated = is_array($this->validated($key)) ? $this->validated($key) : [];
 

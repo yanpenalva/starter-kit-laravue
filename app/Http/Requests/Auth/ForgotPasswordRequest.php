@@ -8,17 +8,20 @@ use App\Traits\FailedValidation;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Fluent;
 
-final class ForgotPasswordRequest extends FormRequest {
+final class ForgotPasswordRequest extends FormRequest
+{
     use FailedValidation;
 
-    public function authorize(): bool {
+    public function authorize(): bool
+    {
         return true;
     }
 
     /**
      * @return array<string, string>
      */
-    public function rules(): array {
+    public function rules(): array
+    {
         return [
             'email' => 'required|email|exists:users,email',
         ];
@@ -27,7 +30,8 @@ final class ForgotPasswordRequest extends FormRequest {
     /**
      * @return array<string, string>
      */
-    public function messages(): array {
+    public function messages(): array
+    {
         return [
             'email.required' => 'O campo e-mail é obrigatório.',
             'email.email' => 'O campo e-mail deve ser um endereço de e-mail válido.',
@@ -38,7 +42,8 @@ final class ForgotPasswordRequest extends FormRequest {
     /**
      * @return Fluent<string, mixed>
      */
-    public function fluentParams(?string $key = null, mixed $default = null): Fluent {
+    public function fluentParams(?string $key = null, mixed $default = null): Fluent
+    {
         /** @var array<string,mixed> $data */
         $data = $key
             ? [$key => $this->input($key)]
@@ -47,7 +52,8 @@ final class ForgotPasswordRequest extends FormRequest {
         return new Fluent($data);
     }
 
-    protected function prepareForValidation(): void {
+    protected function prepareForValidation(): void
+    {
         if ($this->filled('email')) {
             $emailInput = $this->input('email');
 

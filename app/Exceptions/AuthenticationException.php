@@ -8,7 +8,8 @@ use Exception;
 
 // @codeCoverageIgnoreStart
 
-final class AuthenticationException extends Exception {
+final class AuthenticationException extends Exception
+{
     /**
      * @var array<int, string>
      */
@@ -19,7 +20,8 @@ final class AuthenticationException extends Exception {
     /**
      * @param  array<int, string>  $guards
      */
-    public function __construct(string $message = 'Não Autenticado', array $guards = [], ?string $redirectTo = null) {
+    public function __construct(string $message = 'Não Autenticado', array $guards = [], ?string $redirectTo = null)
+    {
         parent::__construct($message);
 
         $this->guards = $guards;
@@ -29,11 +31,13 @@ final class AuthenticationException extends Exception {
     /**
      * @return array<int, string>
      */
-    public function guards(): array {
+    public function guards(): array
+    {
         return $this->guards;
     }
 
-    public function redirectTo(): ?string {
+    public function redirectTo(): ?string
+    {
         return $this->redirectTo;
     }
 }

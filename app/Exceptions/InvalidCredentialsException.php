@@ -8,7 +8,8 @@ use Exception;
 use Illuminate\Http\Response;
 use Throwable;
 
-final class InvalidCredentialsException extends Exception {
+final class InvalidCredentialsException extends Exception
+{
     public string $error;
 
     public function __construct(
