@@ -13,7 +13,7 @@ defineProps({
 const { textPage } = useAuthenticateConfigPage();
 </script>
 <template>
-  <div class="row">
+  <div class="row auth__container">
     <section class="gt-xs gt-sm col-md-6">
       <div class="auth__background">
       </div>
