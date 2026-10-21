@@ -3,7 +3,7 @@ FROM node:26.8.2-alpine AS node
 
 RUN npm install --global npm@12.0.2
 
-FROM php:8.5.9-fpm-alpine AS base
+FROM php:8.5.12-fpm-alpine@sha256:c15690bd932bd6d33f43ccae6ddd8d60acb93cee50c16afc6e699265d5d86583 AS base
 
 ARG APP_ENV=local
 ENV APP_ENV=$APP_ENV \
