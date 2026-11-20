@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\{DB, Validator};
 
 beforeEach(function () {
     Mockery::close();
+    DB::shouldReceive('getConnections')->andReturn([])->byDefault();
 });
 
 describe('UniqueRoleNameRule (Unit)', function () {
