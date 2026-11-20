@@ -7,20 +7,22 @@ namespace Tests\Unit\Policies;
 use App\Enums\PermissionEnum;
 use App\Models\User;
 use App\Policies\ActivityLogPolicy;
-use Mockery;
+use Illuminate\Support\Facades\Gate;
 use ReflectionClass;
 
 describe('ActivityLogPolicy', function () {
     beforeEach(function () {
         $this->policy = new ActivityLogPolicy();
+        app('cache')->store()->put(config('permission.cache.key'), [
+            'alias' => [],
+            'permissions' => [],
+            'roles' => [],
+        ]);
     });
 
     it('allows users with activity logs list permission to view index', function () {
-        $user = Mockery::mock(User::class);
-        $user->shouldReceive('can')
-            ->with(PermissionEnum::ACTIVITY_LOGS_LIST->value)
-            ->once()
-            ->andReturn(true);
+        Gate::define(PermissionEnum::ACTIVITY_LOGS_LIST->value, fn (User $user): bool => true);
+        $user = new User();
 
         $result = $this->policy->index($user);
 
@@ -28,11 +30,8 @@ describe('ActivityLogPolicy', function () {
     });
 
     it('denies users without activity logs list permission to view index', function () {
-        $user = Mockery::mock(User::class);
-        $user->shouldReceive('can')
-            ->with(PermissionEnum::ACTIVITY_LOGS_LIST->value)
-            ->once()
-            ->andReturn(false);
+        Gate::define(PermissionEnum::ACTIVITY_LOGS_LIST->value, fn (User $user): bool => false);
+        $user = new User();
 
         $result = $this->policy->index($user);
 

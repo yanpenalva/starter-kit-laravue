@@ -7,24 +7,23 @@ namespace Tests\Unit\Policies;
 use App\Enums\{PermissionEnum, RolesEnum};
 use App\Models\User;
 use App\Policies\UserPolicy;
-use Mockery;
+use Illuminate\Support\Facades\Gate;
 use ReflectionClass;
+use Spatie\Permission\Models\Role;
 
 describe('UserPolicy', function () {
     beforeEach(function () {
         $this->policy = new UserPolicy();
-    });
-
-    afterEach(function () {
-        Mockery::close();
+        app('cache')->store()->put(config('permission.cache.key'), [
+            'alias' => [],
+            'permissions' => [],
+            'roles' => [],
+        ]);
     });
 
     it('allows users with users.list permission to view index', function () {
-        $user = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $user->shouldReceive('can')
-            ->with(PermissionEnum::USERS_LIST->value)
-            ->once()
-            ->andReturn(true);
+        Gate::define(PermissionEnum::USERS_LIST->value, fn (User $user): bool => true);
+        $user = new User();
 
         $result = $this->policy->index($user);
 
@@ -32,11 +31,8 @@ describe('UserPolicy', function () {
     });
 
     it('denies users without users.list permission to view index', function () {
-        $user = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $user->shouldReceive('can')
-            ->with(PermissionEnum::USERS_LIST->value)
-            ->once()
-            ->andReturn(false);
+        Gate::define(PermissionEnum::USERS_LIST->value, fn (User $user): bool => false);
+        $user = new User();
 
         $result = $this->policy->index($user);
 
@@ -44,11 +40,8 @@ describe('UserPolicy', function () {
     });
 
     it('allows users with users.create permission to create', function () {
-        $user = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $user->shouldReceive('can')
-            ->with(PermissionEnum::USERS_CREATE->value)
-            ->once()
-            ->andReturn(true);
+        Gate::define(PermissionEnum::USERS_CREATE->value, fn (User $user): bool => true);
+        $user = new User();
 
         $result = $this->policy->create($user);
 
@@ -56,11 +49,8 @@ describe('UserPolicy', function () {
     });
 
     it('denies users without users.create permission to create', function () {
-        $user = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $user->shouldReceive('can')
-            ->with(PermissionEnum::USERS_CREATE->value)
-            ->once()
-            ->andReturn(false);
+        Gate::define(PermissionEnum::USERS_CREATE->value, fn (User $user): bool => false);
+        $user = new User();
 
         $result = $this->policy->create($user);
 
@@ -68,13 +58,13 @@ describe('UserPolicy', function () {
     });
 
     it('allows admin to view any user via show', function () {
-        $roles = Mockery::mock();
-        $roles->shouldReceive('contains')->with('slug', RolesEnum::ADMINISTRATOR->value)->andReturn(true);
+        $actor = new User();
+        $actor->id = 1;
+        $role = new Role(['slug' => RolesEnum::ADMINISTRATOR->value]);
+        $actor->setRelation('roles', collect([$role]));
 
-        $actor = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $actor->shouldReceive('getAttribute')->with('roles')->andReturn($roles);
-
-        $target = Mockery::mock(User::class)->shouldIgnoreMissing();
+        $target = new User();
+        $target->id = 2;
 
         $result = $this->policy->show($actor, $target);
 
@@ -82,16 +72,15 @@ describe('UserPolicy', function () {
     });
 
     it('allows owner with users.show permission to view own profile', function () {
-        $roles = Mockery::mock();
-        $roles->shouldReceive('contains')->with('slug', RolesEnum::ADMINISTRATOR->value)->andReturn(false);
+        $actor = new User();
+        $actor->id = 10;
+        $role = new Role(['slug' => RolesEnum::GUEST->value]);
+        $actor->setRelation('roles', collect([$role]));
 
-        $actor = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $actor->shouldReceive('getAttribute')->with('roles')->andReturn($roles);
-        $actor->shouldReceive('getAttribute')->with('id')->andReturn(10);
-        $actor->shouldReceive('can')->with(PermissionEnum::USERS_SHOW->value)->andReturn(true);
+        Gate::define(PermissionEnum::USERS_SHOW->value, fn (User $user): bool => true);
 
-        $target = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $target->shouldReceive('getAttribute')->with('id')->andReturn(10);
+        $target = new User();
+        $target->id = 10;
 
         $result = $this->policy->show($actor, $target);
 
@@ -99,16 +88,15 @@ describe('UserPolicy', function () {
     });
 
     it('denies non-owner without users.show permission to view other profile', function () {
-        $roles = Mockery::mock();
-        $roles->shouldReceive('contains')->with('slug', RolesEnum::ADMINISTRATOR->value)->andReturn(false);
+        $actor = new User();
+        $actor->id = 11;
+        $role = new Role(['slug' => RolesEnum::GUEST->value]);
+        $actor->setRelation('roles', collect([$role]));
 
-        $actor = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $actor->shouldReceive('getAttribute')->with('roles')->andReturn($roles);
-        $actor->shouldReceive('getAttribute')->with('id')->andReturn(11);
-        $actor->shouldReceive('can')->with(PermissionEnum::USERS_SHOW->value)->andReturn(false);
+        Gate::define(PermissionEnum::USERS_SHOW->value, fn (User $user): bool => false);
 
-        $target = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $target->shouldReceive('getAttribute')->with('id')->andReturn(12);
+        $target = new User();
+        $target->id = 12;
 
         $result = $this->policy->show($actor, $target);
 
@@ -116,11 +104,8 @@ describe('UserPolicy', function () {
     });
 
     it('allows users with users.update permission to update', function () {
-        $user = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $user->shouldReceive('can')
-            ->with(PermissionEnum::USERS_UPDATE->value)
-            ->once()
-            ->andReturn(true);
+        Gate::define(PermissionEnum::USERS_UPDATE->value, fn (User $user): bool => true);
+        $user = new User();
 
         $result = $this->policy->update($user);
 
@@ -128,11 +113,8 @@ describe('UserPolicy', function () {
     });
 
     it('denies users without users.update permission to update', function () {
-        $user = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $user->shouldReceive('can')
-            ->with(PermissionEnum::USERS_UPDATE->value)
-            ->once()
-            ->andReturn(false);
+        Gate::define(PermissionEnum::USERS_UPDATE->value, fn (User $user): bool => false);
+        $user = new User();
 
         $result = $this->policy->update($user);
 
@@ -140,11 +122,8 @@ describe('UserPolicy', function () {
     });
 
     it('allows users with users.delete permission to delete', function () {
-        $user = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $user->shouldReceive('can')
-            ->with(PermissionEnum::USERS_DELETE->value)
-            ->once()
-            ->andReturn(true);
+        Gate::define(PermissionEnum::USERS_DELETE->value, fn (User $user): bool => true);
+        $user = new User();
 
         $result = $this->policy->delete($user);
 
@@ -152,11 +131,8 @@ describe('UserPolicy', function () {
     });
 
     it('denies users without users.delete permission to delete', function () {
-        $user = Mockery::mock(User::class)->shouldIgnoreMissing();
-        $user->shouldReceive('can')
-            ->with(PermissionEnum::USERS_DELETE->value)
-            ->once()
-            ->andReturn(false);
+        Gate::define(PermissionEnum::USERS_DELETE->value, fn (User $user): bool => false);
+        $user = new User();
 
         $result = $this->policy->delete($user);
 
