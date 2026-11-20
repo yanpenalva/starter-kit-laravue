@@ -50,7 +50,6 @@ final readonly class ListLogAction
                                 ->orWhereRaw("(activity_log.properties->'attributes'->>'name') ILIKE ?", ["%{$search}%"])
                                 ->orWhereRaw("(activity_log.properties->'attributes'->'before'->>'name') ILIKE ?", ["%{$search}%"]);
 
-                            /** @var DateTimeInterface|null $date */
                             $date = DateTimeImmutable::createFromFormat('d/m/Y', (string) $search);
 
                             if ($date instanceof DateTimeInterface) {
